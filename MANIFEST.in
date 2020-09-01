@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include eskill_custom *.css
+recursive-include eskill_custom *.csv
+recursive-include eskill_custom *.html
+recursive-include eskill_custom *.ico
+recursive-include eskill_custom *.js
+recursive-include eskill_custom *.json
+recursive-include eskill_custom *.md
+recursive-include eskill_custom *.png
+recursive-include eskill_custom *.py
+recursive-include eskill_custom *.svg
+recursive-include eskill_custom *.txt
+recursive-exclude eskill_custom *.pyc

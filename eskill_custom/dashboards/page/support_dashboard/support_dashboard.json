@@ -1,0 +1,19 @@
+{
+ "content": null,
+ "creation": "2020-08-31 11:54:33.129116",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2020-09-01 09:38:46.748327",
+ "modified_by": "Administrator",
+ "module": "Dashboards",
+ "name": "support-dashboard",
+ "owner": "Administrator",
+ "page_name": "Support Dashboard",
+ "roles": [],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 0,
+ "title": "support"
+}
