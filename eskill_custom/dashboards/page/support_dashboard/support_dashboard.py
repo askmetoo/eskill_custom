@@ -7,7 +7,7 @@ METABASE_SITE_URL = "http://coral.eskilltrading.com:3000"
 METABASE_SECRET_KEY = "30ddebd653ba14e30c762eb0ddbf6dc44fae25f1c11889e47999c677668b971c"
 
 payload = {
-  "resource": {"dashboard": 3},
+  "resource": {"dashboard": 2},
   "params": {
     
   },

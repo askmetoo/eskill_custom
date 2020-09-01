@@ -4,4 +4,5 @@ frappe.pages['support-dashboard'].on_page_load = function(wrapper) {
 		title: 'support',
 		single_column: true
 	});
+	$(frappe.render_template('support_dashboard')).appendTo(page.body);
 }

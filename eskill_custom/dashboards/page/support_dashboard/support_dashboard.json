@@ -4,7 +4,7 @@
  "docstatus": 0,
  "doctype": "Page",
  "idx": 0,
- "modified": "2020-09-01 09:38:46.748327",
+ "modified": "2020-09-01 14:32:35.223753",
  "modified_by": "Administrator",
  "module": "Dashboards",
  "name": "support-dashboard",
@@ -15,5 +15,5 @@
  "standard": "Yes",
  "style": null,
  "system_page": 0,
- "title": "support"
+ "title": "Support"
 }

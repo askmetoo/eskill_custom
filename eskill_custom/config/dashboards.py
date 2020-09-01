@@ -15,6 +15,20 @@ def get_data():
 					"icon": "fa fa-bar-chart",
 					"onboard": 1,
 				},
+				{
+					"type": "page",
+					"name": "sales-dashboard",
+					"label": _("Sales"),
+					"icon": "fa fa-bar-chart",
+					"onboard": 1,
+				},
+				{
+					"type": "page",
+					"name": "support-dashboard",
+					"label": _("Support"),
+					"icon": "fa fa-bar-chart",
+					"onboard": 1,
+				},
             ]
         }
     ]
