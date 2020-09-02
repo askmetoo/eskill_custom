@@ -1,0 +1,19 @@
+{
+ "content": null,
+ "creation": "2020-09-02 13:56:18.884131",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2020-09-02 13:56:18.884131",
+ "modified_by": "Administrator",
+ "module": "Dashboards",
+ "name": "network-overview",
+ "owner": "Administrator",
+ "page_name": "Network Overview",
+ "roles": [],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 0,
+ "title": "Network Overview"
+}
