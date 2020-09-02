@@ -4,19 +4,15 @@ from frappe import _
 def get_data():
 	return [
 		{
-			"label": _("Employee"),
-			"icon": "fa fa-list",
-			"items": [
-				{
-					"name": 'Employee Metrics',
-					"label": _('Employee Metrics'),
-					"type": 'link',
-					"link": '#Form/Employee Metrics/All Employees',
-                    "category": "Employee",
-                    "type": 'link',
-                    "color": '#00FF00',
-                    'standard': 1,
-                },
-			]
+			{
+				"name": 'Employee Metrics',
+				"label": _('Employee Metrics'),
+				"type": 'link',
+				"link": '#Form/Employee Metrics/All Employees',
+				"category": "Employee",
+				"type": 'link',
+				"color": '#00FF00',
+				'standard': 1,
+			},
 		},
 	]
