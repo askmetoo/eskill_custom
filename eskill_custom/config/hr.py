@@ -12,7 +12,11 @@ def get_data():
 					"label": _('Employee Metrics'),
 					"type": 'link',
 					"link": '#Form/Employee Metrics/All Employees',
-				},
+                    "category": "Reports",
+                    "type": 'link',
+                    "color": '#00FF00',
+                    'standard': 1,
+                },
 			]
 		},
 	]
