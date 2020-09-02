@@ -5,7 +5,7 @@ def get_data():
 
     return [
         {
-            "label": _("Dashboards"),
+            "label": _("Accounts"),
             "icon": "octicon octicon-briefcase",
             "items": [
 				{
@@ -15,6 +15,12 @@ def get_data():
 					"icon": "fa fa-bar-chart",
 					"onboard": 1,
 				},
+            ]
+        },
+        {
+            "label": _("Sales"),
+            "icon": "octicon octicon-briefcase",
+            "items": [
 				{
 					"type": "page",
 					"name": "sales-dashboard",
@@ -24,11 +30,37 @@ def get_data():
 				},
 				{
 					"type": "page",
+					"name": "credit-notes",
+					"label": _("Credit Notes"),
+					"icon": "fa fa-bar-chart",
+					"onboard": 1,
+				},
+            ]
+        },
+        {
+            "label": _("Stores"),
+            "icon": "octicon octicon-briefcase",
+            "items": [
+            ]
+        },
+        {
+            "label": _("Support"),
+            "icon": "octicon octicon-briefcase",
+            "items": [
+				{
+					"type": "page",
 					"name": "support-dashboard",
 					"label": _("Support"),
 					"icon": "fa fa-bar-chart",
 					"onboard": 1,
 				},
+				{
+					"type": "page",
+					"name": "technician-time-brea",
+					"label": _("Technician Time Breakdown"),
+					"icon": "fa fa-bar-chart",
+					"onboard": 1,
+				},
             ]
-        }
+        },
     ]
