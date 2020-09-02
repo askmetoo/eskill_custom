@@ -4,7 +4,7 @@ from frappe import _
 def get_data():
 	return [
 		{
-			"label": _("Reports"),
+			"label": _("Employee"),
 			"icon": "fa fa-list",
 			"items": [
 				{
@@ -12,7 +12,7 @@ def get_data():
 					"label": _('Employee Metrics'),
 					"type": 'link',
 					"link": '#Form/Employee Metrics/All Employees',
-                    "category": "Reports",
+                    "category": "Employee",
                     "type": 'link',
                     "color": '#00FF00',
                     'standard': 1,
