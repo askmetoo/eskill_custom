@@ -4,7 +4,7 @@ frappe.pages['network-overview'].on_page_load = function(wrapper) {
 		title: 'Network Overview',
 		single_column: true
 	});
-	$(frappe.render_template('network_overview')).appendTo(page.body);
+	$(frappe.render_template('network_overview')).appendTo(page.body).height('75vh');
 
 	var time = new Date().getTime();
 	$(document.body).bind("mousemove keypress", function(e) {

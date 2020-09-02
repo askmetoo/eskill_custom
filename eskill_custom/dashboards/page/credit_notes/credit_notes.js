@@ -4,7 +4,7 @@ frappe.pages['credit-notes'].on_page_load = function(wrapper) {
 		title: 'Credit Notes',
 		single_column: true
 	});
-	$(frappe.render_template('credit_notes')).appendTo(page.body);
+	$(frappe.render_template('credit_notes')).appendTo(page.body).height('80vh');
 
 	var time = new Date().getTime();
 	$(document.body).bind("mousemove keypress", function(e) {

@@ -4,7 +4,7 @@ frappe.pages['technician-time-brea'].on_page_load = function(wrapper) {
 		title: 'Technician Time Breakdown',
 		single_column: true
 	});
-	$(frappe.render_template('technician_time_breakdown')).appendTo(page.body);
+	$(frappe.render_template('technician_time_breakdown')).appendTo(page.body).height('80vh');
 
 	var time = new Date().getTime();
 	$(document.body).bind("mousemove keypress", function(e) {
