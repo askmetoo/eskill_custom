@@ -7,7 +7,7 @@ def get_data():
 			"label": _("Performance"),
 			"items": [
 				{
-					"name": 'Employee Metrics',
+					"name": 'All Employees',
 					"label": _('Employee Metrics'),
 					"type": 'link',
 					"link": '#Form/Employee Metrics/All Employees',

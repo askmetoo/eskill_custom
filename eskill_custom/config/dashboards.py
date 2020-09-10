@@ -18,6 +18,19 @@ def get_data():
             ]
         },
         {
+            "label": _("Projects"),
+            "icon": "octicon octicon-briefcase",
+            "items": [
+				{
+					"type": "page",
+					"name": "project-dashboard",
+					"label": _("Projects"),
+					"icon": "fa fa-bar-chart",
+					"onboard": 1,
+				},
+            ]
+        },
+        {
             "label": _("Sales"),
             "icon": "octicon octicon-briefcase",
             "items": [
@@ -41,6 +54,13 @@ def get_data():
             "label": _("Stores"),
             "icon": "octicon octicon-briefcase",
             "items": [
+				{
+					"type": "page",
+					"name": "stock-dashboard",
+					"label": _("Stock"),
+					"icon": "fa fa-bar-chart",
+					"onboard": 1,
+				},
             ]
         },
         {
