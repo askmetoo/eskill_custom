@@ -4,7 +4,7 @@ frappe.pages["project-dashboard"].on_page_load = function(wrapper) {
                 title: "Projects",
                 single_column: true
         });
-        $(frappe.render_template("project_dashboard")).appendTo(page.body).height("80vh");
+        $(frappe.render_template("project_dashboard")).appendTo(page.body).height("75vh").width("100%");
 
         var time = new Date().getTime();
         $(document.body).bind("mousemove keypress", function(e) {
