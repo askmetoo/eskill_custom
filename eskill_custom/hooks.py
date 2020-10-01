@@ -127,6 +127,6 @@ app_license = "MIT"
 # 	"Task": "eskill_custom.task.get_dashboard_data"
 # }
 
-fixtures = ['KBA', 'Employee Metrics', 'Custom Field', 'Print Format',\
+fixtures = ['Employee Metrics', 'Custom Field', 'Print Format',\
     'Workflow', 'Workflow Action', 'Workflow Action Master', 'Workflow State', 'Workflow Document State',\
     'Workflow Transition']
