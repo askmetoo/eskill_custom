@@ -127,3 +127,4 @@ app_license = "MIT"
 # 	"Task": "eskill_custom.task.get_dashboard_data"
 # }
 
+fixtures = ['Csutom Fields']
