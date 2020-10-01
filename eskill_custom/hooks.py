@@ -127,4 +127,4 @@ app_license = "MIT"
 # 	"Task": "eskill_custom.task.get_dashboard_data"
 # }
 
-fixtures = ['Custom Fields']
+fixtures = ['Employee Metrics', 'Custom Field', 'KBA', 'Banner', 'Banner Size', 'Print Format']

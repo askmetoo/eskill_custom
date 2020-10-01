@@ -1,0 +1,26 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "Banner Size",
+  "height_in_pixels": 160,
+  "height_in_points": 120,
+  "modified": "2020-09-21 13:06:35.129919",
+  "name": "Height 160px/120pt",
+  "name1": "Height 160px/120pt",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Banner Size",
+  "height_in_pixels": 320,
+  "height_in_points": 240,
+  "modified": "2020-09-21 13:41:20.294073",
+  "name": "Height 320px/240pt",
+  "name1": "Height 320px/240pt",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ }
+]
