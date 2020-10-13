@@ -1,0 +1,262 @@
+[
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2020-07-21 12:37:16.710829",
+  "name": "Software Support",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2020-08-20 13:09:05.240499",
+  "name": "Printer Warranty",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2020-08-20 13:09:20.506925",
+  "name": "Printer Non-Warranty",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2020-09-14 10:35:21.640179",
+  "name": "Internal Software Support",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2020-10-10 23:11:20.305791",
+  "name": "Computer Hardware",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2020-10-13 16:05:03.902086",
+  "name": "Warranty CEG Product Inspect",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2020-10-13 16:05:04.042201",
+  "name": "Inspect & Quote for Repair",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2020-10-13 16:05:04.217432",
+  "name": "SLA - General Service",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2020-10-13 16:05:04.494627",
+  "name": "General Assessment Call Out",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2020-10-13 16:05:04.697091",
+  "name": "Paper Feed/Pickup Error",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2020-10-13 16:05:05.130106",
+  "name": "Ink Absorber Full Error",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2020-10-13 16:05:05.380923",
+  "name": "Driver/ Software Support Issue",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2020-10-13 16:05:05.538486",
+  "name": "Poor Print Quality Fault",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2020-10-13 16:05:05.792896",
+  "name": "Scan and Copy Quality Fault",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2020-10-13 16:05:06.233222",
+  "name": "Not Projecting Image Clearly",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2020-10-13 16:05:06.411568",
+  "name": "No Signal Fault on Projector/Display",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2020-10-13 16:05:06.586086",
+  "name": "Not Printing- Comms Fault/Error Lights",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2020-10-13 16:05:06.677870",
+  "name": "Paper Jam Error - Print Engine",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2020-10-13 16:05:06.757057",
+  "name": "Paper Jam Error - ADF/DADF Unit",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2020-10-13 16:05:07.163915",
+  "name": "Faulty Display Screen - Poor Image Quality",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2020-10-13 16:05:07.487706",
+  "name": "Not Powering On Correctly or At All",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2020-10-13 16:05:07.728671",
+  "name": "Installation & Setup users",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2020-10-13 16:05:07.806932",
+  "name": "Toner Fault",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2020-10-13 16:05:07.883476",
+  "name": "Service",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2020-10-13 16:05:07.966335",
+  "name": "Fit Spares as per Quotation",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2020-10-13 16:05:08.088203",
+  "name": "Error code",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ }
+]
