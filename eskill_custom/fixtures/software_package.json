@@ -1,0 +1,42 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "Software Package",
+  "modified": "2020-10-12 15:44:53.744067",
+  "name": "ERPNext",
+  "name1": "ERPNext",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Software Package",
+  "modified": "2020-10-13 09:16:05.434616",
+  "name": "Palladium",
+  "name1": "Palladium",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Software Package",
+  "modified": "2020-10-13 09:16:21.781710",
+  "name": "Therefore",
+  "name1": "Therefore",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Software Package",
+  "modified": "2020-10-13 09:16:42.404667",
+  "name": "Hansa",
+  "name1": "Hansa",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ }
+]

@@ -1,0 +1,74 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "Software Change Log",
+  "modified": "2020-10-13 10:16:57.995671",
+  "name": "88f444deb3",
+  "parent": "ERPNext-staging.eskilltrading.com",
+  "parentfield": "change_log",
+  "parenttype": "Software Instance",
+  "software_change": "Software Change Log",
+  "status": "Applied",
+  "when_applied": "2020-10-13 10:15:43"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Software Change Log",
+  "modified": "2020-10-13 10:17:45.549864",
+  "name": "56ae67d380",
+  "parent": "ERPNext-erp.eskilltrading.com",
+  "parentfield": "change_log",
+  "parenttype": "Software Instance",
+  "software_change": "Child/Parent Serial Tracking for Components",
+  "status": "Planned",
+  "when_applied": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Software Change Log",
+  "modified": "2020-10-13 10:18:20.476718",
+  "name": "f4104cee8c",
+  "parent": "ERPNext-erpnext.eskilltrading.com",
+  "parentfield": "change_log",
+  "parenttype": "Software Instance",
+  "software_change": "Child/Parent Serial Tracking for Components",
+  "status": "Planned",
+  "when_applied": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Software Change Log",
+  "modified": "2020-10-13 10:16:57.995671",
+  "name": "2abe0f80f9",
+  "parent": "ERPNext-staging.eskilltrading.com",
+  "parentfield": "change_log",
+  "parenttype": "Software Instance",
+  "software_change": "Child/Parent Serial Tracking for Components",
+  "status": "Applied",
+  "when_applied": "2020-10-11 20:26:23"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Software Change Log",
+  "modified": "2020-10-13 10:17:45.549864",
+  "name": "caad4780fa",
+  "parent": "ERPNext-erp.eskilltrading.com",
+  "parentfield": "change_log",
+  "parenttype": "Software Instance",
+  "software_change": "Software Change Log",
+  "status": "Planned",
+  "when_applied": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Software Change Log",
+  "modified": "2020-10-13 10:18:20.476718",
+  "name": "d399e9b156",
+  "parent": "ERPNext-erpnext.eskilltrading.com",
+  "parentfield": "change_log",
+  "parenttype": "Software Instance",
+  "software_change": "Software Change Log",
+  "status": "Planned",
+  "when_applied": null
+ }
+]

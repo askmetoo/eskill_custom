@@ -6,6 +6,7 @@ def get_data():
 	return [
 		{
 			"module_name": "Eskill Customisations",
+                        "category": "Places",
 			"color": "#ffbd20",
 			"icon": "octicon octicon-file-directory",
 			"type": "module",

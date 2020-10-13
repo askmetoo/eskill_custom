@@ -1,0 +1,24 @@
+[
+ {
+  "change_name": "Software Change Log",
+  "description": "<div>Added doctypes:</div><ul><li>Software Package (Simple List)</li><li>Software Change (Name and Description)</li><li>Software Change Log (Date applied, status, and link to Software Change, as child table of Software Instance)</li><li>Software Instance (Name, site and child table for change log)</li></ul><div><br></div>",
+  "docstatus": 0,
+  "doctype": "Software Change",
+  "modified": "2020-10-13 10:26:07.757377",
+  "name": "Software Change Log",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "change_name": "Child/Parent Serial Tracking for Components",
+  "description": "<div>Added doctype:</div><ul><li>Component History</li></ul><div><br></div><div>Changed built-in Serial No doctype:</div><ul><li>Added Component History as child table</li></ul><div><br></div><div>Added custom print format:</div><ul><li>Eskill Serial Number History</li></ul>",
+  "docstatus": 0,
+  "doctype": "Software Change",
+  "modified": "2020-10-13 10:24:09.031924",
+  "name": "Child/Parent Serial Tracking for Components",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ }
+]

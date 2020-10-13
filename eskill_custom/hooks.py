@@ -82,8 +82,8 @@ app_license = "MIT"
 # doc_events = {
 # 	"*": {
 # 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
+# 		"on_cancel": Custom?
+"method"
 #	}
 # }
 
@@ -127,6 +127,4 @@ app_license = "MIT"
 # 	"Task": "eskill_custom.task.get_dashboard_data"
 # }
 
-fixtures = ['Employee Metrics', 'Custom Field', 'Print Format',\
-    'Workflow', 'Workflow Action', 'Workflow Action Master', 'Workflow State', 'Workflow Document State',\
-    'Workflow Transition']
+fixtures = ['Print Format', 'Software Instance', 'Software Change Log', 'Software Change', 'Software Package', 'Component History', 'Warranty Swap Out']
