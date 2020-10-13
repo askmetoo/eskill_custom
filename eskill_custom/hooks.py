@@ -127,6 +127,6 @@ app_license = "MIT"
 # 	"Task": "eskill_custom.task.get_dashboard_data"
 # }
 
-customDocs = ('Software Change', 'Software Change Log', 'Software Package', 'Software Instance', 'Component History')
+customDocs = ('Software Change', 'Software Change Log', 'Software Package', 'Software Instance', 'Component History', 'Warranty Swap Out')
 
 fixtures = [{'doctype': 'DocType', 'filters': [['name', 'in', customDocs]]}, {'doctype': 'Print Format', 'filters': [['name', 'like', 'Eskill%']]}]
