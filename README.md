@@ -1,6 +1,6 @@
 ## Eskill Customisations
 
-App for any and all Eskill Trading customisations to ERPNext.
+ERPNext app for any customisations that do not require their own app.
 
 #### License
 
