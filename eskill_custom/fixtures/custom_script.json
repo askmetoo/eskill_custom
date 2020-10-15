@@ -1,0 +1,79 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "Custom Script",
+  "dt": "Item",
+  "modified": "2020-09-15 10:27:22.849833",
+  "name": "Item-Client",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "script": "frappe.ui.form.on('Item', {\n\trefresh(frm) {\n\t    frm.add_custom_button(__(\"KB Articles\"), function() {\n\t        frm.save();\n            frappe.route_options = {\n                \"type\": \"Product\",\n                \"product\": cur_frm.doc.item_code\n            };\n            frappe.set_route(\"List\", \"KBA\", \"List\");\n\t    });\n\t    frm.add_custom_button(__(\"New KBA\"), function() {\n\t        frm.save();\n            frappe.route_options = {\n                \"type\": \"Product\",\n                \"product\": cur_frm.doc.item_code\n            };\n            frappe.set_route(\"Form\", \"KBA\", \"New KBA\");\n\t    });\n    }\n});"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Custom Script",
+  "dt": "Issue",
+  "modified": "2020-10-15 09:21:27.650140",
+  "name": "Issue-Client",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "script": "frappe.ui.form.on('Issue', {\n\trefresh(frm) {\n\t\tfrm.add_custom_button(__(\"Timesheets\"), function() {\n\t\t    frm.save();\n            frappe.route_options = {\"issue\": cur_frm.doc.name};\n            frappe.set_route(\"List\", \"Timesheet\");\n\t    });\n\t\tfrm.add_custom_button(__(\"KB Articles\"), function() {\n\t\t    frm.save();\n            frappe.route_options = {\n                \"area\": \"Technical\",\n                \"type\": \"Product\",\n                \"product\": cur_frm.doc.model \n                };\n            frappe.set_route(\"List\", \"KBA\");\n\t    });\n\t},\n\t\n\temail_account: function(frm) {\n\t    if (frm.doc.email_account == 'Zabbix Internal Issues') {\n\t        frm.set_value(\"issue_type\", \"Internal Software Support\");\n\t        frm.set_value(\"priority\", \"High\");\n\t        frm.save();\n\t    }\n\t},\n\t\n\tkba_creation: function(frm) {\n\t    frm.save();\n\t    frappe.db.insert({\n\t        doctype: 'KBA',\n\t        topic: frm.doc.subject,\n\t        area: 'Technical',\n\t        type: 'Product',\n\t        product: frm.doc.model,\n\t        details: frm.doc.resolution_details,\n\t        parent_kba: 'KBA-20-Other-00000036'\n\t    });\n\t    frappe.msgprint(\"KBA created.\");\n\t},\n\t\n    model: function(frm) {\n\t\tfrm.fields_dict['serial_number'].get_query = function() {\n\t\t\treturn{\n\t\t\t\tfilters: {\n\t\t\t\t\t'item_code': frm.doc.model\n\t\t\t\t}\n\t\t\t};\n\t\t};\n    },\n});"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Custom Script",
+  "dt": "Sales Order",
+  "modified": "2020-09-24 13:06:50.393297",
+  "name": "Sales Order-Client",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "script": "frappe.ui.form.on('Sales Order', {\n\tbefore_submit(frm) {\n    \tvar tempCust = frm.doc.customer;\n\t\tfrm.set_value(\"customer\", \"\");\n\t\tfrm.set_value(\"customer\", tempCust);\n\n        var emp = '';\n        frappe.run_serially([\n            () => frappe.call({\n                method: \"frappe.client.get_value\",\n                args: {\n                    \"doctype\": \"Employee\",\n                    \"filters\": {\n                        'user_id': frappe.session.user // where Clause \n                    },\n                    \"fieldname\": ['name'], // fieldname to be fetched\n                    \"limit\": 1\n                },\n                callback: function (data) {\n                    emp = data.message.name;\n                    if (!data.exc) {\n                       console.log(data.message);\n                    }\n                }\n            }),\n            () => frappe.call({\n                method: \"frappe.client.get_value\",\n                args: {\n                    \"doctype\": \"Sales Person\",\n                    \"filters\": {\n                        'employee': emp // where Clause \n                    },\n                    \"fieldname\": ['name'], // fieldname to be fetched\n                    \"limit\": 1\n                },\n                callback: function (data) {\n                    frm.set_value('sales_person', data.message.name);\n                    frm.refresh_field('sales_person');\n                    if (!data.exc) {\n                       console.log(r.message);\n                    }\n                }\n            }),\n        ]);\n\t}\n});"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Custom Script",
+  "dt": "Sales Invoice",
+  "modified": "2020-09-10 13:28:38.256392",
+  "name": "Sales Invoice-Client",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "script": "frappe.ui.form.on('Sales Invoice', {\n\tbefore_submit(frm) {\n\t    frappe.run_serially([\n            () => frappe.call({\n                method: \"frappe.client.get_value\",\n                args: {\n                    \"doctype\": \"Employee\",\n                    \"filters\": {\n                        'user_id': frappe.session.user // where Clause \n                    },\n                    \"fieldname\": ['name'], // fieldname to be fetched\n                    \"limit\": 1\n                },\n                callback: function (data) {\n                    var emp = data.message.name;\n                    if (!data.exc) {\n                       console.log(r.message);\n                    }\n                }\n            }),\n            () => frappe.call({\n                method: \"frappe.client.get_value\",\n                args: {\n                    \"doctype\": \"Sales Person\",\n                    \"filters\": {\n                        'employee': emp // where Clause \n                    },\n                    \"fieldname\": ['name'], // fieldname to be fetched\n                    \"limit\": 1\n                },\n                callback: function (data) {\n                    frm.set_value('sales_person', data.message.name);\n                    frm.refresh_field('sales_person');\n                    if (!data.exc) {\n                       console.log(r.message);\n                    }\n                }\n            }),\n        ]);\n\t}\n});"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Custom Script",
+  "dt": "Task",
+  "modified": "2020-09-21 09:43:27.722266",
+  "name": "Task-Client",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "script": "frappe.ui.form.on('Task', {\n\trefresh(frm) {\n\t    if (frm.doc.status == 'Completed') {\n            frm.add_custom_button(\"Reopen\", function() {\n                frm.set_value(\"status\", \"Open\");\n                frm.set_value(\"progress\", 50);\n                frm.save();\n            });\n\t    } else if (frm.doc.status == 'Cancelled'){\n            frm.add_custom_button(\"Reopen\", function() {\n                frm.set_value(\"status\", \"Open\");\n                frm.save();\n            });\n\t    } else if (frm.doc.status == \"Open\") {\n            frm.add_custom_button(\"Working\", function() {\n                frm.set_value(\"status\", \"Working\");\n                frm.save();\n            }, \"Set Status\");\n            frm.add_custom_button(\"Pending Review\", function() {\n                frm.set_value(\"status\", \"Pending Review\");\n                frm.save();\n            }, \"Set Status\");\n            frm.add_custom_button(\"Cancel\", function() {\n                frm.set_value(\"status\", \"Cancelled\");\n                frm.save();\n            }, \"Set Status\");\n            frm.add_custom_button(\"Complete\", function() {\n                frm.set_value(\"status\", \"Completed\");\n                frm.save();\n            }, \"Set Status\");\n\t    } else if (frm.doc.status == \"Working\") {\n            frm.add_custom_button(\"Open\", function() {\n                frm.set_value(\"status\", \"Open\");\n                frm.save();\n            }, \"Set Status\");\n            frm.add_custom_button(\"Pending Review\", function() {\n                frm.set_value(\"status\", \"Pending Review\");\n                frm.save();\n            }, \"Set Status\");\n            frm.add_custom_button(\"Cancel\", function() {\n                frm.set_value(\"status\", \"Cancelled\");\n                frm.save();\n            }, \"Set Status\");\n            frm.add_custom_button(\"Complete\", function() {\n                frm.set_value(\"status\", \"Completed\");\n                frm.save();\n            }, \"Set Status\");\n\t    } else if (frm.doc.status == \"Pending Review\") {\n            frm.add_custom_button(\"Open\", function() {\n                frm.set_value(\"status\", \"Open\");\n                frm.save();\n            }, \"Set Status\");\n            frm.add_custom_button(\"Working\", function() {\n                frm.set_value(\"status\", \"Working\");\n                frm.save();\n            }, \"Set Status\");\n            frm.add_custom_button(\"Cancel\", function() {\n                frm.set_value(\"status\", \"Cancelled\");\n                frm.save();\n            }, \"Set Status\");\n            frm.add_custom_button(\"Complete\", function() {\n                frm.set_value(\"status\", \"Completed\");\n                frm.save();\n            }, \"Set Status\");\n\t    } else if (frm.doc.status == \"Overdue\") {\n            frm.add_custom_button(\"Cancel\", function() {\n                frm.set_value(\"status\", \"Cancelled\");\n                frm.save();\n            }, \"Set Status\");\n            frm.add_custom_button(\"Complete\", function() {\n                frm.set_value(\"status\", \"Completed\");\n                frm.save();\n            }, \"Set Status\");\n\t    }\n\t},\n\t\n\tstatus: function(frm) {\n\t    if (frm.doc.status != \"Completed\") {\n\t        frm.set_value(\"completed_by\", \"\");\n\t    } else {\n\t        frm.set_value(\"completed_by\", frappe.session.user);\n\t    }\n\t    if (frm.doc.status == \"Working\" && frm.doc.progress === 0) {\n\t        frm.set_value(\"progress\", 5);\n\t    }\n\t}\n});"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Custom Script",
+  "dt": "Timesheet",
+  "modified": "2020-09-14 15:10:38.035307",
+  "name": "Timesheet-Client",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "script": "frappe.ui.form.on('Timesheet', {\n\trefresh(frm) {\n\t\tfrm.add_custom_button(__(\"Issues\"), function() {\n\t\t    frm.save();\n            frappe.route_options = {\n                \"name\": '',\n                \"subject\": '',\n                \"customer\": '',\n                \"serial_number\": '',\n                \"project\": '',\n                \"status\": '',\n                \"priority\": '',\n                \"technician_name\": ''\n            };\n            frappe.set_route(\"List\", \"Issue\");\n\t    });\n\t\tfrm.add_custom_button(__(\"Tasks\"), function() {\n\t\t    frm.save();\n            frappe.route_options = {\n                \"name\": '',\n                \"subject\": '',\n                \"project\": '',\n                \"status\": '',\n                \"priority\": ''\n            };\n            frappe.set_route(\"List\", \"Task\");\n\t    });\n\t}\n});"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Custom Script",
+  "dt": "Quotation",
+  "modified": "2020-09-24 13:08:50.899923",
+  "name": "Quotation-Client",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "script": "frappe.ui.form.on('Quotation', {\n\tbefore_submit(frm) {\n\t    var emp = '';\n\t    frappe.run_serially([\n            () => frappe.call({\n                method: \"frappe.client.get_value\",\n                args: {\n                    \"doctype\": \"Employee\",\n                    \"filters\": {\n                        'user_id': frappe.session.user // where Clause \n                    },\n                    \"fieldname\": ['name'], // fieldname to be fetched\n                    \"limit\": 1\n                },\n                callback: function (data) {\n                    emp = data.message.name;\n                    if (!data.exc) {\n                       console.log(r.message);\n                    }\n                }\n            }),\n            () => frappe.call({\n                method: \"frappe.client.get_value\",\n                args: {\n                    \"doctype\": \"Sales Person\",\n                    \"filters\": {\n                        'employee': emp // where Clause \n                    },\n                    \"fieldname\": ['name'], // fieldname to be fetched\n                    \"limit\": 1\n                },\n                callback: function (data) {\n                    frm.set_value('sales_person', data.message.name);\n                    frm.refresh_field('sales_person');\n                    if (!data.exc) {\n                       console.log(r.message);\n                    }\n                }\n            }),\n        ]);\n\t}\n})"
+ }
+]

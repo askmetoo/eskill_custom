@@ -129,7 +129,7 @@ app_license = "MIT"
 
 customDocs = ('Software Change', 'Software Change Log', 'Software Package', 'Software Instance', 'Component History', 'Warranty Swap Out')
 
-fixtures = [{'doctype': 'DocType', 'filters': [['name', 'in', customDocs]]}, {'doctype': 'Print Format', 'filters': [['name', 'like', 'Eskill%']]}, 'Issue Type']
+fixtures = ['Custom Script', {'doctype': 'DocType', 'filters': [['name', 'in', customDocs]]}, {'doctype': 'Print Format', 'filters': [['name', 'like', 'Eskill%']]}, 'Issue Type']
 
 website_context = {
         "favicon": "/assets/eskill_custom/images/EskillFavicon.png",
