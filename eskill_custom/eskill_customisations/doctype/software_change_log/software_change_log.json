@@ -1,0 +1,47 @@
+{
+ "creation": "2020-10-14 14:47:16.756526",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "when_applied",
+  "software_change",
+  "status"
+ ],
+ "fields": [
+  {
+   "fieldname": "when_applied",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Date/Time Applied"
+  },
+  {
+   "fieldname": "software_change",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Software Change",
+   "options": "Software Change",
+   "reqd": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Applied\nPlanned",
+   "reqd": 1
+  }
+ ],
+ "istable": 1,
+ "modified": "2020-10-15 09:03:36.044089",
+ "modified_by": "Administrator",
+ "module": "Eskill Customisations",
+ "name": "Software Change Log",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

@@ -1,0 +1,60 @@
+{
+ "autoname": "field:name1",
+ "creation": "2020-09-21 12:30:42.789102",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "height_in_pixels",
+  "name1",
+  "height_in_points"
+ ],
+ "fields": [
+  {
+   "allow_in_quick_entry": 1,
+   "fieldname": "height_in_pixels",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Height In Pixels",
+   "reqd": 1
+  },
+  {
+   "allow_in_quick_entry": 1,
+   "fieldname": "name1",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "allow_in_quick_entry": 1,
+   "fieldname": "height_in_points",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Height In Points"
+  }
+ ],
+ "modified": "2020-10-15 09:02:23.142695",
+ "modified_by": "Administrator",
+ "module": "Eskill Customisations",
+ "name": "Banner Size",
+ "owner": "neil@eskilltrading.com",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}
