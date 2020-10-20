@@ -173,16 +173,6 @@
   "description": null,
   "docstatus": 0,
   "doctype": "Issue Type",
-  "modified": "2020-10-13 16:05:06.677870",
-  "name": "Paper Jam Error - Print Engine",
-  "parent": null,
-  "parentfield": null,
-  "parenttype": null
- },
- {
-  "description": null,
-  "docstatus": 0,
-  "doctype": "Issue Type",
   "modified": "2020-10-13 16:05:06.757057",
   "name": "Paper Jam Error - ADF/DADF Unit",
   "parent": null,
@@ -255,6 +245,16 @@
   "doctype": "Issue Type",
   "modified": "2020-10-13 16:05:08.088203",
   "name": "Error code",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2020-10-13 16:05:06.677870",
+  "name": "Paper Jam Error - Print Engine",
   "parent": null,
   "parentfield": null,
   "parenttype": null
