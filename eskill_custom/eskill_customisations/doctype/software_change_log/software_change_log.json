@@ -29,13 +29,13 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "Applied\nPlanned",
+   "options": "Planned\nApplied\nReversed",
    "reqd": 1
   }
  ],
  "istable": 1,
- "modified": "2020-10-15 09:03:36.044089",
- "modified_by": "Administrator",
+ "modified": "2020-10-19 08:34:23.252651",
+ "modified_by": "neil@eskilltrading.com",
  "module": "Eskill Customisations",
  "name": "Software Change Log",
  "owner": "Administrator",
