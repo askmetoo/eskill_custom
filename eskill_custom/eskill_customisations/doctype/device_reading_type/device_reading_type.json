@@ -20,8 +20,8 @@
    "unique": 1
   }
  ],
- "modified": "2020-10-20 15:48:42.531390",
- "modified_by": "Administrator",
+ "modified": "2020-10-21 15:37:27.600065",
+ "modified_by": "andrew@eskilltrading.com",
  "module": "Eskill Customisations",
  "name": "Device Reading Type",
  "owner": "neil@eskilltrading.com",
@@ -37,6 +37,28 @@
    "role": "System Manager",
    "share": 1,
    "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Support Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Support Team",
+   "share": 1
   }
  ],
  "quick_entry": 1,

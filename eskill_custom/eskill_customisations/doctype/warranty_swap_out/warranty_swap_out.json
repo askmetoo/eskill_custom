@@ -108,8 +108,8 @@
   }
  ],
  "is_submittable": 1,
- "modified": "2020-10-15 09:05:18.456217",
- "modified_by": "Administrator",
+ "modified": "2020-10-21 15:47:56.438902",
+ "modified_by": "andrew@eskilltrading.com",
  "module": "Eskill Customisations",
  "name": "Warranty Swap Out",
  "owner": "Administrator",
@@ -126,6 +126,32 @@
    "report": 1,
    "role": "System Manager",
    "set_user_permissions": 1,
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Support Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Support Team",
    "share": 1,
    "submit": 1,
    "write": 1
