@@ -127,9 +127,9 @@ app_license = "MIT"
 # 	"Task": "eskill_custom.task.get_dashboard_data"
 # }
 
-modifiedDocs = ('Issue', 'Timesheet', 'Serial No', 'Material Request')
+modifiedDocs = ('Issue', 'Timesheet', 'Serial No', 'Material Request', 'Support Settings')
 
-fixtures = ['Custom Script', {'doctype': 'Custom DocPerm', 'filters': [['parent', 'in', modifiedDocs]]}, 'Issue Type']
+fixtures = ['Custom Script', {'doctype': 'DocPerm', 'filters': [['parent', 'in', modifiedDocs]]}, 'Issue Type']
 
 website_context = {
         "favicon": "/assets/eskill_custom/images/EskillFavicon.png",
