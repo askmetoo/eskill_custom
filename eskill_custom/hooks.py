@@ -129,7 +129,7 @@ app_license = "MIT"
 
 modifiedDocs = ('Issue', 'Timesheet', 'Serial No', 'Material Request')
 
-fixtures = ['Custom Script', 'Issue Type']
+fixtures = ['Custom Script', {'doctype': 'DocType', 'filters': [['name', 'in', modifiedDocs]]}, 'Issue Type']
 
 website_context = {
         "favicon": "/assets/eskill_custom/images/EskillFavicon.png",
