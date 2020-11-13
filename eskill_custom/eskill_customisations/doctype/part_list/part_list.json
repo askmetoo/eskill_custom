@@ -13,6 +13,7 @@
   "warehouse",
   "section_break_4",
   "request",
+  "row",
   "section_break_3",
   "status",
   "column_break_5",
@@ -98,15 +99,23 @@
    "reqd": 1
   },
   {
+   "depends_on": "eval: doc.status == \"Not Requested\"",
    "fetch_from": "part.stock_uom",
    "fieldname": "uom",
    "fieldtype": "Link",
    "label": "UOM",
    "options": "UOM"
+  },
+  {
+   "fieldname": "row",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "label": "Row",
+   "precision": "0"
   }
  ],
  "istable": 1,
- "modified": "2020-10-27 11:16:53.893917",
+ "modified": "2020-11-10 11:40:44.982866",
  "modified_by": "andrew@eskilltrading.com",
  "module": "Eskill Customisations",
  "name": "Part List",
