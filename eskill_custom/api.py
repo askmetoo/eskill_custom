@@ -13,11 +13,13 @@ def issue_total_hours(doctype, filters):
     except:
         return False
 
+
 @frappe.whitelist()
 def check_maintain_stock(doctype, item):
     "Return maintain stock status."
     try:
-        maintain_stock = frappe.db.sql("select is_stock_item from tabItem where name = '%s' limit 1;" % item)
+        maintain_stock = frappe.db.sql(
+            "select is_stock_item from tabItem where name = '%s' limit 1;" % item)
         return maintain_stock
     except:
-            return False
+        return False
