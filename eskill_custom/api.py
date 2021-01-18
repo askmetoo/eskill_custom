@@ -23,3 +23,18 @@ def check_maintain_stock(doctype, item):
         return maintain_stock
     except:
         return False
+
+
+@frappe.whitelist()
+def sales_invoice_tax(doctype, currency, customer):
+    "Return tax template for Sales Invoice."
+    try:
+        territory = frappe.db.sql(
+            f"select territory from tabCustomer where name = '{customer}';")
+        if territory[0][0] != 'Zimbabwe':
+            return None
+        template = frappe.db.sql(
+            f"select name from `tabSales Taxes and Charges Template` where name like '%{currency}%' limit 1;")
+        return template
+    except:
+        return None
