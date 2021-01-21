@@ -44,17 +44,17 @@ def stock_lookup(doctype, user, item):
     "Returns stock locations and quantities."
     try:
         stock = frappe.db.sql(
-            f"select (case when (W.warehouse_type in (select for_value from `tabUser Permission` where allow = 'Warehouse Type' and user = {user})"
-            f" or W.name in (select for_value from `tabUser Permission` where allow = 'Warehouse' and user = {user})) or"
-            f" ((select count(*) from `tabUser Permission` where (allow = 'Warehouse Type' or allow = 'Warehouse') and user = {user}) = 0) then W.name else 'Other' end) Location,"
-            f" sum(actual_qty) Quantity"
+            f"select (case when (W.warehouse_type in (select for_value from `tabUser Permission` where allow = 'Warehouse Type' and user = '{user}')"
+            f" or W.name in (select for_value from `tabUser Permission` where allow = 'Warehouse' and user = '{user}')) or"
+            f" ((select count(*) from `tabUser Permission` where (allow = 'Warehouse Type' or allow = 'Warehouse') and user = '{user}') = 0) then W.name else 'Other' end) location,"
+            f" sum(actual_qty) quantity"
             f" from `tabStock Ledger Entry` as SLE"
             f" join `tabItem` as I on SLE.item_code = I.name"
             f" join `tabWarehouse` as W on SLE.warehouse =  W.name "
-            f" where I.is_stock_item and I.name = {item} and W.disabled = 0"
-            f" group by Location"
-            f" having Quantity > 0 or Location = 'Other'"
-            f" order by (case when Location = 'Other' then 1 else 0 end), Quantity desc, Location"
+            f" where I.is_stock_item and I.name = '{item}' and W.disabled = 0"
+            f" group by location"
+            f" having quantity > 0 or location = 'Other'"
+            f" order by (case when location = 'Other' then 1 else 0 end), quantity desc, location", as_dict = True
         )
         return stock
     except:
