@@ -82,8 +82,8 @@ app_license = "MIT"
 # doc_events = {
 # 	"*": {
 # 		"on_update": "method",
-# 		"on_cancel": Custom?
-"method"
+# 		"on_cancel": "method",
+#               "on_trash": "method"
 #	}
 # }
 
