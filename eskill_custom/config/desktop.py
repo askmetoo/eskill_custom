@@ -13,14 +13,6 @@ def get_data():
 			"label": _("Eskill Customisations")
 		},
 		{
-			"module_name": "Dashboards",
-			"category": "Places",
-			"color": "#00ff00",
-			"icon": "octicon octicon-graph",
-			"type": "module",
-			"label": _("Dashboards")
-		},
-		{
 			"module_name": 'Knowledge Base',
 			"category": "Places",
 			"label": _('Knowledge Base'),
