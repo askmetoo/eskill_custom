@@ -8,7 +8,7 @@ def issue_total_hours(doctype, filters):
     "Return all time related to the given issue."
     try:
         hours_worked = frappe.db.sql(
-            "select round(sum(total_hours), 3) total, round(sum(total_billable_hours), 3) billable from tabTimesheet where issue = '%s' and docstatus <> 2" % filters, as_dict=True)
+            "select round(sum(hours), 3) total, round(sum(billing_hours), 3) billable from `tabTimesheet Detail` where issue = '%s' and docstatus <> 2" % filters, as_dict=True)
         return hours_worked
     except:
         return False
