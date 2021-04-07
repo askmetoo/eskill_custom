@@ -58,12 +58,12 @@
   "docstatus": 0,
   "doctype": "Custom Script",
   "dt": "Timesheet",
-  "modified": "2020-09-14 15:10:38.035307",
+  "modified": "2021-04-06 16:18:36.929492",
   "name": "Timesheet-Client",
   "parent": null,
   "parentfield": null,
   "parenttype": null,
-  "script": "frappe.ui.form.on('Timesheet', {\n\trefresh(frm) {\n\t\tfrm.add_custom_button(__(\"Issues\"), function() {\n\t\t    frm.save();\n            frappe.route_options = {\n                \"name\": '',\n                \"subject\": '',\n                \"customer\": '',\n                \"serial_number\": '',\n                \"project\": '',\n                \"status\": '',\n                \"priority\": '',\n                \"technician_name\": ''\n            };\n            frappe.set_route(\"List\", \"Issue\");\n\t    });\n\t\tfrm.add_custom_button(__(\"Tasks\"), function() {\n\t\t    frm.save();\n            frappe.route_options = {\n                \"name\": '',\n                \"subject\": '',\n                \"project\": '',\n                \"status\": '',\n                \"priority\": ''\n            };\n            frappe.set_route(\"List\", \"Task\");\n\t    });\n\t}\n});"
+  "script": "frappe.ui.form.on('Timesheet', {\n\trefresh(frm) {\n\t\tfrm.add_custom_button(__(\"Issues\"), function() {\n\t\t    frm.save();\n            frappe.route_options = {\n                \"name\": '',\n                \"subject\": '',\n                \"customer\": '',\n                \"serial_number\": '',\n                \"project\": '',\n                \"status\": '',\n                \"priority\": '',\n                \"technician_name\": ''\n            };\n            frappe.set_route(\"List\", \"Issue\");\n\t    });\n\t\tfrm.add_custom_button(__(\"Tasks\"), function() {\n\t\t    frm.save();\n            frappe.route_options = {\n                \"name\": '',\n                \"subject\": '',\n                \"project\": '',\n                \"status\": '',\n                \"priority\": ''\n            };\n            frappe.set_route(\"List\", \"Task\");\n\t    });\n\t    activity_doctype_filter(frm);\n\t}\n});\n\nfunction activity_doctype_filter(frm) {\n\tfrm.get_field(\"time_logs\").grid.fields_map.activity_doctype.get_query = function () {\n\t\treturn {\n\t\t\tfilters: [[\"DocType\", \"name\", \"in\", [\"Issue\", \"Quotation\", \"Sales Invoice\", \"Sales Order\"]]]\n\t\t};\n\t};\n}"
  },
  {
   "docstatus": 0,
