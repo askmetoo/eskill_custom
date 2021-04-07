@@ -127,7 +127,7 @@ app_license = "MIT"
 # 	"Task": "eskill_custom.task.get_dashboard_data"
 # }
 
-modifiedDocs = ('Issue', 'Timesheet', 'Serial No', 'Material Request', 'Support Settings')
+modifiedDocs = ('Issue', 'Timesheet', 'Timesheet Detail' 'Serial No', 'Material Request', 'Support Settings')
 
 fixtures = ['Custom Script', {'doctype': 'DocPerm', 'filters': [['parent', 'in', modifiedDocs]]}, {'doctype': 'Custom DocPerm', 'filters': [['parent', 'in', modifiedDocs]]}, 'Issue Type']
 
