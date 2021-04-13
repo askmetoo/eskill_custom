@@ -1,15 +1,14 @@
 {
  "allow_import": 1,
- "autoname": "format:AR-YYYY-.####",
+ "autoname": "naming_series:",
  "creation": "2021-04-09 11:35:34.761927",
  "description": "Specify Exchange Rate to convert one currency into another",
  "doctype": "DocType",
  "document_type": "Document",
  "engine": "InnoDB",
  "field_order": [
+  "naming_series",
   "date",
-  "from_currency",
-  "to_currency",
   "exchange_rate",
   "column_break_5",
   "for_buying",
@@ -23,30 +22,6 @@
    "label": "Date",
    "reqd": 1,
    "width": "5"
-  },
-  {
-   "default": "USD",
-   "fieldname": "from_currency",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "From Currency",
-   "options": "Currency",
-   "reqd": 1,
-   "set_only_once": 1,
-   "width": "3"
-  },
-  {
-   "default": "RTGS",
-   "fieldname": "to_currency",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "To Currency",
-   "options": "Currency",
-   "reqd": 1,
-   "set_only_once": 1,
-   "width": "3"
   },
   {
    "allow_in_quick_entry": 1,
@@ -74,10 +49,16 @@
    "fieldname": "for_selling",
    "fieldtype": "Check",
    "label": "For Selling"
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "read_only": 1
   }
  ],
  "icon": "fa fa-exchange",
- "modified": "2021-04-09 15:42:26.742311",
+ "modified": "2021-04-09 16:19:15.053276",
  "modified_by": "andrew@eskilltrading.com",
  "module": "Eskill Customisations",
  "name": "Auction Exchange Rate",
