@@ -5662,5 +5662,37 @@
   "property": "hidden",
   "property_type": "Check",
   "value": "1"
+ },
+ {
+  "default_value": null,
+  "doc_type": "Auction Exchange Rate",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocField",
+  "field_name": "naming_series",
+  "modified": "2021-04-09 16:21:40.160187",
+  "name": "Auction Exchange Rate-naming_series-options",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "property": "options",
+  "property_type": "Text",
+  "value": "AR-.YYYY.-.####"
+ },
+ {
+  "default_value": null,
+  "doc_type": "Auction Exchange Rate",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocField",
+  "field_name": "naming_series",
+  "modified": "2021-04-09 16:21:40.183124",
+  "name": "Auction Exchange Rate-naming_series-default",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "property": "default",
+  "property_type": "Text",
+  "value": "AR-.YYYY.-.####"
  }
 ]
