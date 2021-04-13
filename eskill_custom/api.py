@@ -82,7 +82,7 @@ def auction_rate_lookup(doctype, si_posting_date):
     try:
         auction_rate = frappe.db.sql(
             f"select exchange_rate from `tabAuction Exchange Rate` where date < "
-            f"date_add({si_posting_date}, interval 1 day) order by date desc limit 1"
+            f"date_add('{si_posting_date}', interval 1 day) order by date desc limit 1"
         )
         auction_rate = auction_rate[0][0]
     except:
