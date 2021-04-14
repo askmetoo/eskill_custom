@@ -1,0 +1,76 @@
+{
+ "autoname": "format:{parent}-.###",
+ "creation": "2021-04-07 15:00:09.869486",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "model",
+  "serial_number",
+  "warranty_job",
+  "swap_out",
+  "column_break_5",
+  "serial_no_report",
+  "warranty_date_update",
+  "request_swap_out"
+ ],
+ "fields": [
+  {
+   "fieldname": "model",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Model",
+   "options": "Item"
+  },
+  {
+   "fieldname": "serial_number",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Serial Number",
+   "options": "Serial No"
+  },
+  {
+   "default": "0",
+   "fieldname": "warranty_job",
+   "fieldtype": "Check",
+   "label": "Warranty Job"
+  },
+  {
+   "fieldname": "swap_out",
+   "fieldtype": "Link",
+   "label": "Swap Out",
+   "options": "Warranty Swap Out"
+  },
+  {
+   "fieldname": "column_break_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "serial_no_report",
+   "fieldtype": "Button",
+   "in_list_view": 1,
+   "label": "Serial No Report"
+  },
+  {
+   "fieldname": "warranty_date_update",
+   "fieldtype": "Button",
+   "label": "Warranty Date Update"
+  },
+  {
+   "fieldname": "request_swap_out",
+   "fieldtype": "Button",
+   "label": "Request Swap Out"
+  }
+ ],
+ "istable": 1,
+ "modified": "2021-04-14 07:48:09.600771",
+ "modified_by": "Administrator",
+ "module": "Eskill Customisations",
+ "name": "Issue Machines",
+ "owner": "andrew@eskilltrading.com",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
