@@ -9,10 +9,8 @@
  "field_order": [
   "naming_series",
   "date",
-  "exchange_rate",
   "column_break_5",
-  "for_buying",
-  "for_selling"
+  "exchange_rate"
  ],
  "fields": [
   {
@@ -39,27 +37,16 @@
    "fieldtype": "Column Break"
   },
   {
-   "default": "1",
-   "fieldname": "for_buying",
-   "fieldtype": "Check",
-   "label": "For Buying"
-  },
-  {
-   "default": "1",
-   "fieldname": "for_selling",
-   "fieldtype": "Check",
-   "label": "For Selling"
-  },
-  {
    "fieldname": "naming_series",
    "fieldtype": "Select",
+   "hidden": 1,
    "label": "Naming Series",
    "read_only": 1
   }
  ],
  "icon": "fa fa-exchange",
- "modified": "2021-04-09 16:19:15.053276",
- "modified_by": "andrew@eskilltrading.com",
+ "modified": "2021-04-14 11:23:18.123025",
+ "modified_by": "Administrator",
  "module": "Eskill Customisations",
  "name": "Auction Exchange Rate",
  "owner": "andrew@eskilltrading.com",
