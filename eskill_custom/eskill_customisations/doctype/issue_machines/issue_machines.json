@@ -1,5 +1,4 @@
 {
- "autoname": "format:{parent}-.###",
  "creation": "2021-04-07 15:00:09.869486",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -38,6 +37,7 @@
   {
    "fieldname": "swap_out",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Swap Out",
    "options": "Warranty Swap Out"
   },
@@ -59,12 +59,13 @@
   {
    "fieldname": "request_swap_out",
    "fieldtype": "Button",
+   "hidden": 1,
    "label": "Request Swap Out"
   }
  ],
  "istable": 1,
- "modified": "2021-04-14 07:48:09.600771",
- "modified_by": "Administrator",
+ "modified": "2021-04-22 09:09:20.134293",
+ "modified_by": "andrew@eskilltrading.com",
  "module": "Eskill Customisations",
  "name": "Issue Machines",
  "owner": "andrew@eskilltrading.com",
