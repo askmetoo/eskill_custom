@@ -19,9 +19,11 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Model",
-   "options": "Item"
+   "options": "Item",
+   "reqd": 1
   },
   {
+   "depends_on": "eval: (doc.model);",
    "fieldname": "serial_number",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -46,12 +48,14 @@
    "fieldtype": "Column Break"
   },
   {
+   "depends_on": "eval: (doc.serial_number);",
    "fieldname": "serial_no_report",
    "fieldtype": "Button",
    "in_list_view": 1,
    "label": "Serial No Report"
   },
   {
+   "depends_on": "eval: (doc.serial_number);",
    "fieldname": "warranty_date_update",
    "fieldtype": "Button",
    "label": "Warranty Date Update"
@@ -64,7 +68,7 @@
   }
  ],
  "istable": 1,
- "modified": "2021-04-22 09:09:20.134293",
+ "modified": "2021-04-22 15:47:56.133282",
  "modified_by": "andrew@eskilltrading.com",
  "module": "Eskill Customisations",
  "name": "Issue Machines",
