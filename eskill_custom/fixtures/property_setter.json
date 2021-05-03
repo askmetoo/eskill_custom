@@ -246,14 +246,14 @@
   "doctype": "Property Setter",
   "doctype_or_field": "DocField",
   "field_name": "naming_series",
-  "modified": "2020-07-16 14:20:34.082254",
+  "modified": "2021-04-30 11:05:45.424556",
   "name": "Sales Invoice-naming_series-options",
   "parent": null,
   "parentfield": null,
   "parenttype": null,
   "property": "options",
   "property_type": "Text",
-  "value": "SI.########"
+  "value": "SI.########\nCN.########"
  },
  {
   "default_value": null,
@@ -262,7 +262,7 @@
   "doctype": "Property Setter",
   "doctype_or_field": "DocField",
   "field_name": "naming_series",
-  "modified": "2020-07-16 14:20:34.107353",
+  "modified": "2021-04-30 11:05:45.497411",
   "name": "Sales Invoice-naming_series-default",
   "parent": null,
   "parentfield": null,
@@ -534,14 +534,14 @@
   "doctype": "Property Setter",
   "doctype_or_field": "DocField",
   "field_name": "naming_series",
-  "modified": "2020-07-16 14:25:06.899088",
+  "modified": "2021-04-30 11:02:29.104066",
   "name": "Payment Entry-naming_series-options",
   "parent": null,
   "parentfield": null,
   "parenttype": null,
   "property": "options",
   "property_type": "Text",
-  "value": "PYE.########"
+  "value": "\nPYE.########\nREC.########"
  },
  {
   "default_value": null,
@@ -550,14 +550,14 @@
   "doctype": "Property Setter",
   "doctype_or_field": "DocField",
   "field_name": "naming_series",
-  "modified": "2020-07-16 14:25:06.922778",
+  "modified": "2021-04-30 11:02:29.140162",
   "name": "Payment Entry-naming_series-default",
   "parent": null,
   "parentfield": null,
   "parenttype": null,
   "property": "default",
   "property_type": "Text",
-  "value": "PYE.########"
+  "value": ""
  },
  {
   "default_value": null,
@@ -630,14 +630,14 @@
   "doctype": "Property Setter",
   "doctype_or_field": "DocField",
   "field_name": "naming_series",
-  "modified": "2020-07-16 14:27:38.747347",
+  "modified": "2021-04-30 11:12:52.053774",
   "name": "Journal Entry-naming_series-options",
   "parent": null,
   "parentfield": null,
   "parenttype": null,
   "property": "options",
   "property_type": "Text",
-  "value": "AJE.########"
+  "value": "AJE.########\nBNK.########\nBNK-N.########\nCASH.########"
  },
  {
   "default_value": null,
@@ -646,7 +646,7 @@
   "doctype": "Property Setter",
   "doctype_or_field": "DocField",
   "field_name": "naming_series",
-  "modified": "2020-07-16 14:27:38.770111",
+  "modified": "2021-04-30 11:12:52.076888",
   "name": "Journal Entry-naming_series-default",
   "parent": null,
   "parentfield": null,
@@ -5694,5 +5694,21 @@
   "property": "default",
   "property_type": "Text",
   "value": "AR-.YYYY.-.####"
+ },
+ {
+  "default_value": null,
+  "doc_type": "Exchange Rate Revaluation Account",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocField",
+  "field_name": "new_exchange_rate",
+  "modified": "2021-04-27 12:44:56.158971",
+  "name": "Exchange Rate Revaluation Account-new_exchange_rate-precision",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "property": "precision",
+  "property_type": "Select",
+  "value": "9"
  }
 ]

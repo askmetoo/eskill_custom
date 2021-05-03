@@ -1,0 +1,29 @@
+{
+ "add_total_row": 1,
+ "creation": "2021-04-28 10:40:45.273284",
+ "disable_prepared_report": 0,
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "idx": 0,
+ "is_standard": "Yes",
+ "letter_head": "Eskill Trading",
+ "modified": "2021-04-30 14:02:53.822721",
+ "modified_by": "Administrator",
+ "module": "Eskill Customisations",
+ "name": "Sales Invoice Income & Expense",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "query": "select\n\t`tabSales Invoice`.name as 'Invoice:Link/Sales Invoice:100',\n\t`tabSales Invoice`.customer_name as 'Customer:Link/Customer:400',\n\ttabCustomer.customer_code as 'Customer Code:Text:100',\n\t`tabSales Invoice`.posting_date as 'Posting Date:Date:120',\n\t`tabSales Invoice`.currency as 'Invoice Currency:Text:50',\n\t(case when `tabSales Invoice`.is_return then GL.credit * -1 else GL.debit end) as 'Cost of Sales (USD):Currency:120',\n\t`tabSales Invoice`.base_net_total as 'Income Excl. VAT (USD):Currency:120',\n\t`tabSales Invoice`.base_total as 'Income Incl. VAT (USD):Currency:120',\n\trate.rate as 'Rate (Auction/Exchange):Int:60',\n\t(case when `tabSales Invoice`.is_return then (GL.credit * rate.rate) * -1 else (GL.debit * rate.rate) end) as 'Cost of Sales (RTGS):Currency:120',\n\t(`tabSales Invoice`.base_net_total * rate.rate) as 'Income Excl. VAT (RTGS):Currency:120',\n\t(`tabSales Invoice`.base_total * rate.rate) as 'Income Incl. VAT (RTGS):Currency:120'\nfrom\n\t`tabSales Invoice`\nleft join\n\ttabCustomer on tabCustomer.name = `tabSales Invoice`.customer \njoin\n\t(select\n\t\tparent invoice,\n\t\tdelivery_note\n\tfrom\n\t\t`tabSales Invoice Item`\n\twhere\n\t\titem_code is not null\n\tgroup by\n\t\tinvoice) as link on `tabSales Invoice`.name = link.invoice\nleft join\n\t(select\n\t\tvoucher_no,\n\t\tsum(debit) debit,\n\t\tsum(credit) credit\n\tfrom\n\t\t`tabGL Entry`\n\twhere\n\t\taccount like \"%%Cost of Sales%%\" and voucher_type = \"Delivery Note\"\n\tgroup by\n\t\tvoucher_no) as GL on GL.voucher_no = link.delivery_note\njoin\n\t(select\n\t\tname invoice,\n\t\t(case when currency = \"USD\" then auction_bid_rate else 1 / conversion_rate end) rate\n\tfrom\n\t\t`tabSales Invoice`) as rate on rate.invoice = `tabSales Invoice`.name \nwhere\n\t`tabSales Invoice`.docstatus = 1 and\n\t(case when %(start_date)s is not null then `tabSales Invoice`.posting_date >= %(start_date)s end) and\n\t`tabSales Invoice`.posting_date <= %(end_date)s\norder by\n\t`tabSales Invoice`.name desc\n",
+ "ref_doctype": "Sales Invoice",
+ "report_name": "Sales Invoice Income & Expense",
+ "report_type": "Script Report",
+ "roles": [
+  {
+   "role": "Accounts User"
+  },
+  {
+   "role": "Accounts Manager"
+  }
+ ]
+}
