@@ -95,7 +95,7 @@ def execute(filters=None):
 	`tabSales Invoice`.posting_date as posting_date,
 	`tabSales Invoice`.currency as currency,
 	(case when `tabSales Invoice`.is_return then GL.credit * -1 else GL.debit end) as cos_usd,
-	`tabSales Invoice`.base_net_total as net_total_sd,
+	`tabSales Invoice`.base_net_total as net_total_usd,
 	`tabSales Invoice`.base_total as total_usd,
 	rate.rate as rate,
 	(case when `tabSales Invoice`.is_return then (GL.credit * rate.rate) * -1 else (GL.debit * rate.rate) end) as cos_rtgs,
