@@ -65,7 +65,7 @@ def execute(filters=None):
 		{
 			"fieldname": "rate",
 			"label": _("Rate (Auction/Exchange)"),
-			"fieldtype": "Int",
+			"fieldtype": "Text",
 			"width": 60
 		},
 		{
