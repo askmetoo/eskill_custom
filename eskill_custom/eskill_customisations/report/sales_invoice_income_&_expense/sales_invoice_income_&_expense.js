@@ -14,8 +14,8 @@ frappe.query_reports["Sales Invoice Income & Expense"] = {
         {
             "fieldname":"currency",
             "label": __("Currency"),
-            "fieldtype": "Select",
-            "options": " \nUSD\nRTGS"
+            "fieldtype": "Link",
+            "options": "Currency"
         },
         {
             "fieldname":"start_date",
