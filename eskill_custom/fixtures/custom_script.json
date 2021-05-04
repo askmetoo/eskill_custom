@@ -91,11 +91,11 @@
   "docstatus": 0,
   "doctype": "Custom Script",
   "dt": "Delivery Note",
-  "modified": "2021-05-03 14:46:55.056236",
+  "modified": "2021-05-04 09:47:46.678833",
   "name": "Delivery Note-Client",
   "parent": null,
   "parentfield": null,
   "parenttype": null,
-  "script": "frappe.ui.form.on('Delivery Note', {\n\ton_submit(frm) {\n\t\tfrappe.model.open_mapped_doc({\n\t\t\tmethod: \"erpnext.stock.doctype.delivery_note.delivery_note.make_sales_invoice\",\n\t\t\tfrm: frm,\n\t\t});\n\t}\n});"
+  "script": "frappe.ui.form.on('Delivery Note', {\n\ton_submit(frm) {\n\t    if (!frm.doc.issue) {\n    \t\tfrappe.model.open_mapped_doc({\n    \t\t\tmethod: \"erpnext.stock.doctype.delivery_note.delivery_note.make_sales_invoice\",\n    \t\t\tfrm: frm,\n    \t\t});\n\t    }\n\t}\n});"
  }
 ]
