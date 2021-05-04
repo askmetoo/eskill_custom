@@ -97,7 +97,7 @@ def execute(filters=None):
 	(case when `tabSales Invoice`.is_return then GL.credit * -1 else GL.debit end) as cos_usd,
 	`tabSales Invoice`.base_net_total as net_total_usd,
 	`tabSales Invoice`.base_total as total_usd,
-	rate.rate as rate,
+	convert(rate.rate, char) as rate,
 	(case when `tabSales Invoice`.is_return then (GL.credit * rate.rate) * -1 else (GL.debit * rate.rate) end) as cos_zwd,
 	(`tabSales Invoice`.base_net_total * rate.rate) as net_total_zwd,
 	(`tabSales Invoice`.base_total * rate.rate) as total_zwd
