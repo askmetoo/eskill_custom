@@ -65,25 +65,25 @@ def execute(filters=None):
 		{
 			"fieldname": "rate",
 			"label": _("Rate (Auction/Exchange)"),
-			"fieldtype": "Int",
+			"fieldtype": "Text",
 			"width": 60
 		},
 		{
-			"fieldname": "cos_rtgs",
-			"label": _("Cost of Sales (RTGS)"),
+			"fieldname": "cos_zwd",
+			"label": _("Cost of Sales (ZWD)"),
 			"fieldtype": "Currency",
 			"width": 120
 		},
 		{
-			"fieldname": "net_total_rtgs",
-			"label": _("Income Excl. VAT (RTGS)"),
+			"fieldname": "net_total_zwd",
+			"label": _("Income Excl. VAT (ZWD)"),
 			"fieldtype": "Currency",
 			"options": "",
 			"width": 120
 		},
 		{
-			"fieldname": "total_rtgs",
-			"label": _("Income Incl. VAT (RTGS)"),
+			"fieldname": "total_zwd",
+			"label": _("Income Incl. VAT (ZWD)"),
 			"fieldtype": "Currency",
 			"width": 120
 		}
@@ -97,10 +97,10 @@ def execute(filters=None):
 	(case when `tabSales Invoice`.is_return then GL.credit * -1 else GL.debit end) as cos_usd,
 	`tabSales Invoice`.base_net_total as net_total_usd,
 	`tabSales Invoice`.base_total as total_usd,
-	rate.rate as rate,
-	(case when `tabSales Invoice`.is_return then (GL.credit * rate.rate) * -1 else (GL.debit * rate.rate) end) as cos_rtgs,
-	(`tabSales Invoice`.base_net_total * rate.rate) as net_total_rtgs,
-	(`tabSales Invoice`.base_total * rate.rate) as total_rtgs
+	convert(rate.rate, char) as rate,
+	(case when `tabSales Invoice`.is_return then (GL.credit * rate.rate) * -1 else (GL.debit * rate.rate) end) as cos_zwd,
+	(`tabSales Invoice`.base_net_total * rate.rate) as net_total_zwd,
+	(`tabSales Invoice`.base_total * rate.rate) as total_zwd
 from
 	`tabSales Invoice`
 left join

@@ -5710,5 +5710,21 @@
   "property": "precision",
   "property_type": "Select",
   "value": "9"
+ },
+ {
+  "default_value": null,
+  "doc_type": "Delivery Note",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocField",
+  "field_name": "issue_credit_note",
+  "modified": "2021-05-04 08:40:04.791076",
+  "name": "Delivery Note-issue_credit_note-hidden",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "property": "hidden",
+  "property_type": "Check",
+  "value": "1"
  }
 ]
