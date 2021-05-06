@@ -138,3 +138,9 @@ website_context = {
 	"favicon": "/assets/eskill_custom/images/EskillFavicon.png",
 	"splash_image": "/assets/eskill_custom/images/EskillSplash.png"
 }
+
+jenv = {
+	"methods": [
+		"get_issue_list:eskill_custom.eskill_customisations.print_format.eskill_serial_number_history.eskill_serial_number_history.get_issue_list"
+	]
+}
