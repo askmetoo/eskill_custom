@@ -2,6 +2,17 @@
  {
   "docstatus": 0,
   "doctype": "Custom Script",
+  "dt": "Customer",
+  "modified": "2021-05-11 14:53:46.817260",
+  "name": "Customer-Client",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "script": "frappe.ui.form.on('Customer', {\n\tdefault_currency: function(frm) {\n\t\tfrappe.call({\n\t\t    method: \"eskill_custom.api.customer_account_selector\",\n\t\t    args: {\n\t            currency: frm.doc.default_currency\n\t\t    },\n\t\t    callback: function(response) {\n\t\t        frappe.model.clear_table(frm.doc, \"accounts\");\n\t\t        if (response.message) {\n    \t\t        var debtors_account = frappe.model.add_child(frm.doc, \"Party Account\", \"accounts\");\n    \t\t        debtors_account.company = frappe.defaults.get_user_default(\"Company\");\n    \t\t        debtors_account.account = response.message;\n\t\t        }\n\t\t        frm.refresh_fields();\n\t\t    }\n\t\t});\n\t}\n});"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Custom Script",
   "dt": "Item",
   "modified": "2020-09-15 10:27:22.849833",
   "name": "Item-Client",

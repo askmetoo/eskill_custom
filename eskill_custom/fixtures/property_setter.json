@@ -1,6 +1,22 @@
 [
  {
   "default_value": null,
+  "doc_type": "Customer",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocField",
+  "field_name": "accounts",
+  "modified": "2021-05-11 10:52:46.737033",
+  "name": "Customer-accounts-description",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "property": "description",
+  "property_type": "Text",
+  "value": ""
+ },
+ {
+  "default_value": null,
   "doc_type": "Serial No",
   "docstatus": 0,
   "doctype": "Property Setter",

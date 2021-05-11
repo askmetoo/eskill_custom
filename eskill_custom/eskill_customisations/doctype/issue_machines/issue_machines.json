@@ -20,7 +20,8 @@
    "in_list_view": 1,
    "label": "Model",
    "options": "Item",
-   "reqd": 1
+   "reqd": 1,
+   "set_only_once": 1
   },
   {
    "depends_on": "eval: (doc.model);",
@@ -28,7 +29,8 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Serial Number",
-   "options": "Serial No"
+   "options": "Serial No",
+   "set_only_once": 1
   },
   {
    "default": "0",
@@ -68,8 +70,8 @@
   }
  ],
  "istable": 1,
- "modified": "2021-04-22 15:47:56.133282",
- "modified_by": "andrew@eskilltrading.com",
+ "modified": "2021-05-07 16:09:36.776488",
+ "modified_by": "Administrator",
  "module": "Eskill Customisations",
  "name": "Issue Machines",
  "owner": "andrew@eskilltrading.com",
