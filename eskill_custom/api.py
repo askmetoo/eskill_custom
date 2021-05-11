@@ -88,3 +88,15 @@ def auction_rate_lookup(doctype, si_posting_date):
     except:
         auction_rate = 0
     return auction_rate
+
+@frappe.whitelist()
+def customer_account_selector(currency):
+    "Returns the debtors' control account for the given currency."
+
+    try:
+        debtors_account = frappe.db.sql(f"select name from tabAccount where account_currency = '{currency}' and debtors_account is true limit 1;")
+        debtors_account = debtors_account[0][0] 
+    except:
+        debtors_account = ""
+
+    return debtors_account
