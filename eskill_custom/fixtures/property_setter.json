@@ -1,6 +1,38 @@
 [
  {
   "default_value": null,
+  "doc_type": "Supplier",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocType",
+  "field_name": null,
+  "modified": "2021-06-08 11:26:12.264562",
+  "name": "Supplier-sort_field",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "property": "sort_field",
+  "property_type": "Data",
+  "value": "supplier_code"
+ },
+ {
+  "default_value": null,
+  "doc_type": "Customer",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocType",
+  "field_name": null,
+  "modified": "2021-06-08 11:32:47.109524",
+  "name": "Customer-search_fields",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "property": "search_fields",
+  "property_type": "Data",
+  "value": "customer_name,customer_code,customer_group,territory, mobile_no,primary_address"
+ },
+ {
+  "default_value": null,
   "doc_type": "Customer",
   "docstatus": 0,
   "doctype": "Property Setter",
