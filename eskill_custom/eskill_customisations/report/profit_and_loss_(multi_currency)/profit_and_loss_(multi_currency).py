@@ -27,7 +27,7 @@ def execute(filters=None):
 
     start_m, end_m = month_str_to_int[filters['start_m']], month_str_to_int[filters['end_m']]
     if filters['start_y'] == filters['end_y']:
-        if start_m == end_m:
+        if start_m == end_m or filters['periodicity'] == "Yearly":
             single_period = True
         elif start_m > end_m:
             frappe.throw(_("Start date must not precede end date."))
