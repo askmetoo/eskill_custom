@@ -24,6 +24,12 @@ def get_data():
             		"doctype": "Sales Invoice",
                     "is_query_report": True
             	},
+            	{
+            		"type": "report",
+            		"name": "Profit and Loss (Multi-currency)",
+            		"doctype": "GL Entry",
+                    "is_query_report": True
+            	},
             ]
         }
     ]
