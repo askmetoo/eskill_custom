@@ -143,6 +143,7 @@ def get_data(start_m: int, end_m: int, filters: dict, columns: list, single_peri
     for header in income_headers:
         data.extend([header])
         data.extend(get_sub_accounts(parent_account=header['account'], columns=columns, date_range=date_range, rate=period_rate))
+        data.extend([blank_row])
 
     total_income = {'account': "Total Income"}
     for i in range(1, len(columns)):
@@ -158,6 +159,7 @@ def get_data(start_m: int, end_m: int, filters: dict, columns: list, single_peri
     for header in expense_headers:
         data.extend([header])
         data.extend(get_sub_accounts(parent_account=header['account'], columns=columns, date_range=date_range, rate=period_rate))
+        data.extend([blank_row])
 
     total_expense = {'account': "Total Expense"}
     for i in range(1, len(columns)):
