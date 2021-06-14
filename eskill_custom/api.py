@@ -100,3 +100,24 @@ def customer_account_selector(currency):
         debtors_account = ""
 
     return debtors_account
+
+@frappe.whitelist()
+def set_invoice_as_credited(credit):
+    "Sets the status of the invoice linked to credit note to 'Credit Note Issued'."
+
+    try:
+        if credit:
+            invoice = frappe.db.sql(
+                "select parent Credit, CNI.delivery_note, DN.return_against, SII.Invoice from `tabSales Invoice Item` CNI "
+                "join (select name, return_against from `tabDelivery Note`) DN on DN.name = CNI.delivery_note "
+                "join (select parent Invoice, delivery_note from `tabSales Invoice Item` group by parent) SII on SII.delivery_note = DN.return_against "
+                "group by parent "
+                f"having Credit = '{credit}' "
+                "order by parent desc "
+                "limit 1;")
+            frappe.db.set_value("Sales Invoice", invoice[0][0], "return_against", invoice[0][3])
+            frappe.db.set_value("Sales Invoice", invoice[0][3], "status", "Credit Note Issued")
+        else:
+            return
+    except Exception as error:
+        return error
