@@ -108,5 +108,16 @@
   "parentfield": null,
   "parenttype": null,
   "script": "frappe.ui.form.on('Delivery Note', {\n\ton_submit(frm) {\n\t    if (!frm.doc.issue) {\n    \t\tfrappe.model.open_mapped_doc({\n    \t\t\tmethod: \"erpnext.stock.doctype.delivery_note.delivery_note.make_sales_invoice\",\n    \t\t\tfrm: frm,\n    \t\t});\n\t    }\n\t}\n});"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Custom Script",
+  "dt": "Payment Entry",
+  "modified": "2021-06-15 10:04:11.670840",
+  "name": "Payment Entry-Client",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "script": "frappe.ui.form.on('Payment Entry', {\n\trefresh(frm) {\n\t\tname_series(frm);\n\t\tparty_filter(frm);\n\t},\n\t\n\tpayment_type: function(frm) {\n\t    name_series(frm);\n\t}\n});\n\nfunction name_series(frm) {\n    if (frm.doc.payment_type == \"Receive\") {\n        frm.set_value('naming_series', \"REC.########\");\n        frm.set_df_property('naming_series', 'read_only', 1);\n    } else if (frm.doc.payment_type == \"Pay\") {\n        frm.set_value('naming_series', \"PYE.########\");\n        frm.set_df_property('naming_series', 'read_only', 1);\n    }\n}\n\nfunction party_filter(frm) {\n\tfrm.fields_dict.party_type.get_query = function() {\n\t\treturn {\n\t\t\tfilters: [\n\t\t\t\t[\"DocType\", \"name\", \"in\", [\"Customer\", \"Supplier\", \"Employee\", \"Shareholder\"]],\n\t\t\t],\n\t\t};\n\t};\n}"
  }
 ]
