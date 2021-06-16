@@ -27,7 +27,7 @@ def execute(filters=None):
 
     start_m, end_m = month_str_to_int[filters['start_m']], month_str_to_int[filters['end_m']]
     if filters['start_y'] == filters['end_y']:
-        if start_m == end_m:
+        if start_m == end_m or filters['periodicity'] == "Yearly":
             single_period = True
         elif start_m > end_m:
             frappe.throw(_("Start date must not precede end date."))
@@ -143,6 +143,7 @@ def get_data(start_m: int, end_m: int, filters: dict, columns: list, single_peri
     for header in income_headers:
         data.extend([header])
         data.extend(get_sub_accounts(parent_account=header['account'], columns=columns, date_range=date_range, rate=period_rate))
+        data.extend([blank_row])
 
     total_income = {'account': "Total Income"}
     for i in range(1, len(columns)):
@@ -158,6 +159,7 @@ def get_data(start_m: int, end_m: int, filters: dict, columns: list, single_peri
     for header in expense_headers:
         data.extend([header])
         data.extend(get_sub_accounts(parent_account=header['account'], columns=columns, date_range=date_range, rate=period_rate))
+        data.extend([blank_row])
 
     total_expense = {'account': "Total Expense"}
     for i in range(1, len(columns)):
