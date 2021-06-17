@@ -121,3 +121,28 @@ def set_invoice_as_credited(credit):
             return
     except Exception as error:
         return error
+
+@frappe.whitelist()
+def get_date(interval_type: str, interval: int) -> str:
+    "Get date based on the provided interval and interval type."
+
+    date = frappe.db.sql(f"select date_format(date_add(curdate(), interval {interval} {interval_type}), '%Y-%m-%d')")[0][0]
+
+    return date
+
+@frappe.whitelist()
+def update_issue_billing(docfield: str, docname: str, docfield_status: str, issue: str) -> int:
+    """Updates billing status of documents linked in Issues.
+
+    Returns 1 to indicate normal operation."""
+
+    frappe.db.sql(f"""\
+update
+    tabIssue
+set
+    {docfield} = '{docname}', {docfield}_status = '{docfield_status}'
+where
+    name = '{issue}'""")
+    frappe.db.commit()
+
+    return 1
