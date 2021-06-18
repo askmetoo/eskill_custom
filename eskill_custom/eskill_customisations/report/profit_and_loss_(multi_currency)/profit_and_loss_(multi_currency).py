@@ -242,7 +242,7 @@ def get_headers(root_type: str, date_range: list, columns: list, rate: list):
     if len(date_range) == 1:
         headers.extend(frappe.db.sql(f"""\
 select
-    A.parent_account account, sum(credit - debit) {columns[1]['fieldname']}, sum((credit - debit) * ifnull(AER.exchange_rate, {rate[0]})) {columns[2]['fieldname']}, 1 parent_account
+    A.parent_account account, sum(debit - credit) {columns[1]['fieldname']}, sum((debit - credit) * ifnull(AER.exchange_rate, {rate[0]})) {columns[2]['fieldname']}, 1 parent_account
 from
     `tabGL Entry` GLE
 join
@@ -259,7 +259,7 @@ select
     tab1.account account, {columns[1]['fieldname']}, {columns[2]['fieldname']}, {columns[3]['fieldname']}, {columns[4]['fieldname']}
 from
     (select
-        A.parent_account account, sum(credit - debit) {columns[1]['fieldname']}, sum((credit - debit) * ifnull(AER.exchange_rate, {rate[0]})) {columns[2]['fieldname']}
+        A.parent_account account, sum(debit - credit) {columns[1]['fieldname']}, sum((debit - credit) * ifnull(AER.exchange_rate, {rate[0]})) {columns[2]['fieldname']}
     from
         `tabGL Entry` GLE
     join
@@ -272,7 +272,7 @@ from
         A.parent_account) tab1
 join
     (select
-        A.parent_account account, sum(credit - debit) {columns[3]['fieldname']}, sum((credit - debit) * ifnull(AER.exchange_rate, {rate[1]})) {columns[4]['fieldname']}
+        A.parent_account account, sum(debit - credit) {columns[3]['fieldname']}, sum((debit - credit) * ifnull(AER.exchange_rate, {rate[1]})) {columns[4]['fieldname']}
     from
         `tabGL Entry` GLE
     join
@@ -295,7 +295,7 @@ def get_sub_accounts(parent_account: str, columns: list, date_range: list, rate:
     if len(date_range) == 1:
         data.extend(frappe.db.sql(f"""\
 select
-    A.name account, sum(credit - debit) {columns[1]['fieldname']}, sum((credit - debit) * ifnull(AER.exchange_rate, {rate[0]})) {columns[2]['fieldname']}, A.root_type account_type
+    A.name account, sum(debit - credit) {columns[1]['fieldname']}, sum((debit - credit) * ifnull(AER.exchange_rate, {rate[0]})) {columns[2]['fieldname']}, A.root_type account_type
 from
     `tabGL Entry` GLE
 join
@@ -312,7 +312,7 @@ select
     tab1.account account, {columns[1]['fieldname']}, {columns[2]['fieldname']}, {columns[3]['fieldname']}, {columns[4]['fieldname']}
 from
     (select
-        A.name account, sum(credit - debit) {columns[1]['fieldname']}, sum((credit - debit) * ifnull(AER.exchange_rate, {rate[0]})) {columns[2]['fieldname']}
+        A.name account, sum(debit - credit) {columns[1]['fieldname']}, sum((debit - credit) * ifnull(AER.exchange_rate, {rate[0]})) {columns[2]['fieldname']}
     from
         `tabGL Entry` GLE
     join
@@ -325,7 +325,7 @@ from
         A.name) tab1
 join
     (select
-        A.name account, sum(credit - debit) {columns[3]['fieldname']}, sum((credit - debit) * ifnull(AER.exchange_rate, {rate[1]})) {columns[4]['fieldname']}
+        A.name account, sum(debit - credit) {columns[3]['fieldname']}, sum((debit - credit) * ifnull(AER.exchange_rate, {rate[1]})) {columns[4]['fieldname']}
     from
         `tabGL Entry` GLE
     join
