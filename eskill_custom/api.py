@@ -185,7 +185,6 @@ def invoice_sales_person(user: str, service_invoice: bool = False, issue: str = 
 
 
     sales_team = []
-    employee = ""
 
     if service_invoice:
         users = frappe.db.sql(f"""\
