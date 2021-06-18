@@ -225,11 +225,13 @@ join
         else:
             user = frappe.db.sql(f"""\
 select
-    user_id user, 100 time
+    E.user_id user, 100 time
 from
-    tabEmployee
-where
-    """)
+    tabEmployee E
+join
+    tabIssue I on I.current_technician = E.name
+Where
+    I.name = '{issue}'""")[0]
     if (service_invoice and len(users) == 0) or not service_invoice:
         users = [{'user': user, 'time': 100}]
 
