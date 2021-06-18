@@ -193,14 +193,14 @@ select
 from
     tabTimesheet TS 
 join
-	(select 
-		parent prnt 
-	from
-		`tabTimesheet Detail`
-	where 
-		activity_document = '{issue}') TSD on TSD.prnt = TS.name
+    (select 
+        parent prnt 
+    from
+        `tabTimesheet Detail`
+    where 
+        activity_document = '{issue}') TSD on TSD.prnt = TS.name
 group by 
-	user
+    user
 having
     time > 0""", as_dict=1)
         time = frappe.db.sql(f"""\
@@ -209,12 +209,12 @@ select
 from
     tabTimesheet TS 
 join
-	(select 
-		parent prnt 
-	from
-		`tabTimesheet Detail`
-	where 
-		activity_document = '{issue}') TSD on TSD.prnt = TS.name""")[0][0]
+    (select 
+        parent prnt 
+    from
+        `tabTimesheet Detail`
+    where 
+        activity_document = '{issue}') TSD on TSD.prnt = TS.name""")[0][0]
 
         if len(users) > 1:
             for i in range(len(users)):
@@ -222,15 +222,18 @@ join
         elif len(users) == 1:
             users[0]['time'] = 100
         else:
-            user = frappe.db.sql(f"""\
+            try:
+                user = frappe.db.sql(f"""\
 select
-    E.user_id user, 100 time
+    E.user_id
 from
     tabEmployee E
 join
     tabIssue I on I.current_technician = E.name
 Where
-    I.name = '{issue}'""")[0]
+    I.name = '{issue}'""")[0][0]
+            except:
+                pass
     if (service_invoice and len(users) == 0) or not service_invoice:
         users = [{'user': user, 'time': 100}]
 
@@ -238,13 +241,13 @@ Where
     for user in users:
         sales_person = frappe.db.sql(f"""\
 select
-	SP.name 'sales_person', '{user['time']}' contribution
+    SP.name 'sales_person', '{user['time']}' contribution
 from 
-	`tabSales Person` SP
+    `tabSales Person` SP
 join 
-	tabEmployee E on E.name = SP.employee 
+    tabEmployee E on E.name = SP.employee 
 where 
-	E.user_id = '{user['user']}'""", as_dict=1)[0]
+    E.user_id = '{user['user']}'""", as_dict=1)[0]
         sales_team.append(sales_person)
 
     return sales_team
