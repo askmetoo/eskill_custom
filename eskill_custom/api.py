@@ -121,3 +121,129 @@ def set_invoice_as_credited(credit):
             return
     except Exception as error:
         return error
+
+@frappe.whitelist()
+def get_date(interval_type: str, interval: int) -> str:
+    "Get date based on the provided interval and interval type."
+
+    date = frappe.db.sql(f"select date_format(date_add(curdate(), interval {interval} {interval_type}), '%Y-%m-%d')")[0][0]
+
+    return date
+
+@frappe.whitelist()
+def update_issue_billing(docfield: str, docname: str, docfield_status: str, issue: str) -> int:
+    """Updates billing status of documents linked in Issues.
+
+    Returns 1 to indicate normal operation."""
+
+    frappe.db.sql(f"""\
+update
+    tabIssue
+set
+    {docfield} = '{docname}', {docfield}_status = '{docfield_status}'
+where
+    name = '{issue}'""")
+    frappe.db.commit()
+
+    return 1
+
+@frappe.whitelist()
+def service_quote_ordered(issue: str) -> int:
+    """Marks quote for Issue as complete.
+
+    Returns 1 to indicate normal operation."""
+
+    details = frappe.db.sql(f"""\
+select
+    'quotation', quotation, 'Ordered', name
+from
+    tabIssue
+where
+    name = '{issue}'""")[0]
+
+    update_issue_billing(*details)
+
+    frappe.db.sql(f"""\
+update
+    tabQuotation
+set
+    status = 'Ordered'
+where
+    name = '{details[1]}'""")
+    frappe.db.commit()
+
+    return 1
+
+@frappe.whitelist()
+def invoice_sales_person(user: str, service_invoice: bool = False, issue: str = "") -> list:
+    """Returns the sales person for an invoice based on whether or not it's a service invoice.
+
+    ### Key Parameters
+    - user : ERPNext username
+    - service_invoice : Flag indicating whether or not it is a service invoice
+    - issue : The linked issue number (defaults to empty string)"""
+
+
+    sales_team = []
+    employee = ""
+
+    if service_invoice:
+        users = frappe.db.sql(f"""\
+select
+    TS.user user, sum(round(TS.total_billable_hours, 0)) time
+from
+    tabTimesheet TS 
+join
+	(select 
+		parent prnt 
+	from
+		`tabTimesheet Detail`
+	where 
+		activity_document = '{issue}') TSD on TSD.prnt = TS.name
+group by 
+	user
+having
+    time > 0""", as_dict=1)
+        time = frappe.db.sql(f"""\
+select
+    sum(round(TS.total_billable_hours, 0))
+from
+    tabTimesheet TS 
+join
+	(select 
+		parent prnt 
+	from
+		`tabTimesheet Detail`
+	where 
+		activity_document = '{issue}') TSD on TSD.prnt = TS.name""")[0][0]
+
+        if len(users) > 1:
+            for i in range(len(users)):
+                users[i]['time'] = (users[i]['time'] / time) * 100
+        elif len(users) == 1:
+            users[0]['time'] = 100
+        else:
+            user = frappe.db.sql(f"""\
+select
+    user_id user, 100 time
+from
+    tabEmployee
+where
+    """)
+    if (service_invoice and len(users) == 0) or not service_invoice:
+        users = [{'user': user, 'time': 100}]
+
+
+    for user in users:
+        sales_person = frappe.db.sql(f"""\
+select
+	SP.name 'sales_person', '{user['time']}' contribution
+from 
+	`tabSales Person` SP
+join 
+	tabEmployee E on E.name = SP.employee 
+where 
+	E.user_id = '{user['user']}'""", as_dict=1)[0]
+        sales_team.append(sales_person)
+
+    return sales_team
