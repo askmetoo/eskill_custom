@@ -24,6 +24,11 @@ def get_data():
             		"doctype": "Sales Invoice",
                     "is_query_report": True
             	},
+            ]
+        },
+        {
+            "label": _("Financial Statements"),
+            "items": [
             	{
             		"type": "report",
             		"name": "Profit and Loss (Multi-currency)",
