@@ -3,56 +3,56 @@
   "docstatus": 0,
   "doctype": "Custom Script",
   "dt": "Journal Entry",
-  "modified": "2021-06-23 15:36:30.055222",
+  "modified": "2021-06-24 11:15:09.318856",
   "name": "Journal Entry-Client",
   "parent": null,
   "parentfield": null,
   "parenttype": null,
-  "script": "frappe.ui.form.on('Journal Entry', {\n\tbefore_submit(frm) {\n\t\tget_bid_rate(frm);\n\t}\n});\n\nfunction get_bid_rate(frm) {\n    if (frm.doc.currency == \"USD\") {\n        frappe.call({\n            method: \"eskill_custom.api.auction_rate_lookup\",\n            args: {\n                posting_date: frm.doc.posting_date\n            },\n            callback: function(data) {\n                frm.set_value(\"auction_bid_rate\", data.message);\n            }\n        });\n        console.log(\"Got bid rate.\");\n    }\n}\n"
+  "script": "frappe.ui.form.on('Journal Entry', {\n\tbefore_submit(frm) {\n\t\tget_bid_rate(frm);\n\t}\n});\n\nfunction get_bid_rate(frm) {\n    frappe.call({\n        method: \"eskill_custom.api.auction_rate_lookup\",\n        args: {\n            posting_date: frm.doc.posting_date\n        },\n        callback: function(data) {\n            frm.set_value(\"auction_bid_rate\", data.message);\n        }\n    });\n    console.log(\"Got bid rate.\");\n}\n"
  },
  {
   "docstatus": 0,
   "doctype": "Custom Script",
   "dt": "Stock Reconciliation",
-  "modified": "2021-06-23 15:43:43.251664",
+  "modified": "2021-06-24 11:14:44.416345",
   "name": "Stock Reconciliation-Client",
   "parent": null,
   "parentfield": null,
   "parenttype": null,
-  "script": "frappe.ui.form.on('Stock Reconciliation', {\n\tbefore_submit(frm) {\n\t\tget_bid_rate(frm);\n\t}\n});\n\nfunction get_bid_rate(frm) {\n    if (frm.doc.currency == \"USD\") {\n        frappe.call({\n            method: \"eskill_custom.api.auction_rate_lookup\",\n            args: {\n                posting_date: frm.doc.posting_date\n            },\n            callback: function(data) {\n                frm.set_value(\"auction_bid_rate\", data.message);\n            }\n        });\n        console.log(\"Got bid rate.\");\n    }\n}\n"
+  "script": "frappe.ui.form.on('Stock Reconciliation', {\n\tbefore_submit(frm) {\n\t\tget_bid_rate(frm);\n\t}\n});\n\nfunction get_bid_rate(frm) {\n    frappe.call({\n        method: \"eskill_custom.api.auction_rate_lookup\",\n        args: {\n            posting_date: frm.doc.posting_date\n        },\n        callback: function(data) {\n            frm.set_value(\"auction_bid_rate\", data.message);\n        }\n    });\n    console.log(\"Got bid rate.\");\n}\n"
  },
  {
   "docstatus": 0,
   "doctype": "Custom Script",
   "dt": "Stock Entry",
-  "modified": "2021-06-23 15:44:19.686245",
+  "modified": "2021-06-24 11:14:21.560232",
   "name": "Stock Entry-Client",
   "parent": null,
   "parentfield": null,
   "parenttype": null,
-  "script": "frappe.ui.form.on('Stock Entry', {\n\tbefore_submit(frm) {\n\t\tget_bid_rate(frm);\n\t}\n});\n\nfunction get_bid_rate(frm) {\n    if (frm.doc.currency == \"USD\") {\n        frappe.call({\n            method: \"eskill_custom.api.auction_rate_lookup\",\n            args: {\n                posting_date: frm.doc.posting_date\n            },\n            callback: function(data) {\n                frm.set_value(\"auction_bid_rate\", data.message);\n            }\n        });\n        console.log(\"Got bid rate.\");\n    }\n}\n"
+  "script": "frappe.ui.form.on('Stock Entry', {\n\tbefore_submit(frm) {\n\t\tget_bid_rate(frm);\n\t}\n});\n\nfunction get_bid_rate(frm) {\n    frappe.call({\n        method: \"eskill_custom.api.auction_rate_lookup\",\n        args: {\n            posting_date: frm.doc.posting_date\n        },\n        callback: function(data) {\n            frm.set_value(\"auction_bid_rate\", data.message);\n        }\n    });\n    console.log(\"Got bid rate.\");\n}\n"
  },
  {
   "docstatus": 0,
   "doctype": "Custom Script",
   "dt": "Purchase Invoice",
-  "modified": "2021-06-23 15:45:35.757314",
+  "modified": "2021-06-24 11:12:57.054389",
   "name": "Purchase Invoice-Client",
   "parent": null,
   "parentfield": null,
   "parenttype": null,
-  "script": "frappe.ui.form.on('Purchase Invoice', {\n\tbefore_submit(frm) {\n\t\tget_bid_rate(frm);\n\t}\n});\n\nfunction get_bid_rate(frm) {\n    if (frm.doc.currency == \"USD\") {\n        frappe.call({\n            method: \"eskill_custom.api.auction_rate_lookup\",\n            args: {\n                posting_date: frm.doc.posting_date\n            },\n            callback: function(data) {\n                frm.set_value(\"auction_bid_rate\", data.message);\n            }\n        });\n        console.log(\"Got bid rate.\");\n    }\n}\n"
+  "script": "frappe.ui.form.on('Purchase Invoice', {\n\tbefore_submit(frm) {\n\t\tget_bid_rate(frm);\n\t}\n});\n\nfunction get_bid_rate(frm) {\n    if (frm.doc.currency != \"ZWD\") {\n        frappe.call({\n            method: \"eskill_custom.api.auction_rate_lookup\",\n            args: {\n                posting_date: frm.doc.posting_date\n            },\n            callback: function(data) {\n                frm.set_value(\"auction_bid_rate\", data.message);\n            }\n        });\n        console.log(\"Got bid rate.\");\n    }\n}\n"
  },
  {
   "docstatus": 0,
   "doctype": "Custom Script",
   "dt": "Purchase Receipt",
-  "modified": "2021-06-23 15:46:11.749174",
+  "modified": "2021-06-24 11:12:28.336427",
   "name": "Purchase Receipt-Client",
   "parent": null,
   "parentfield": null,
   "parenttype": null,
-  "script": "frappe.ui.form.on('Purchase Receipt', {\n\tbefore_submit(frm) {\n\t\tget_bid_rate(frm);\n\t}\n});\n\nfunction get_bid_rate(frm) {\n    if (frm.doc.currency == \"USD\") {\n        frappe.call({\n            method: \"eskill_custom.api.auction_rate_lookup\",\n            args: {\n                posting_date: frm.doc.posting_date\n            },\n            callback: function(data) {\n                frm.set_value(\"auction_bid_rate\", data.message);\n            }\n        });\n        console.log(\"Got bid rate.\");\n    }\n}\n"
+  "script": "frappe.ui.form.on('Purchase Receipt', {\n\tbefore_submit(frm) {\n\t\tget_bid_rate(frm);\n\t}\n});\n\nfunction get_bid_rate(frm) {\n    if (frm.doc.currency != \"ZWD\") {\n        frappe.call({\n            method: \"eskill_custom.api.auction_rate_lookup\",\n            args: {\n                posting_date: frm.doc.posting_date\n            },\n            callback: function(data) {\n                frm.set_value(\"auction_bid_rate\", data.message);\n            }\n        });\n        console.log(\"Got bid rate.\");\n    }\n}\n"
  },
  {
   "docstatus": 0,
@@ -168,11 +168,22 @@
   "docstatus": 0,
   "doctype": "Custom Script",
   "dt": "Payment Entry",
-  "modified": "2021-06-23 16:10:34.543906",
+  "modified": "2021-06-24 11:11:08.492939",
   "name": "Payment Entry-Client",
   "parent": null,
   "parentfield": null,
   "parenttype": null,
-  "script": "frappe.ui.form.on('Payment Entry', {\n\trefresh(frm) {\n\t\tname_series(frm);\n\t\tparty_filter(frm);\n\t},\n\t\n\tbefore_submit(frm) {\n\t    get_bid_rate(frm);\n\t},\n\t\n\tpayment_type: function(frm) {\n\t    name_series(frm);\n\t}\n});\n\nfunction name_series(frm) {\n    if (frm.doc.payment_type == \"Receive\") {\n        frm.set_value('naming_series', \"REC.########\");\n        frm.set_df_property('naming_series', 'read_only', 1);\n    } else if (frm.doc.payment_type == \"Pay\") {\n        frm.set_value('naming_series', \"PYE.########\");\n        frm.set_df_property('naming_series', 'read_only', 1);\n    }\n}\n\nfunction party_filter(frm) {\n\tfrm.fields_dict.party_type.get_query = function() {\n\t\treturn {\n\t\t\tfilters: [\n\t\t\t\t[\"DocType\", \"name\", \"in\", [\"Customer\", \"Supplier\", \"Employee\", \"Shareholder\"]],\n\t\t\t],\n\t\t};\n\t};\n}\n\nfunction get_bid_rate(frm) {\n    if (frm.doc.currency == \"USD\") {\n        frappe.call({\n            method: \"eskill_custom.api.auction_rate_lookup\",\n            args: {\n                posting_date: frm.doc.posting_date\n            },\n            callback: function(data) {\n                frm.set_value(\"auction_bid_rate\", data.message);\n            }\n        });\n        console.log(\"Got bid rate.\");\n    }\n}\n"
+  "script": "frappe.ui.form.on('Payment Entry', {\n\trefresh(frm) {\n\t\tname_series(frm);\n\t\tparty_filter(frm);\n\t},\n\t\n\tbefore_save(frm) {\n\t    get_bid_rate(frm);\n\t},\n\t\n\tpayment_type: function(frm) {\n\t    name_series(frm);\n\t}\n});\n\nfunction name_series(frm) {\n    if (frm.doc.payment_type == \"Receive\") {\n        frm.set_value('naming_series', \"REC.########\");\n        frm.set_df_property('naming_series', 'read_only', 1);\n    } else if (frm.doc.payment_type == \"Pay\") {\n        frm.set_value('naming_series', \"PYE.########\");\n        frm.set_df_property('naming_series', 'read_only', 1);\n    }\n}\n\nfunction party_filter(frm) {\n\tfrm.fields_dict.party_type.get_query = function() {\n\t\treturn {\n\t\t\tfilters: [\n\t\t\t\t[\"DocType\", \"name\", \"in\", [\"Customer\", \"Supplier\", \"Employee\", \"Shareholder\"]],\n\t\t\t],\n\t\t};\n\t};\n}\n\nfunction get_bid_rate(frm) {\n    frappe.call({\n        method: \"eskill_custom.api.auction_rate_lookup\",\n        args: {\n            posting_date: frm.doc.posting_date\n        },\n        callback: function(data) {\n            console.log(data)\n            frm.set_value(\"auction_bid_rate\", data.message);\n        }\n    });\n    console.log(\"Got bid rate.\");\n}\n"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Custom Script",
+  "dt": "Landed Cost Voucher",
+  "modified": "2021-06-25 11:15:35.265020",
+  "name": "Landed Cost Voucher-Client",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "script": "frappe.ui.form.on('Landed Cost Voucher', {\n\tbefore_save(frm) {\n\t\tget_bid_rate(frm);\n\t}\n});\n\nfunction get_bid_rate(frm) {\n    frappe.call({\n        method: \"eskill_custom.api.auction_rate_lookup\",\n        args: {\n            posting_date: frm.doc.posting_date\n        },\n        callback: function(data) {\n            frm.set_value(\"auction_bid_rate\", data.message);\n        }\n    });\n    console.log(\"Got bid rate.\");\n}\n"
  }
 ]
