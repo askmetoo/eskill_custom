@@ -5886,5 +5886,53 @@
   "property": "default",
   "property_type": "Text",
   "value": "Standard Selling"
+ },
+ {
+  "default_value": null,
+  "doc_type": "Issue",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocField",
+  "field_name": "opening_date",
+  "modified": "2021-06-28 11:43:24.411077",
+  "name": "Issue-opening_date-permlevel",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "property": "permlevel",
+  "property_type": "Int",
+  "value": "1"
+ },
+ {
+  "default_value": null,
+  "doc_type": "Issue",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocField",
+  "field_name": "opening_time",
+  "modified": "2021-06-28 11:43:24.483256",
+  "name": "Issue-opening_time-permlevel",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "property": "permlevel",
+  "property_type": "Int",
+  "value": "1"
+ },
+ {
+  "default_value": null,
+  "doc_type": "Issue",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocField",
+  "field_name": "resolution_date",
+  "modified": "2021-06-28 11:43:24.493661",
+  "name": "Issue-resolution_date-permlevel",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "property": "permlevel",
+  "property_type": "Int",
+  "value": "1"
  }
 ]
