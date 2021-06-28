@@ -35,6 +35,7 @@ def execute(filters=None):
     elif filters['start_y'] > filters['end_y']:
         frappe.throw(_("Start date must not precede end date."))
     
+    # Create columns
     columns = [
         {
             'fieldname': "account",
@@ -46,13 +47,21 @@ def execute(filters=None):
     ]
     columns.extend(get_columns(filters=filters, single_period=single_period))
 
+    # Generate report data
     data = []
     data.extend(get_data(filters=filters, columns=columns, start_m=start_m, end_m=end_m, single_period=single_period, accumulated=filters['accumulated']))
 
-    return columns, data, None, None
+    # Generate chart
+    try:
+        chart = get_chart_data((columns[1],) if single_period else (columns[1], columns[3]), data)
+    except:
+        frappe.msgprint(_("Failed to generate chart."))
+        chart = None
+
+    return columns, data, None, chart
 
 
-def get_columns(filters: dict, single_period: bool = True):
+def get_columns(filters: 'dict[str, ]', single_period: bool = True):
     "Returns list of period based columns."
 
     if filters['periodicity'] == "Monthly":
@@ -98,7 +107,7 @@ def get_columns(filters: dict, single_period: bool = True):
     return columns
 
 
-def get_data(start_m: int, end_m: int, filters: dict, columns: list, single_period: bool = False, accumulated: bool = False) -> list:
+def get_data(start_m: int, end_m: int, filters: 'dict[str, ]', columns: 'list[dict[str, ]]', single_period: bool = False, accumulated: bool = False) -> list:
     "Get report data."
 
     blank_row = {'account': ""}
@@ -195,7 +204,7 @@ def get_data(start_m: int, end_m: int, filters: dict, columns: list, single_peri
     return data
 
 
-def initialise_data(columns, date_range, single_period, blank_row) -> list:
+def initialise_data(columns: 'list[dict[str, ]]', date_range: 'list[str]', single_period: bool, blank_row: 'dict[str, ]') -> list:
     "Initialises data table."
 
     headers, data =  [], []
@@ -281,7 +290,7 @@ group by
     A.name""", as_dict=1))
             data.append(blank_row)
 
-    total_row = {'account': 'Net Profit', 'total': 1}
+    total_row = {'account': 'Net Profit/Loss', 'total': 1}
     for i in range(1, len(columns)):
         total_row[columns[i]['fieldname']] = 0
 
@@ -300,18 +309,18 @@ group by
     return headers, data
 
 
-def get_account_data(columns: list, date_range: str, doctype: str) -> list:
+def get_account_data(columns: 'list[dict[str, ]]', date_range: str, doctype: str) -> list:
     "Get data based on GL Entries."
 
     data = []
 
     has_currency = frappe.db.sql(f"""\
 select
-	true
+    true
 from
-	information_schema.columns
+    information_schema.columns
 where
-	table_schema = '{frappe.conf.get('db_name')}' and table_name = 'tab{doctype}' and column_name = 'currency'""")
+    table_schema = '{frappe.conf.get('db_name')}' and table_name = 'tab{doctype}' and column_name = 'currency'""")
 
     if len(has_currency):
         column2 = """\
@@ -344,3 +353,47 @@ having
     {columns[0]['fieldname']} <> 0""", as_dict=1))
 
     return data
+
+
+def get_chart_data(columns: 'list[dict[str, ]]', data: 'list[dict[str, ]]') -> dict:
+    "Generate chart based on report."
+
+    labels = [col['label'] for col in columns]
+
+    income_data, expense_data, net_profit = [], [], []
+
+    for col in columns:
+        income, expense = 0, 0
+        for account in data:
+            if account['header']:
+                if account['account_type'] == "Income":
+                    income += account[col['fieldname']]
+                elif account['account_type'] == "Expense":
+                    expense += account[col['fieldname']]
+        income_data.append(income * -1)
+        expense_data.append(expense)
+        net_profit.append(data[-1][col['fieldname']] * -1)
+
+    datasets = []
+    if income_data:
+        datasets.append({'name': _('Income'), 'chartType': "bar", 'values': income_data})
+    if expense_data:
+        datasets.append({'name': _('Expense'), 'chartType': "bar", 'values': expense_data})
+    if net_profit:
+        datasets.append({'name': _('Net Profit/Loss'), 'chartType': "line" if len(columns) > 1 else "bar", 'values': net_profit})
+
+    chart = {
+        'data': {
+            'labels': labels,
+            'datasets': datasets
+        },
+        'colors': [
+            "green",
+            "red",
+            "#ffbd20"
+            ],
+        'fieldtype': "Currency",
+        'type': "axis-mixed"
+    }
+
+    return chart
