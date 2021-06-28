@@ -243,7 +243,7 @@ from
 join
     tabAccount A on GLE.account = A.name
 where
-    A.root_type = '{header['account_type']}' and {date_range[0]}
+    A.root_type = '{header['account_type']}' and A.parent_account = '{header['account']}' and {date_range[0]}
 group by
     A.name""", as_dict=1))
             data.append(blank_row)
@@ -285,7 +285,7 @@ from
 join
     tabAccount A on GLE.account = A.name
 where
-    A.root_type = '{header['account_type']}' and ({date_range[0]} or {date_range[1]})
+    A.root_type = '{header['account_type']}' and A.parent_account = '{header['account']}' and ({date_range[0]} or {date_range[1]})
 group by
     A.name""", as_dict=1))
             data.append(blank_row)
