@@ -149,7 +149,6 @@ def get_data(start_m: int, end_m: int, filters: 'dict[str, ]', columns: 'list[di
     # List of documents that affect Income & Expense
     doc_list = [
         "Delivery Note",
-        "Journal Entry",
         "Sales Invoice",
         "Landed Cost Voucher",
         "Payment Entry",
@@ -172,6 +171,19 @@ def get_data(start_m: int, end_m: int, filters: 'dict[str, ]', columns: 'list[di
                 index = next(j for j, account in enumerate(data) if account['account'] == new_data[i]['account'])
                 data[index][columns[3]['fieldname']] += new_data[i][columns[3]['fieldname']]
                 data[index][columns[4]['fieldname']] += new_data[i][columns[4]['fieldname']]
+
+    # Get data from journal entries
+    new_data = get_journal_data([columns[1], columns[2]], date_range[0])
+    for i in range(len(new_data)):
+        index = next(j for j, account in enumerate(data) if account['account'] == new_data[i]['account'])
+        data[index][columns[1]['fieldname']] += new_data[i][columns[1]['fieldname']]
+        data[index][columns[2]['fieldname']] += new_data[i][columns[2]['fieldname']]
+    if not single_period:
+        new_data = get_journal_data([columns[3], columns[4]], date_range[1])
+        for i in range(len(new_data)):
+            index = next(j for j, account in enumerate(data) if account['account'] == new_data[i]['account'])
+            data[index][columns[3]['fieldname']] += new_data[i][columns[3]['fieldname']]
+            data[index][columns[4]['fieldname']] += new_data[i][columns[4]['fieldname']]
 
     # Calculate header totals
     for header in headers:
@@ -345,6 +357,55 @@ join
     tabAccount A on GLE.account = A.name
 join
     `tab{doctype}` doc on GLE.voucher_no = doc.name
+where
+    {date_range} and (A.root_type = 'Income' or A.root_type = 'Expense')
+group by
+    GLE.account
+having
+    {columns[0]['fieldname']} <> 0""", as_dict=1))
+
+    return data
+
+
+def get_journal_data(columns: 'list[dict[str, ]]', date_range: str) -> list:
+    "Get data based from Journal Entries."
+
+    data = []
+
+    data.extend(frappe.db.sql(f"""\
+select
+    GLE.account account,
+    sum(GLE.debit - GLE.credit) {columns[0]['fieldname']},
+    sum((GLE.debit - GLE.credit) * (case
+    	when
+			doc.multi_currency
+		then 
+			(case when					
+				1 / (select
+					avg(JEA2.exchange_rate)
+				from
+					`tabJournal Entry Account` JEA2
+				where
+					JEA2.parent = GLE.voucher_no and JEA2.account_currency = "ZWD")
+			then 
+				1 / (select
+					avg(JEA2.exchange_rate)
+				from
+					`tabJournal Entry Account` JEA2
+				where
+					JEA2.parent = GLE.voucher_no and JEA2.account_currency = "ZWD")
+			else 
+				doc.auction_bid_rate
+			end)
+		else 
+			doc.auction_bid_rate 
+		end)) {columns[1]['fieldname']}
+from
+    `tabGL Entry` GLE
+join
+    tabAccount A on GLE.account = A.name
+join
+    `tabJournal Entry` doc on GLE.voucher_no = doc.name
 where
     {date_range} and (A.root_type = 'Income' or A.root_type = 'Expense')
 group by
