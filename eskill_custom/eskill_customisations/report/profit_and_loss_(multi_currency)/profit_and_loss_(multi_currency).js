@@ -53,18 +53,24 @@ frappe.require("assets/erpnext/js/financial_statements.js", function() {
 				"hidden": 1
 			},
 			{
-				"fieldname": "project",
-				"label": __("Project"),
-				"fieldtype": "Link",
-				"options": "Project",
-				"hidden": 1
-			},
-			{
 				"fieldname": "company",
 				"label": __("Company"),
 				"fieldtype": "Link",
 				"options": "Company",
 				"default": frappe.sys_defaults.company,
+				"hidden": 1
+			},
+			{
+				"fieldname": "cost_center",
+				"label": __("Cost Center"),
+				"fieldtype": "Link",
+				"options": "Cost Center",
+			},
+			{
+				"fieldname": "project",
+				"label": __("Project"),
+				"fieldtype": "Link",
+				"options": "Project",
 				"hidden": 1
 			},
 			{
