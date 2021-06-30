@@ -39,6 +39,7 @@ def sales_invoice_tax(doctype, currency, customer):
     except:
         return None
 
+
 @frappe.whitelist()
 def stock_lookup(doctype, user, item):
     "Returns stock locations and quantities."
@@ -60,6 +61,7 @@ def stock_lookup(doctype, user, item):
     except:
         return None
 
+
 @frappe.whitelist()
 def item_price_lookup(doctype, currency, price_list, item):
     "Returns the price of a given item."
@@ -75,6 +77,7 @@ def item_price_lookup(doctype, currency, price_list, item):
     except:
         return "Unavailable"
 
+
 @frappe.whitelist()
 def auction_rate_lookup(posting_date: str) -> float:
     "Returns the auction rate at the date of SI posting."
@@ -89,6 +92,7 @@ def auction_rate_lookup(posting_date: str) -> float:
         auction_rate = 0
     return auction_rate
 
+
 @frappe.whitelist()
 def customer_account_selector(currency):
     "Returns the debtors' control account for the given currency."
@@ -100,6 +104,7 @@ def customer_account_selector(currency):
         debtors_account = ""
 
     return debtors_account
+
 
 @frappe.whitelist()
 def set_invoice_as_credited(credit):
@@ -122,6 +127,7 @@ def set_invoice_as_credited(credit):
     except Exception as error:
         return error
 
+
 @frappe.whitelist()
 def get_date(interval_type: str, interval: int) -> str:
     "Get date based on the provided interval and interval type."
@@ -129,6 +135,7 @@ def get_date(interval_type: str, interval: int) -> str:
     date = frappe.db.sql(f"select date_format(date_add(curdate(), interval {interval} {interval_type}), '%Y-%m-%d')")[0][0]
 
     return date
+
 
 @frappe.whitelist()
 def update_issue_billing(docfield: str, docname: str, docfield_status: str, issue: str) -> int:
@@ -146,6 +153,7 @@ where
     frappe.db.commit()
 
     return 1
+
 
 @frappe.whitelist()
 def service_quote_ordered(issue: str) -> int:
@@ -173,6 +181,7 @@ where
     frappe.db.commit()
 
     return 1
+
 
 @frappe.whitelist()
 def invoice_sales_person(user: str, service_invoice: bool = False, issue: str = "") -> list:
@@ -251,3 +260,53 @@ where
         sales_team.append(sales_person)
 
     return sales_team
+
+
+@frappe.whitelist()
+def non_billable_item(item_code: str, sla_job: int) -> 'dict[str, str | int]':
+    "Returns valuation rate and expense account for SLA and warranty delivery notes."
+
+    results = {}
+
+    valuation = frappe.db.sql(f"""\
+select
+    valuation_rate
+from
+    `tabStock Ledger Entry` SLE
+where
+    item_code = '{item_code}'
+order by
+    posting_date desc, posting_time desc
+limit 1""")
+
+    if len(valuation):
+        results['valuation'] = valuation[0][0]
+    else:
+        results['valuation'] = 0
+
+    item_group = frappe.db.sql(f"""\
+select
+    item_group
+from
+    tabItem
+where
+    name = '{item_code}'""")[0][0]
+
+    item_group = item_group.split(' ')[0]
+
+    expense_account = frappe.db.sql(f"""\
+select
+    A.name
+from
+    tabAccount A
+where
+    account_name like '{'Cost of Sales - SLA ' if int(sla_job) else 'Warranty%'}{item_group}' and root_type = 'Expense'""")
+
+
+    if len(expense_account):
+        results['expense_account'] = expense_account[0][0]
+    else:
+        results['expense_account'] = ''
+
+    return results
+    
