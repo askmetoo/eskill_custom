@@ -131,3 +131,20 @@ def make_service_invoice(source_name, target_doc=None):
     }, target_doc, set_missing_values)
 
     return doc
+
+
+@frappe.whitelist()
+def set_non_billable_status(docname: str):
+    "Sets Delivery Note status to 'Completed' upon submission if it is non-billable."
+
+    frappe.db.sql(f"""
+        update
+            `tabDelivery Note`
+        set
+            status = 'Completed',
+            per_billed = 100
+        where
+            name = '{docname}';""")
+    frappe.db.commit()
+
+    return 1
