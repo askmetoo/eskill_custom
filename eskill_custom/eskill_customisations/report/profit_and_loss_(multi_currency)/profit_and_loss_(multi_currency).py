@@ -143,13 +143,18 @@ def get_data(start_m: int, end_m: int, filters: 'dict[str, ]', columns: 'list[di
                     f"(month(GLE.posting_date) = {end_m} and year(GLE.posting_date) = {filters['end_y']})"
                 ]
 
+    # Create cost center query for where statement
+    if "cost_center" in filters:
+        cost_center = f" and GLE.cost_center = '{filters['cost_center']}'"
+    else:
+        cost_center = ""
+
     # Initialise data
-    headers, data = initialise_data(columns, date_range, single_period, blank_row)
+    headers, data = initialise_data(columns, date_range, cost_center, single_period, blank_row)
 
     # List of documents that affect Income & Expense
     doc_list = [
         "Delivery Note",
-        "Journal Entry",
         "Sales Invoice",
         "Landed Cost Voucher",
         "Payment Entry",
@@ -161,17 +166,30 @@ def get_data(start_m: int, end_m: int, filters: 'dict[str, ]', columns: 'list[di
 
     # Get account totals
     for doctype in doc_list:
-        new_data = get_account_data([columns[1], columns[2]], date_range[0], doctype)
+        new_data = get_account_data([columns[1], columns[2]], date_range[0], cost_center, doctype)
         for i in range(len(new_data)):
             index = next(j for j, account in enumerate(data) if account['account'] == new_data[i]['account'])
             data[index][columns[1]['fieldname']] += new_data[i][columns[1]['fieldname']]
             data[index][columns[2]['fieldname']] += new_data[i][columns[2]['fieldname']]
         if not single_period:
-            new_data = get_account_data([columns[3], columns[4]], date_range[1], doctype)
+            new_data = get_account_data([columns[3], columns[4]], date_range[1], cost_center, doctype)
             for i in range(len(new_data)):
                 index = next(j for j, account in enumerate(data) if account['account'] == new_data[i]['account'])
                 data[index][columns[3]['fieldname']] += new_data[i][columns[3]['fieldname']]
                 data[index][columns[4]['fieldname']] += new_data[i][columns[4]['fieldname']]
+
+    # Get data from journal entries
+    new_data = get_journal_data([columns[1], columns[2]], date_range[0], cost_center)
+    for i in range(len(new_data)):
+        index = next(j for j, account in enumerate(data) if account['account'] == new_data[i]['account'])
+        data[index][columns[1]['fieldname']] += new_data[i][columns[1]['fieldname']]
+        data[index][columns[2]['fieldname']] += new_data[i][columns[2]['fieldname']]
+    if not single_period:
+        new_data = get_journal_data([columns[3], columns[4]], date_range[1], cost_center)
+        for i in range(len(new_data)):
+            index = next(j for j, account in enumerate(data) if account['account'] == new_data[i]['account'])
+            data[index][columns[3]['fieldname']] += new_data[i][columns[3]['fieldname']]
+            data[index][columns[4]['fieldname']] += new_data[i][columns[4]['fieldname']]
 
     # Calculate header totals
     for header in headers:
@@ -204,7 +222,7 @@ def get_data(start_m: int, end_m: int, filters: 'dict[str, ]', columns: 'list[di
     return data
 
 
-def initialise_data(columns: 'list[dict[str, ]]', date_range: 'list[str]', single_period: bool, blank_row: 'dict[str, ]') -> list:
+def initialise_data(columns: 'list[dict[str, ]]', date_range: 'list[str]', cost_center: str, single_period: bool, blank_row: 'dict[str, ]') -> list:
     "Initialises data table."
 
     headers, data =  [], []
@@ -222,7 +240,7 @@ from
 join
     tabAccount A on GLE.account = A.name
 where
-    (A.root_type = 'Income' or A.root_type = 'Expense') and {date_range[0]}
+    (A.root_type = 'Income' or A.root_type = 'Expense') and {date_range[0]}{cost_center}
 group by
     A.parent_account
 order by
@@ -243,7 +261,7 @@ from
 join
     tabAccount A on GLE.account = A.name
 where
-    A.root_type = '{header['account_type']}' and A.parent_account = '{header['account']}' and {date_range[0]}
+    A.root_type = '{header['account_type']}' and A.parent_account = '{header['account']}' and {date_range[0]}{cost_center}
 group by
     A.name""", as_dict=1))
             data.append(blank_row)
@@ -262,7 +280,7 @@ from
 join
     tabAccount A on GLE.account = A.name
 where
-    (A.root_type = 'Income' or A.root_type = 'Expense') and ({date_range[0]} or {date_range[1]})
+    (A.root_type = 'Income' or A.root_type = 'Expense') and ({date_range[0]} or {date_range[1]}){cost_center}
 group by
     A.parent_account
 order by
@@ -285,7 +303,7 @@ from
 join
     tabAccount A on GLE.account = A.name
 where
-    A.root_type = '{header['account_type']}' and A.parent_account = '{header['account']}' and ({date_range[0]} or {date_range[1]})
+    A.root_type = '{header['account_type']}' and A.parent_account = '{header['account']}' and ({date_range[0]} or {date_range[1]}){cost_center}
 group by
     A.name""", as_dict=1))
             data.append(blank_row)
@@ -309,7 +327,7 @@ group by
     return headers, data
 
 
-def get_account_data(columns: 'list[dict[str, ]]', date_range: str, doctype: str) -> list:
+def get_account_data(columns: 'list[dict[str, ]]', date_range: str, cost_center: str, doctype: str) -> list:
     "Get data based on GL Entries."
 
     data = []
@@ -346,7 +364,56 @@ join
 join
     `tab{doctype}` doc on GLE.voucher_no = doc.name
 where
-    {date_range} and (A.root_type = 'Income' or A.root_type = 'Expense')
+    {date_range} and (A.root_type = 'Income' or A.root_type = 'Expense'){cost_center}
+group by
+    GLE.account
+having
+    {columns[0]['fieldname']} <> 0""", as_dict=1))
+
+    return data
+
+
+def get_journal_data(columns: 'list[dict[str, ]]', date_range: str, cost_center: str) -> list:
+    "Get data based from Journal Entries."
+
+    data = []
+
+    data.extend(frappe.db.sql(f"""\
+select
+    GLE.account account,
+    sum(GLE.debit - GLE.credit) {columns[0]['fieldname']},
+    sum((GLE.debit - GLE.credit) * (case
+    	when
+			doc.multi_currency
+		then 
+			(case when					
+				1 / (select
+					avg(JEA2.exchange_rate)
+				from
+					`tabJournal Entry Account` JEA2
+				where
+					JEA2.parent = GLE.voucher_no and JEA2.account_currency = "ZWD")
+			then 
+				1 / (select
+					avg(JEA2.exchange_rate)
+				from
+					`tabJournal Entry Account` JEA2
+				where
+					JEA2.parent = GLE.voucher_no and JEA2.account_currency = "ZWD")
+			else 
+				doc.auction_bid_rate
+			end)
+		else 
+			doc.auction_bid_rate 
+		end)) {columns[1]['fieldname']}
+from
+    `tabGL Entry` GLE
+join
+    tabAccount A on GLE.account = A.name
+join
+    `tabJournal Entry` doc on GLE.voucher_no = doc.name
+where
+    {date_range} and (A.root_type = 'Income' or A.root_type = 'Expense'){cost_center}
 group by
     GLE.account
 having
