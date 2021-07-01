@@ -3,6 +3,186 @@
   "description": null,
   "docstatus": 0,
   "doctype": "Issue Type",
+  "modified": "2021-04-06 11:02:44.611106",
+  "name": "General Fault",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2021-04-07 15:35:34.447090",
+  "name": "Out of box failure",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2021-04-07 16:03:03.556887",
+  "name": "Transfer belt replacement",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2021-04-23 11:44:33.729858",
+  "name": "Inspection",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2021-04-23 15:22:41.069803",
+  "name": "Sofware Support",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2021-05-05 11:34:21.399000",
+  "name": "Callout",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2021-05-05 11:59:43.917440",
+  "name": "Machine Swop Out",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2021-05-05 14:49:28.633141",
+  "name": "Printhead replacement",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2021-05-07 10:37:33.084846",
+  "name": "Inspect and Service",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2021-05-10 16:16:28.853877",
+  "name": "Installation",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2021-05-11 10:34:12.758851",
+  "name": "Reconfiguration of projector",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2021-05-12 14:59:06.360917",
+  "name": "Camera fault",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2021-05-12 15:49:54.273309",
+  "name": "Fit hinges",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2021-05-14 15:01:25.974000",
+  "name": "Waste toner replacement",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2021-05-17 16:01:45.345462",
+  "name": "User setup",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2021-05-17 16:21:24.451411",
+  "name": "Toner replacement",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2021-05-21 14:11:18.490194",
+  "name": "Refurbishment of machine",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2021-06-03 15:06:07.021784",
+  "name": "Loading drivers",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
   "modified": "2020-07-21 12:37:16.710829",
   "name": "Software Support",
   "parent": null,
@@ -255,6 +435,36 @@
   "doctype": "Issue Type",
   "modified": "2020-10-13 16:05:07.883476",
   "name": "Service",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2021-04-07 12:57:44.818980",
+  "name": "Drum replacement",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2021-05-14 14:56:34.714124",
+  "name": "Warranty",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Issue Type",
+  "modified": "2021-05-04 08:47:26.525707",
+  "name": "Inspect and Quote",
   "parent": null,
   "parentfield": null,
   "parenttype": null
