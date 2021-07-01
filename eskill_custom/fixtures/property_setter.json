@@ -5934,5 +5934,21 @@
   "property": "permlevel",
   "property_type": "Int",
   "value": "1"
+ },
+ {
+  "default_value": null,
+  "doc_type": "Issue",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocField",
+  "field_name": "service_level_section",
+  "modified": "2021-06-29 10:19:18.716421",
+  "name": "Issue-service_level_section-collapsible_depends_on",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "property": "collapsible_depends_on",
+  "property_type": "Data",
+  "value": "eval: (!doc.sla_job)"
  }
 ]
