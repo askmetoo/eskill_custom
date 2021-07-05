@@ -6158,5 +6158,21 @@
   "property": "collapsible_depends_on",
   "property_type": "Data",
   "value": "eval: (!doc.sla_job)"
+ },
+ {
+  "default_value": null,
+  "doc_type": "Delivery Note",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocType",
+  "field_name": null,
+  "modified": "2021-07-01 11:44:13.843920",
+  "name": "Delivery Note-search_fields",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "property": "search_fields",
+  "property_type": "Data",
+  "value": "status,customer,customer_name, territory,base_grand_total,issue"
  }
 ]
