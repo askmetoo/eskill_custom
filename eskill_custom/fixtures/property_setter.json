@@ -6174,5 +6174,21 @@
   "property": "search_fields",
   "property_type": "Data",
   "value": "status,customer,customer_name, territory,base_grand_total,issue"
+ },
+ {
+  "default_value": null,
+  "doc_type": "Quotation",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocField",
+  "field_name": "conversion_rate",
+  "modified": "2021-07-06 10:07:55.008025",
+  "name": "Quotation-conversion_rate-read_only",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "property": "read_only",
+  "property_type": "Check",
+  "value": "1"
  }
 ]
