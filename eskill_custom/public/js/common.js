@@ -4,18 +4,20 @@ function check_save(frm) {
     }
 }
 
-function get_bid_rate(frm) {
-    if (frm.doc.currency == "USD") {
-        frappe.call({
-            method: "eskill_custom.api.auction_rate_lookup",
-            args: {
-                posting_date: frm.doc.posting_date
-            },
-            callback: function(data) {
-                frm.set_value("auction_bid_rate", data.message);
-            }
-        });
-        console.log("Got bid rate.");
+function convert_base_to_selected(frm) {
+    if (frm.doc.usd_to_currency) {
+        frm.set_value('conversion_rate', roundNumber(1 / frm.doc.usd_to_currency, 9));
+    } else {
+        frm.set_value('conversion_rate', null);
+    }
+}
+
+function convert_selected_to_base(frm) {
+    if (frm.doc.conversion_rate) {
+        frm.doc.usd_to_currency = roundNumber(1 / frm.doc.conversion_rate, 4);
+        frm.refresh_field('usd_to_currency');
+    } else {
+        frm.set_value('usd_to_currency', null);
     }
 }
 
