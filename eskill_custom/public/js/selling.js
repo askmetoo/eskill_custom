@@ -36,6 +36,16 @@ function issue_billing_update(frm, dtype) {
     });
 }
 
+function limit_rate(frm) {
+    if (frm.doc.auction_bid_rate && frm.doc.currency == "ZWD" && frm.doc.conversion_rate) {
+        if (frm.doc.conversion_rate > roundNumber(1 / roundNumber(frm.doc.auction_bid_rate * 1.08, 4), 9)) {
+            frm.set_value('conversion_rate', null);
+            frappe.validate = false;
+            frappe.throw("The minimum USD to selected currency rate is: ".concat(roundNumber(frm.doc.auction_bid_rate * 1.08, 4)));
+        }
+    }
+}
+
 function set_tax_template(frm) {
     frappe.call({
         method: "eskill_custom.api.sales_invoice_tax",
