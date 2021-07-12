@@ -128,7 +128,7 @@ app_license = "MIT"
 # }
 
 fixtures = [
-	'Custom Script',
+	'Client Script',
 	'Custom Field',
 	'Property Setter',
 	'Issue Type',
