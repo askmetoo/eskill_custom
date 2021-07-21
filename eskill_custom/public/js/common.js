@@ -22,7 +22,7 @@ function convert_selected_to_base(frm) {
 }
 
 function get_bid_rate(frm, posting_date) {
-    if (posting_date) {
+    if (posting_date && !frm.doc.docstatus) {
         frappe.call({
             method: "eskill_custom.api.auction_rate_lookup",
             args: {
