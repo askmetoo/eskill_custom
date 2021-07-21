@@ -47,25 +47,27 @@ function limit_rate(frm) {
 }
 
 function set_tax_template(frm) {
-    frappe.call({
-        method: "eskill_custom.api.sales_invoice_tax",
-        args: {
-            "doctype": frm.doctype,
-            "currency": frm.doc.currency,
-            "customer": frm.doc.customer
-        },
-        callback: function(data) {
-            var template = data.message[0][0];
-            if (template) {
-                frappe.run_serially([
-					() => frm.set_value("taxes_and_charges", template),
-					() => frm.trigger("taxes_and_charges")
-				]);
-            } else {
-                frappe.msgprint("No Tax Template detected.");
+    if (frm.doc.customer && frm.doc.currency) {
+        frappe.call({
+            method: "eskill_custom.api.sales_invoice_tax",
+            args: {
+                "doctype": frm.doctype,
+                "currency": frm.doc.currency,
+                "customer": frm.doc.customer
+            },
+            callback: function(data) {
+                var template = data.message[0][0];
+                if (template) {
+                    frappe.run_serially([
+                        () => frm.set_value("taxes_and_charges", template),
+                        () => frm.trigger("taxes_and_charges")
+                    ]);
+                } else {
+                    frappe.msgprint("No Tax Template detected.");
+                }
             }
-        }
-    });
+        });
+    }
 }
 
 function tax_template_filter(frm) {
