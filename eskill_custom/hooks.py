@@ -145,7 +145,6 @@ doctype_js = {
 # }
 
 fixtures = [
-	'Client Script',
 	'Custom Field',
 	'Property Setter',
 	'Issue Type',
