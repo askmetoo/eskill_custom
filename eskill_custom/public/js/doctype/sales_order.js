@@ -7,9 +7,7 @@ frappe.ui.form.on('Sales Order', {
     refresh(frm) {
         stock_item_filter(frm);  
         tax_template_filter(frm);
-        if (!frm.doc.docstatus) {
-            get_bid_rate(frm, frm.doc.transaction_date);
-        }
+        get_bid_rate(frm, frm.doc.transaction_date);
     },
     
     before_save(frm) {
