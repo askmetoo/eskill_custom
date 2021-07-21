@@ -53,7 +53,7 @@ frappe.ui.form.on('Issue', {
                     create_quote(frm);
                 }, "Billing");
         }
-        if (frm.doc.status == "Closed" && (!frm.doc.delivery_note || frm.doc.delivery_note_status == "Cancelled") && (frm.doc.quotation  || ((frm.doc.warranty_job || frm.doc.sla_job) && frm.doc.part_list.length))) {
+        if (frm.doc.status == "Closed" && (!frm.doc.delivery_note || frm.doc.delivery_note_status == "Cancelled") && (frm.doc.quotation  || ((frm.doc.warranty_job || frm.doc.sla_job)))) {
             frm.add_custom_button(__("Delivery Note"), function() {
                 create_delivery(frm);
             }, "Billing");
@@ -328,7 +328,7 @@ function create_quote(frm) {
             frm.doc.part_list.forEach(function (row) {
                 var part = frappe.model.add_child(quote, "Quotation Item", "items");
                 part.item_code = row.part;
-                part.item_name = row.item_name;
+                part.item_name = row.part_name;
                 part.qty = row.qty;
                 part.description = row.description;
                 part.uom = row.uom;
@@ -507,42 +507,44 @@ function create_delivery(frm) {
         delivery.sla_issue = frm.doc.sla_job ? 1 : 0;
         delivery.warranty_issue = frm.doc.warranty_job ? 1 : 0;
         // Labour will be put in here when valuation for labour is implemented
-        frm.doc.part_list.forEach(function (row) {
-            if (row.status = "Received") {
-                frappe.call({
-                    method: "eskill_custom.api.non_billable_item",
-                    args: {
-                        item_code: row.part,
-                        sla_job: frm.doc.sla_job
-                    },
-                    callback: function(data) {
-                        if (data.message) {
-                            if (data.message.valuation && data.message.expense_account) {
-                                var note_item = frappe.model.add_child(delivery, "Delivery Note Item", "items");
-                                note_item.item_code = row.part;
-                                note_item.item_name = row.part_name;
-                                note_item.description = row.description;
-                                note_item.schedule_date = delivery.schedule_date;
-                                note_item.qty = row.qty;
-                                note_item.stock_qty = row.qty;
-                                note_item.uom = row.uom;
-                                note_item.stock_uom = row.uom;
-                                note_item.conversion_factor = 1;
-                                note_item.warehouse = row.warehouse;
-                                note_item.expense_account = data.message.expense_account;
-                                note_item.rate = data.message.valuation;
+        if (frm.doc.part_list.length) {
+            frm.doc.part_list.forEach(function (row) {
+                if (row.status = "Received") {
+                    frappe.call({
+                        method: "eskill_custom.api.non_billable_item",
+                        args: {
+                            item_code: row.part,
+                            sla_job: frm.doc.sla_job
+                        },
+                        callback: function(data) {
+                            if (data.message) {
+                                if (data.message.valuation && data.message.expense_account) {
+                                    var note_item = frappe.model.add_child(delivery, "Delivery Note Item", "items");
+                                    note_item.item_code = row.part;
+                                    note_item.item_name = row.part_name;
+                                    note_item.description = row.description;
+                                    note_item.schedule_date = delivery.schedule_date;
+                                    note_item.qty = row.qty;
+                                    note_item.stock_qty = row.qty;
+                                    note_item.uom = row.uom;
+                                    note_item.stock_uom = row.uom;
+                                    note_item.conversion_factor = 1;
+                                    note_item.warehouse = row.warehouse;
+                                    note_item.expense_account = data.message.expense_account;
+                                    note_item.rate = data.message.valuation;
+                                } else {
+                                    console.log(data);
+                                    frappe.throw("Failed to get valuation rate and expense account for ".concat(row.part));
+                                }
                             } else {
                                 console.log(data);
                                 frappe.throw("Failed to get valuation rate and expense account for ".concat(row.part));
                             }
-                        } else {
-                            console.log(data);
-                            frappe.throw("Failed to get valuation rate and expense account for ".concat(row.part));
                         }
-                    }
-                });
-            }
-        });
+                    });
+                }
+            });
+        }
     }
     frappe.set_route("Form", "Delivery Note", delivery.name);
 }
