@@ -1,0 +1,247 @@
+{
+ "allow_import": 1,
+ "autoname": "format:WSU-{YYYY}-{########}",
+ "creation": "2021-06-15 12:08:13.230297",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "provided_serial_no",
+  "serial_number",
+  "approved",
+  "column_break_4",
+  "status",
+  "amended_from",
+  "section_break_4",
+  "model",
+  "column_break_2",
+  "item_name",
+  "section_break_6",
+  "purchase_date",
+  "column_break_8",
+  "reseller",
+  "section_break_10",
+  "purchase_receipt",
+  "column_break_12",
+  "check_receipt",
+  "section_break_14",
+  "first_name",
+  "email_address",
+  "column_break_20",
+  "last_name"
+ ],
+ "fields": [
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Warranty Signup",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "serial_number",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Serial Number",
+   "options": "Serial No",
+   "unique": 1
+  },
+  {
+   "fetch_from": "serial_number.item_code",
+   "fieldname": "model",
+   "fieldtype": "Link",
+   "label": "Model",
+   "options": "Item",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval: (doc.serial_number)",
+   "fieldname": "section_break_4",
+   "fieldtype": "Section Break",
+   "label": "Device Details"
+  },
+  {
+   "fieldname": "purchase_date",
+   "fieldtype": "Date",
+   "label": "Purchase Date",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "serial_number.item_name",
+   "fieldname": "item_name",
+   "fieldtype": "Data",
+   "label": "Item Name",
+   "read_only": 1
+  },
+  {
+   "depends_on": "eval: (doc.serial_number || doc.provided_serial_no)",
+   "fieldname": "section_break_6",
+   "fieldtype": "Section Break",
+   "label": "Purchase Details"
+  },
+  {
+   "fieldname": "column_break_8",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "The supplier of the product.",
+   "fieldname": "reseller",
+   "fieldtype": "Link",
+   "label": "Reseller",
+   "options": "Customer"
+  },
+  {
+   "fieldname": "section_break_10",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "purchase_receipt",
+   "fieldtype": "Attach",
+   "label": "Purchase Receipt",
+   "reqd": 1,
+   "set_only_once": 1
+  },
+  {
+   "fieldname": "column_break_12",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval: (doc.purchase_receipt)",
+   "fieldname": "check_receipt",
+   "fieldtype": "Button",
+   "label": "Check Receipt"
+  },
+  {
+   "fieldname": "section_break_14",
+   "fieldtype": "Section Break",
+   "label": "Customer Details"
+  },
+  {
+   "fieldname": "first_name",
+   "fieldtype": "Data",
+   "label": "First Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "last_name",
+   "fieldtype": "Data",
+   "label": "Last Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "email_address",
+   "fieldtype": "Data",
+   "label": "Email Address",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "depends_on": "eval: (doc.serial_number && doc.purchase_receipt && doc.purchase_date && doc.reseller)",
+   "fieldname": "approved",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Approved",
+   "permlevel": 1
+  },
+  {
+   "fieldname": "provided_serial_no",
+   "fieldtype": "Data",
+   "label": "Provided Serial No",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_20",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Pending Review",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Doc Status",
+   "options": "Pending Review\nApproved\nRejected",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  }
+ ],
+ "is_submittable": 1,
+ "modified": "2021-07-01 15:12:16.035944",
+ "modified_by": "andrew@eskilltrading.com",
+ "module": "Eskill Customisations",
+ "name": "Warranty Signup",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "permlevel": 1,
+   "read": 1,
+   "role": "System Manager",
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "import": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "set_user_permissions": 1,
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "permlevel": 1,
+   "read": 1,
+   "role": "Support Manager",
+   "write": 1
+  },
+  {
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Support Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Support Team",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "name",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

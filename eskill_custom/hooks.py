@@ -26,7 +26,24 @@ app_license = "MIT"
 # page_js = {"page" : "public/js/file.js"}
 
 # include js in doctype views
-# doctype_js = {"doctype" : "public/js/doctype.js"}
+doctype_js = {
+	'Customer' : 'public/js/doctype/customer.js',
+	'Delivery Note' : 'public/js/doctype/delivery_note.js',
+	'Issue' : 'public/js/doctype/issue.js',
+	'Item' : 'public/js/doctype/item.js',
+	'Journal Entry' : 'public/js/doctype/journal_entry.js',
+	'Landed Cost Voucher' : 'public/js/doctype/landed_cost_voucher.js',
+	'Payment Entry' : 'public/js/doctype/payment_entry.js',
+	'Purchase Invoice' : 'public/js/doctype/purchase_invoice.js',
+	'Purchase Receipt' : 'public/js/doctype/purchase_receipt.js',
+	'Quotation' : 'public/js/doctype/quotation.js',
+	'Sales Invoice' : 'public/js/doctype/sales_invoice.js',
+	'Sales Order' : 'public/js/doctype/sales_order.js',
+	'Stock Entry' : 'public/js/doctype/stock_entry.js',
+	'Stock Reconciliation' : 'public/js/doctype/stock_reconciliation.js',
+	'Task' : 'public/js/doctype/task.js',
+	'Timesheet' : 'public/js/doctype/timesheet.js',
+}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
@@ -128,7 +145,6 @@ app_license = "MIT"
 # }
 
 fixtures = [
-	'Custom Script',
 	'Custom Field',
 	'Property Setter',
 	'Issue Type',
