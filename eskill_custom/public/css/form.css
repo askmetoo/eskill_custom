@@ -1,0 +1,16 @@
+.data-row {
+    background-color: var(--control-bg);
+}
+
+[data-theme="dark"] {
+    --bg-yellow: #ffbd20;
+    --text-on-yellow: #ffffff;
+    --yellow-avatar-bg: #ffbd20;
+}
+
+[data-theme="light"] {
+    --bg-yellow: #ffbd20;
+    --control-bg: #ededed;
+    --text-on-yellow: #656565;
+    --yellow-avatar-color: #ffbd20;
+}
