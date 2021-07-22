@@ -1,0 +1,32 @@
+{
+ "category": "Modules",
+ "charts": [],
+ "creation": "2021-07-22 11:22:58.324215",
+ "developer_mode_only": 0,
+ "disable_user_customization": 0,
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "extends": "Home",
+ "extends_another_page": 1,
+ "hide_custom": 0,
+ "idx": 0,
+ "is_default": 0,
+ "is_standard": 1,
+ "label": "Eskill Home",
+ "links": [],
+ "modified": "2021-07-22 11:22:58.324215",
+ "modified_by": "andrew@eskilltrading.com",
+ "module": "Eskill Customisations",
+ "name": "Eskill Home",
+ "owner": "andrew@eskilltrading.com",
+ "pin_to_bottom": 0,
+ "pin_to_top": 0,
+ "shortcuts": [
+  {
+   "doc_view": "List",
+   "label": "Timesheets",
+   "link_to": "Timesheet",
+   "type": "DocType"
+  }
+ ]
+}
