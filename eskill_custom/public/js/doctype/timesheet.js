@@ -8,6 +8,8 @@ frappe.ui.form.on('Timesheet', {
             frm.save();
             frappe.set_route("List", "Task");
         });
+        frm.remove_custom_button("Create Sales Invoice");
+        frm.remove_custom_button("Create Salary Slip");
         activity_doctype_filter(frm);
     }
 });
