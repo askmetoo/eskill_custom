@@ -401,13 +401,6 @@ def get_chart_data(filters: 'dict[str]', data: 'list[dict]', columns: 'list[dict
 
     if "group_by_party" in filters:
         rows = []
-        column_fields = [col['fieldname'] for col in columns if col['fieldname'].startswith("range") and col['fieldname'].endswith("_base")]
-        # for record in data:
-        #     if "total" in record:
-        #         if not record['total']:
-        #             rows.append({
-        #                 'values': [record[name] for name in column_fields]
-        #             })
         rows.append({
             'values': [record['total_debt'] for record in data[:-1] if "total" in record and record['total']]
         })
