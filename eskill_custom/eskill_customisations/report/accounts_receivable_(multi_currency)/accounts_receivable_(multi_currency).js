@@ -73,6 +73,19 @@ frappe.query_reports['Accounts Receivable (Multi-Currency)'] = {
             }
         },
         {
+            'fieldname': "currency",
+            'label': __("Reported Currency"),
+            'fieldtype': "Link",
+            'options': "Currency",
+            get_query: () => {
+                return {
+                    filters: [
+                        ["Currency", "name", "!=", frappe.defaults.get_default("Currency")]
+                    ]
+                }
+            }
+        },
+        {
             'fieldname':  "aging_based_on",
             'label':  __("Aging Based On"),
             'fieldtype':  "Select",

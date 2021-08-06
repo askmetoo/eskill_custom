@@ -63,6 +63,13 @@ def get_columns(filters: 'dict[str, ]'):
             'options': "Currency"
         },
         {
+            'fieldname': "report_currency",
+            'label': _("Report Currency"),
+            'fieldtype': "Link",
+            'options': "Currency",
+            'hidden': 1
+        },
+        {
             'fieldname': "voucher_type",
             'label': _("Voucher Type"),
             'fieldtype': "Data",
@@ -110,9 +117,9 @@ def get_columns(filters: 'dict[str, ]'):
         },
         {
             'fieldname': "total_debt_account",
-            'label': _("Total Debt (Account)"),
+            'label': _(f"Total Debt ({filters['currency'] if 'currency' in filters else 'Account'})"),
             'fieldtype': "Currency",
-            'options': "currency",
+            'options': 'report_currency' if 'currency' in filters else 'currency',
             'default': 0
         },
         {
@@ -125,9 +132,9 @@ def get_columns(filters: 'dict[str, ]'):
         },
         {
             'fieldname': "range1_account",
-            'label': _(f"0-{filters['range1']} Account"),
+            'label': _(f"0-{filters['range1']} {filters['currency'] if 'currency' in filters else 'Account'}"),
             'fieldtype': "Currency",
-            'options': "currency",
+            'options': 'report_currency' if 'currency' in filters else 'currency',
             'default': 0,
             'urgency': 1
         },
@@ -141,9 +148,9 @@ def get_columns(filters: 'dict[str, ]'):
         },
         {
             'fieldname': "range2_account",
-            'label': _(f"{filters['range1'] + 1}-{filters['range2']} Account"),
+            'label': _(f"{filters['range1'] + 1}-{filters['range2']} {filters['currency'] if 'currency' in filters else 'Account'}"),
             'fieldtype': "Currency",
-            'options': "currency",
+            'options': 'report_currency' if 'currency' in filters else 'currency',
             'default': 0,
             'urgency': 2
         },
@@ -157,9 +164,9 @@ def get_columns(filters: 'dict[str, ]'):
         },
         {
             'fieldname': "range3_account",
-            'label': _(f"{filters['range2'] + 1}-{filters['range3']} Account"),
+            'label': _(f"{filters['range2'] + 1}-{filters['range3']} {filters['currency'] if 'currency' in filters else 'Account'}"),
             'fieldtype': "Currency",
-            'options': "currency",
+            'options': 'report_currency' if 'currency' in filters else 'currency',
             'default': 0,
             'urgency': 3
         },
@@ -173,9 +180,9 @@ def get_columns(filters: 'dict[str, ]'):
         },
         {
             'fieldname': "range4_account",
-            'label': _(f"{filters['range3'] + 1}-{filters['range4']} Account"),
+            'label': _(f"{filters['range3'] + 1}-{filters['range4']} {filters['currency'] if 'currency' in filters else 'Account'}"),
             'fieldtype': "Currency",
-            'options': "currency",
+            'options': 'report_currency' if 'currency' in filters else 'currency',
             'default': 0,
             'urgency': 4
         },
@@ -189,9 +196,9 @@ def get_columns(filters: 'dict[str, ]'):
         },
         {
             'fieldname': "range5_account",
-            'label': _(f"{filters['range4'] + 1}-Above Account"),
+            'label': _(f"{filters['range4'] + 1}-Above {filters['currency'] if 'currency' in filters else 'Account'}"),
             'fieldtype': "Currency",
-            'options': "currency",
+            'options': 'report_currency' if 'currency' in filters else 'currency',
             'default': 0,
             'urgency': 5
         },
@@ -206,6 +213,7 @@ def get_data(filters: 'dict[str, ]', columns: 'list[dict]') -> list:
     total_columns = [col for col in columns[-10:]]
 
     data = initialise_data(filters, columns)
+    rates = get_exchange_rates(filters)
 
     values = get_debts(filters)
     if values:
@@ -218,7 +226,17 @@ def get_data(filters: 'dict[str, ]', columns: 'list[dict]') -> list:
             else:
                 index = next(i for i, record in enumerate(data) if record['voucher_no'] == value['voucher_no'] and record['customer'] == value['customer'])
             data[index]['total_debt'] += value['main']
-            data[index]['total_debt_account'] += value['account']
+            if "currency" in filters and filters['currency'] != data[index]['currency']:
+                if rates:
+                    try:
+                        data[index]['total_debt_account'] += value['main'] * next(record['rate'] for record in rates if record['date'] <= value['posting_date'])
+                    except StopIteration:
+                        data[index]['total_debt_account'] += value['main'] * rates[-1]['rate']
+            else:
+                data[index]['total_debt_account'] += value['account']
+
+    if "currency" in filters and not rates:
+        frappe.msgprint(f"There are no exchange rates to convert to {filters['currency']}")
 
     data = [record for record in data if record['total_debt'] or record['total_debt_account']]
 
@@ -293,10 +311,14 @@ def get_data(filters: 'dict[str, ]', columns: 'list[dict]') -> list:
         data[-1][columns[0]['fieldname']] = date(*[int(i) for i in filters['report_date'].split("-")])
         data[-1]['customer'] = "Final Total"
 
+    if "currency" in filters:
+        for index, record in enumerate(data):
+            data[index]['report_currency'] = filters['currency']
+
     return data
     
 
-def initialise_data(filters: 'dict[str, ]', columns: 'list[dict]') -> list:
+def initialise_data(filters: 'dict[str, ]', columns: 'list[dict]'):
     "Initialise report data."
 
     age_query = f"datediff('{filters['report_date']}', GLE.posting_date)" if filters['aging_based_on'] == "Posting Date" else f"datediff('{filters['report_date']}', ifnull(GLE.due_date, GLE.posting_date))"
@@ -351,6 +373,36 @@ def initialise_data(filters: 'dict[str, ]', columns: 'list[dict]') -> list:
     return data
 
 
+def get_exchange_rates(filters: 'dict[str, ]'):
+    "Return list of applicable exchange rates."
+
+    rates = []
+
+    if "currency" in filters:
+        currency = frappe.db.sql(f"""\
+            select
+                default_currency
+            from
+                tabCompany
+            where
+                name = '{filters['company']}';""")[0][0]
+
+        rates.extend(frappe.db.sql(f"""\
+            select
+                date,
+                max(exchange_rate) rate
+            from
+                `tabCurrency Exchange`
+            where
+                date <= '{filters['report_date']}' and from_currency = '{currency}' and to_currency = '{filters['currency']}'
+            group by
+                date
+            order by
+                date desc;""", as_dict=1))
+
+    return rates
+
+
 def get_debts(filters: 'dict[str, ]'):
     "Return list of entry values."
 
@@ -361,8 +413,9 @@ def get_debts(filters: 'dict[str, ]'):
             round(sum(GLE.debit_in_account_currency - GLE.credit_in_account_currency), 2) account,
             GLE.against_voucher,
             GLE.against_voucher_type,
-            round(sum(GLE.debit - GLE.credit), 2) main,
             GLE.party customer,
+            round(sum(GLE.debit - GLE.credit), 2) main,
+            GLE.posting_date,
             GLE.voucher_no
         from
             `tabGL Entry` GLE
@@ -371,7 +424,7 @@ def get_debts(filters: 'dict[str, ]'):
         where
             A.debtors_account and GLE.posting_date <= '{filters['report_date']}'
         group by
-            GLE.party, GLE.voucher_no, GLE.against_voucher;""", as_dict=1))
+            GLE.party, GLE.posting_date, GLE.voucher_no, GLE.against_voucher;""", as_dict=1))
 
     return data
 
