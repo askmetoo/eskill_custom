@@ -1,0 +1,33 @@
+{
+ "add_total_row": 1,
+ "columns": [],
+ "creation": "2021-07-30 09:28:47.896947",
+ "disable_prepared_report": 0,
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [],
+ "idx": 0,
+ "is_standard": "Yes",
+ "letter_head": "Eskill Trading",
+ "modified": "2021-07-30 09:28:47.896947",
+ "modified_by": "Administrator",
+ "module": "Eskill Customisations",
+ "name": "Accounts Receivable (Multi-Currency)",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "ref_doctype": "Sales Invoice",
+ "report_name": "Accounts Receivable (Multi-Currency)",
+ "report_type": "Script Report",
+ "roles": [
+  {
+   "role": "Accounts User"
+  },
+  {
+   "role": "Accounts Manager"
+  },
+  {
+   "role": "Employee"
+  }
+ ]
+}
