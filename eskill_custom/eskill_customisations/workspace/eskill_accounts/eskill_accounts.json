@@ -77,14 +77,14 @@
   {
    "hidden": 0,
    "is_query_report": 1,
-   "label": "Accounts Receivable (Mulit-Currency)",
+   "label": "Accounts Receivable (Multi-Currency)",
    "link_to": "Accounts Receivable (Multi-Currency)",
    "link_type": "Report",
    "onboard": 0,
    "type": "Link"
   }
  ],
- "modified": "2021-08-06 11:12:59.956105",
+ "modified": "2021-08-11 17:02:49.366726",
  "modified_by": "andrew@eskilltrading.com",
  "module": "Eskill Customisations",
  "name": "Eskill Accounts",
