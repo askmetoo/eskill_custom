@@ -109,13 +109,13 @@ doctype_js = {
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
+scheduler_events = {
 # 	"all": [
 # 		"eskill_custom.tasks.all"
 # 	],
-# 	"daily": [
-# 		"eskill_custom.tasks.daily"
-# 	],
+	'daily' : [
+		"eskill_custom.eskill_customisations.doctype.device_sla.device_sla.update_state"
+	],
 # 	"hourly": [
 # 		"eskill_custom.tasks.hourly"
 # 	],
@@ -125,7 +125,7 @@ doctype_js = {
 # 	"monthly": [
 # 		"eskill_custom.tasks.monthly"
 # 	]
-# }
+}
 
 # Testing
 # -------
