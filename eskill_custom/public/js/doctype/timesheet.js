@@ -2,29 +2,14 @@ frappe.ui.form.on('Timesheet', {
     refresh(frm) {
         frm.add_custom_button(__("Issues"), function() {
             frm.save();
-            frappe.route_options = {
-                "name": '',
-                "subject": '',
-                "customer": '',
-                "serial_number": '',
-                "project": '',
-                "status": '',
-                "priority": '',
-                "technician_name": ''
-            };
             frappe.set_route("List", "Issue");
         });
         frm.add_custom_button(__("Tasks"), function() {
             frm.save();
-            frappe.route_options = {
-                "name": '',
-                "subject": '',
-                "project": '',
-                "status": '',
-                "priority": ''
-            };
             frappe.set_route("List", "Task");
         });
+        frm.remove_custom_button("Create Sales Invoice");
+        frm.remove_custom_button("Create Salary Slip");
         activity_doctype_filter(frm);
     }
 });

@@ -15,7 +15,9 @@ app_license = "MIT"
 # ------------------
 
 # include js, css files in header of desk.html
-# app_include_css = "/assets/eskill_custom/css/eskill_custom.css"
+app_include_css = [
+	"/assets/eskill_custom/css/form.css"
+]
 # app_include_js = "/assets/eskill_custom/js/eskill_custom.js"
 
 # include js, css files in header of web template
@@ -107,13 +109,13 @@ doctype_js = {
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
+scheduler_events = {
 # 	"all": [
 # 		"eskill_custom.tasks.all"
 # 	],
-# 	"daily": [
-# 		"eskill_custom.tasks.daily"
-# 	],
+	'daily' : [
+		"eskill_custom.eskill_customisations.doctype.device_sla.device_sla.update_state"
+	],
 # 	"hourly": [
 # 		"eskill_custom.tasks.hourly"
 # 	],
@@ -123,7 +125,7 @@ doctype_js = {
 # 	"monthly": [
 # 		"eskill_custom.tasks.monthly"
 # 	]
-# }
+}
 
 # Testing
 # -------
