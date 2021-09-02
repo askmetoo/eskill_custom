@@ -1,5 +1,5 @@
 function check_save(frm) {
-    if (frm.doc.__unsaved) {
+    if (frm.is_dirty()) {
         frm.save();
     }
 }
