@@ -2,12 +2,13 @@
  "actions": [],
  "allow_copy": 1,
  "allow_import": 1,
- "autoname": "format:{customer} - {serial_number}",
+ "autoname": "naming_series:",
  "creation": "2021-07-23 08:37:19.008217",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "naming_series",
   "customer",
   "amended_from",
   "column_break_2",
@@ -170,12 +171,14 @@
    "fieldname": "breach",
    "fieldtype": "Button",
    "label": "Breach"
+  },
+  {
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2021-07-29 10:02:16.642617",
+ "modified": "2021-11-02 09:35:01.629019",
  "modified_by": "Administrator",
  "module": "Eskill Customisations",
  "name": "Device SLA",
@@ -211,6 +214,7 @@
    "read": 1,
    "report": 1,
    "role": "Support Manager",
+   "select": 1,
    "set_user_permissions": 1,
    "share": 1,
    "submit": 1,
@@ -222,6 +226,7 @@
    "role": "Support Team"
   }
  ],
+ "search_fields": "customer, customer_name",
  "show_name_in_global_search": 1,
  "show_preview_popup": 1,
  "sort_field": "modified",
