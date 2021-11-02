@@ -8,6 +8,23 @@ frappe.ui.form.on('Device SLA', {
         serial_filter(frm);
         set_end_date(frm);
         terms_filter(frm);
+        frm.fields_dict.devices.grid.get_docfield("add_counter_readings").hidden = 1
+        frm.fields_dict.devices.grid.get_docfield("warranty_date_update").hidden = 1
+        frm.fields_dict.devices.grid.get_docfield("warranty_swap_out_section").hidden = 1
+        frm.fields_dict.devices.grid.grid_rows.forEach( (device) => {
+            device.docfields[device.docfields.findIndex( (field) => {
+                return field.fieldname == "add_counter_readings"
+            })].hidden = 1;
+            device.docfields[device.docfields.findIndex( (field) => {
+                return field.fieldname == "warranty_date_update"
+            })].hidden = 1;
+            device.docfields[device.docfields.findIndex( (field) => {
+                return field.fieldname == "warranty_swap_out_section"
+            })].hidden = 1;
+        });
+        frm.refresh_field("devices");
+    },
+
     },
 
     before_submit : function(frm) {
