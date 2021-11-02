@@ -1,6 +1,42 @@
 // Copyright (c) 2021, Eskill Trading and contributors
 // For license information, please see license.txt
 
+
+frappe.form.link_formatters['Customer'] = (value, doc) => {
+    if (value && doc.customer_name && (doc.customer_name != value)) {
+        return value + ": " + doc.customer_name;
+    } else {
+        return value;
+    }
+}
+
+
+frappe.form.link_formatters['Item'] = (value, doc) => {
+    if (value) {
+        if (doc.part_name && doc.part_name != value) {
+            return value + ": " + doc.part_name;
+        } else if (doc.model_name && doc.model_name != value) {
+            return value + ": " + doc.model_name;
+        } else {
+            return value;
+        }
+    }
+}
+
+
+frappe.form.link_formatters['Serial No'] = (value, doc) => {
+    if (doc.doctype == "Service Device" && value) {
+        if (doc.warranty_status) {
+            return value + ": " + doc.warranty_status;
+        } else {
+            return value + ": Warranty Unknown";
+        }
+    } else {
+        return value;
+    }
+}
+
+
 frappe.ui.form.on('Device SLA', {
     refresh : function(frm) {
         customer_filter(frm);
