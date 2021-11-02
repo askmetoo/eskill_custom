@@ -33,6 +33,54 @@ frappe.ui.form.on('Device SLA', {
     }
 });
 
+
+frappe.ui.form.on('Service Device', {
+    before_devices_remove(frm, cdt, cdn) {
+        if (!frappe.user_roles.includes("Support Manager") && locals[cdt][cdn].model) {
+            frappe.throw("Please contact a support manager if you wish to remove a device from this issue.");
+        }
+    },
+    
+    model(frm, cdt, cdn) {
+        if (locals[cdt][cdn].serial_number) {
+            locals[cdt][cdn].serial_number = undefined;
+            locals[cdt][cdn].warranty_status = undefined;
+        }
+        if (locals[cdt][cdn].model) {
+            serial_filter(frm, cdn);
+        } else {
+            locals[cdt][cdn].model_name = undefined;
+        }
+        frm.refresh_fields();
+    },
+    
+    serial_no_report(frm, cdt, cdn) {
+        serial_report(locals[cdt][cdn].serial_number);
+    },
+    
+    serial_number(frm, cdt, cdn) {
+        if (!locals[cdt][cdn].serial_number) {
+            locals[cdt][cdn].warranty_status = undefined;
+        } else {
+            var duplicate_found = false;
+            frm.fields_dict.devices.grid.grid_rows.forEach( (device) => {
+                if (device.doc.name != cdn && device.doc.serial_number == locals[cdt][cdn].serial_number) {
+                    duplicate_found = true;
+                }
+            });
+            if (duplicate_found) {
+                frappe.msgprint(locals[cdt][cdn].serial_number + " is a duplicate serial number.");
+                locals[cdt][cdn].serial_number = undefined;
+            }
+        }
+    },
+
+    warranty_date_update(frm, cdt, cdn) {
+        warranty_update(frm, locals[cdt][cdn].model, locals[cdt][cdn].serial_number);
+    },
+});
+
+
 function breach_contract(frm) {
     frappe.confirm(
         "You are about to breach the SLA. Are you sure that you wish to proceed?",
