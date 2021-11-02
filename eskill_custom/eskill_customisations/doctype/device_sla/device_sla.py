@@ -29,6 +29,10 @@ class DeviceSLA(Document):
         
         self.devices = accepted_devices
 
+        # Sort the devices table based on model, then serial number. Places entries without a serial number at the top
+        for i, device in enumerate(sorted(self.devices, key=lambda device: (device.model if device.serial_number else "", device.serial_number if device.serial_number else device.model)), 1):
+            device.idx = i
+
 
     @frappe.whitelist()
     def get_terms(self) -> str:
