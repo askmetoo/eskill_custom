@@ -9,11 +9,32 @@ from frappe.model.document import Document
 class DeviceSLA(Document):
     def __init__(self, *args, **kwargs) -> None:
         super(DeviceSLA, self).__init__(*args, **kwargs)
+
+
+    def validate(self):
+        # Remove entries with duplicate serial numbers or invalid serial numbers
+        known_serials = set()
+        accepted_devices = list()
+        for device in sorted(self.devices, key=lambda device: (device.name if "New" not in device.name else ""), reverse=True):
+            if device.serial_number:
+                if not frappe.db.exists("Serial No", device.serial_number):
+                    continue
+
+                serial_number = frappe.get_doc("Serial No", device.serial_number)
+                if device.serial_number not in known_serials and device.model == serial_number.item_code:
+                    known_serials.add(device.serial_number)
+                else:
+                    continue
+            accepted_devices.append(device)
         
+        self.devices = accepted_devices
+
+
     @frappe.whitelist()
     def get_terms(self) -> str:
         "Gets the selected terms and conditions template and returns it with the values filled in."
         pass
+
 
 def update_status():
     "Updates SLA status based on date."
