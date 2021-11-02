@@ -25,6 +25,8 @@ frappe.ui.form.on('Device SLA', {
         frm.refresh_field("devices");
     },
 
+    after_save(frm) {
+        frm.reload_doc();
     },
 
     before_submit : function(frm) {
