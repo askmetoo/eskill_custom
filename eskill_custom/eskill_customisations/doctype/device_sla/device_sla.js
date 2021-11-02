@@ -107,25 +107,40 @@ function customer_filter(frm) {
     }
 }
 
+
 function model_filter(frm) {
-    frm.fields_dict.model.get_query = function() {
+    frm.fields_dict.devices.grid.fields_map.model.get_query = function() {
         return {
             filters : [
-                ['Item', 'item_group', 'like', '%Hardware'],
                 ['Item', 'has_serial_no', '=', 1]
             ]
         }
     }
 }
 
-function serial_filter(frm) {
-    frm.fields_dict.serial_number.get_query = function() {
+
+function serial_filter(frm, devices_row) {
+    if (devices_row) {
+        frm.fields_dict.devices.grid.grid_rows_by_docname[devices_row].get_field('serial_number').get_query = function() {
         return {
-            filters : [
-                ['Serial No', 'item_code', '=', frm.doc.model]
-            ]
+                filters: {
+                    'item_code': locals['Service Device'][devices_row].model
         }
     }
+        }
+    } else {
+        var serial_field = frm.fields_dict.devices.grid.get_docfield("serial_number").idx - 1
+        frm.fields_dict.devices.grid.grid_rows.forEach( (row) => {
+            frm.fields_dict.devices.grid.grid_rows_by_docname[row.doc.name].docfields[serial_field].get_query = function() {
+                return {
+                    filters: {
+                        'item_code': row.doc.model
+                    }
+                }
+            }
+        });
+    }
+    frm.refresh_fields();
 }
 
 function set_end_date(frm) {
