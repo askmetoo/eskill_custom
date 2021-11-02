@@ -38,7 +38,7 @@ frappe.form.link_formatters['Serial No'] = (value, doc) => {
 
 
 frappe.ui.form.on('Device SLA', {
-    refresh : function(frm) {
+    refresh(frm) {
         customer_filter(frm);
         model_filter(frm);
         serial_filter(frm);
@@ -65,25 +65,25 @@ frappe.ui.form.on('Device SLA', {
         frm.reload_doc();
     },
 
-    before_submit : function(frm) {
+    before_submit(frm) {
         set_status(frm);
     },
 
-    breach : function(frm) {
+    breach(frm) {
         breach_contract(frm);
     },
 
-    model : function(frm) {
+    model(frm) {
         if (!frm.doc.model) {
             frm.set_value('serial_number', null);
         }
     },
 
-    period : function(frm) {
+    period(frm) {
         set_end_date(frm);
     },
 
-    start_date : function(frm) {
+    start_date(frm) {
         set_end_date(frm);
     }
 });
@@ -152,6 +152,7 @@ function breach_contract(frm) {
     );
 }
 
+
 function customer_filter(frm) {
     frm.fields_dict.customer.get_query = function() {
         return {
@@ -177,11 +178,11 @@ function model_filter(frm) {
 function serial_filter(frm, devices_row) {
     if (devices_row) {
         frm.fields_dict.devices.grid.grid_rows_by_docname[devices_row].get_field('serial_number').get_query = function() {
-        return {
+            return {
                 filters: {
                     'item_code': locals['Service Device'][devices_row].model
-        }
-    }
+                }
+            }
         }
     } else {
         var serial_field = frm.fields_dict.devices.grid.get_docfield("serial_number").idx - 1
@@ -198,9 +199,11 @@ function serial_filter(frm, devices_row) {
     frm.refresh_fields();
 }
 
+
 function set_end_date(frm) {
     frm.set_value('end_date', frappe.datetime.add_months(frm.doc.start_date, frm.doc.period));
 }
+
 
 function set_status(frm) {
     if (frappe.datetime.now_date() < frm.doc.start_date) {
@@ -211,6 +214,7 @@ function set_status(frm) {
         frm.set_value('status', 'Expired');
     }
 }
+
 
 function terms_filter(frm) {
     frm.fields_dict.cp_name.get_query = function() {
