@@ -34,6 +34,19 @@ class DeviceSLA(Document):
             device.idx = i
 
 
+    def before_submit(self):
+        # Check for device entries without serial numbers
+        incomplete_devices = [device for device in self.devices if not device.serial_number]
+
+        if len(incomplete_devices) == 1:
+            frappe.throw(f"Row {incomplete_devices[0].idx} is missing a serial number in the devices table.")
+        elif len(incomplete_devices) > 1:
+            message = f"Rows {incomplete_devices[0].idx}"
+            for i in range(1, len(incomplete_devices)):
+                message += f", {incomplete_devices[i].idx}"
+            frappe.throw(message + " are missing serial numbers in the devices table.")
+
+
     @frappe.whitelist()
     def get_terms(self) -> str:
         "Gets the selected terms and conditions template and returns it with the values filled in."
