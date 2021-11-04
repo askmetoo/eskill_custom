@@ -4,6 +4,7 @@
 
 [data-theme="dark"] {
     --bg-yellow: #ffbd20;
+    --text-muted: #cdcdcd;
     --text-on-yellow: #ffffff;
     --yellow-avatar-bg: #ffbd20;
 }
