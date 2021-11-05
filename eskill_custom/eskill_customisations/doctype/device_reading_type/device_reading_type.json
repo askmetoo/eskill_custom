@@ -1,4 +1,6 @@
 {
+ "actions": [],
+ "allow_rename": 1,
  "autoname": "field:type_name",
  "creation": "2020-10-19 11:55:01.050451",
  "doctype": "DocType",
@@ -20,11 +22,13 @@
    "unique": 1
   }
  ],
- "modified": "2020-10-21 15:37:27.600065",
- "modified_by": "andrew@eskilltrading.com",
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2021-11-05 15:08:52.338287",
+ "modified_by": "Administrator",
  "module": "Eskill Customisations",
  "name": "Device Reading Type",
- "owner": "neil@eskilltrading.com",
+ "owner": "Administrator",
  "permissions": [
   {
    "create": 1,
