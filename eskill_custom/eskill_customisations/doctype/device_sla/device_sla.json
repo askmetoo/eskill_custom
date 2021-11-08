@@ -9,6 +9,7 @@
  "engine": "InnoDB",
  "field_order": [
   "naming_series",
+  "title",
   "customer",
   "customer_name",
   "amended_from",
@@ -170,12 +171,20 @@
    "label": "Naming Series",
    "options": "SLA-.########",
    "set_only_once": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Title",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2021-11-02 09:35:01.629019",
+ "modified": "2021-11-05 15:59:58.042979",
  "modified_by": "Administrator",
  "module": "Eskill Customisations",
  "name": "Device SLA",
@@ -228,5 +237,6 @@
  "show_preview_popup": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
+ "title_field": "title",
  "track_changes": 1
 }
