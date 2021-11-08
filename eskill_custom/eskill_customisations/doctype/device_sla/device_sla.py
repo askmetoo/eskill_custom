@@ -33,6 +33,9 @@ class DeviceSLA(Document):
         for i, device in enumerate(sorted(self.devices, key=lambda device: (device.model if device.serial_number else "", device.serial_number if device.serial_number else device.model)), 1):
             device.idx = i
 
+        # Set title based on customer and contract tier
+        self.title = f"{self.customer} - {self.contract_tier}"
+
 
     def before_submit(self):
         # Check for device entries without serial numbers
