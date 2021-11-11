@@ -6,7 +6,7 @@ frappe.require([
 frappe.ui.form.on('Delivery Note', {
     refresh: function(frm) {
         tax_template_filter(frm);
-        if (frm.doc.issue && frm.doc.docstatus == 1 && frm.doc.status == "To Bill") {
+        if (frm.doc.service_order && frm.doc.docstatus == 1 && frm.doc.status == "To Bill") {
             setTimeout(() => {
                 frm.remove_custom_button("Sales Invoice", 'Create');
             }, 500);
@@ -27,31 +27,27 @@ frappe.ui.form.on('Delivery Note', {
         assign_sales_person(frm);
         limit_rate(frm);
     },
+
+    after_save(frm) {
+        set_non_billable_accounts(frm);
+    },
     
     before_submit(frm) {
         get_bid_rate(frm, frm.doc.posting_date);
         set_tax_template(frm);
         assign_sales_person(frm);
     },
-    
-    after_save(frm) {
-        if (frm.doc.issue){
-            issue_billing_update(frm, "delivery_note");
-        }
-    },
-    
+        
     on_submit(frm) {
-        if (frm.doc.issue){
-            if (!frm.doc.sla_issue && !frm.doc.warranty_issue) {
-                issue_billing_update(frm, "delivery_note");
-                quote_ordered(frm);
+        if (frm.doc.service_order) {
+            update_service_order(frm);
+            if (frm.doc.service_order_type == "Billable") {
                 frappe.model.open_mapped_doc({
                     method: "eskill_custom.delivery_note.make_service_invoice",
                     frm: frm,
                 });
             } else {
                 service_delivery_unbillable(frm);
-                frm.refresh();
             }
         } else {
             frappe.model.open_mapped_doc({
@@ -59,19 +55,10 @@ frappe.ui.form.on('Delivery Note', {
                 frm: frm,
             });
         }
+    },
 
-    },
-    
-    on_update(frm) {
-        if (frm.doc.issue){
-            issue_billing_update(frm, "delivery_note");
-        }
-    },
-    
     after_cancel(frm) {
-        if (frm.doc.issue){
-            issue_billing_update(frm, "delivery_note");
-        }
+        update_service_order(frm);
     },
 
     conversion_rate: function(frm) {
@@ -101,34 +88,37 @@ frappe.ui.form.on('Delivery Note', {
     }
 });
 
-function quote_ordered(frm) {
-    frappe.call({
-        method: "eskill_custom.api.service_quote_ordered",
-        args: {
-            issue: frm.doc.issue
-        },
-        callback: function(response) {
-            if (response.message != 1) {
-                frappe.throw(__("Error encountered when updating quote status."));
-            }
-        }
-    });
-}
 
 function service_delivery_unbillable(frm) {
     frappe.call({
         method: "eskill_custom.delivery_note.set_non_billable_status",
         args: {
-            docname: frm.doc.name,
+            delivery_name: frm.doc.name,
         },
-        callback: function() {
-            issue_billing_update(frm, "delivery_note");
+        callback: () => {
+            frm.reload_doc();
         }
     });
 }
 
+
+function set_non_billable_accounts(frm) {
+    if (frm.doc.service_order_type != "Billable") {
+        frappe.call({
+            method: "eskill_custom.delivery_note.set_non_billable_accounts",
+            args: {
+                delivery_name: frm.doc.name
+            },
+            callback: () => {
+                frm.reload_doc();
+            }
+        });
+    }
+}
+
+
 function set_tax_template(frm) {
-    if (!frm.doc.sla_issue && !frm.doc.warranty_issue) {
+    if (frm.doc.service_order_type == "Billable") {
         frappe.call({
             method: "eskill_custom.api.sales_invoice_tax",
             args: {
@@ -149,4 +139,14 @@ function set_tax_template(frm) {
             }
         });
     }
+}
+
+
+function update_service_order(frm) {
+    frappe.call({
+        method: "eskill_custom.delivery_note.update_service_order",
+        args: {
+            delivery_name: frm.doc.name
+        }
+    });
 }

@@ -30,29 +30,13 @@ frappe.ui.form.on('Sales Invoice', {
         assign_sales_person(frm);
     },
     
-    after_save(frm) {
-        if (frm.doc.issue){
-            issue_billing_update(frm, "invoice");
-        }
-    },
-    
     on_submit(frm) {
         link_credit_to_invoice(frm);
-        if (frm.doc.issue){
-            issue_billing_update(frm, "invoice");
-        }
+        update_service_order(frm);
     },
-    
-    on_update(frm) {
-        if (frm.doc.issue){
-            issue_billing_update(frm, "invoice");
-        }
-    },
-    
+
     after_cancel(frm) {
-        if (frm.doc.issue){
-            issue_billing_update(frm, "invoice");
-        }
+        update_service_order(frm);
     },
 
     conversion_rate: function(frm) {
@@ -116,4 +100,13 @@ function naming_series_set(frm) {
     } else {
         frm.set_value("naming_series", "SI.########");
     }
+}
+
+function update_service_order(frm) {
+    frappe.call({
+        method: "eskill_custom.sales_invoice.update_service_order",
+        args: {
+            invoice_name: frm.doc.name
+        }
+    });
 }
