@@ -1,17 +1,12 @@
 # Copyright (c) 2021, Eskill Trading and contributors
 # For license information, please see license.txt
 
-from typing import Dict
-
 import frappe
 from erpnext.accounts.party import get_party_account_currency
 from erpnext.setup.utils import get_exchange_rate
 from frappe import _
-from frappe.contacts.doctype.address.address import get_company_address
 from frappe.model.document import Document
 from frappe.model.mapper import get_mapped_doc
-from frappe.model.utils import get_fetch_values
-from frappe.utils import flt
 
 
 class ServiceOrder(Document):
@@ -267,14 +262,14 @@ class ServiceOrder(Document):
 
 
     @frappe.whitelist()
-    def set_job_type(self, type: str):
+    def set_job_type(self, job_type: str):
         "Updates the billability of the job and adds comment to describe who updated it."
 
-        self.db_set("job_type", type)
+        self.db_set("job_type", job_type)
 
         self.add_comment(
             comment_type="Info",
-            text=f"set job as \"{type}\"."
+            text=f"set job as \"{job_type}\"."
         )
 
 
