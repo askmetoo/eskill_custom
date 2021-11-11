@@ -1,0 +1,76 @@
+{
+ "category": "Modules",
+ "charts": [],
+ "creation": "2021-11-08 14:04:22.186010",
+ "developer_mode_only": 0,
+ "disable_user_customization": 0,
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "extends": "Support",
+ "extends_another_page": 1,
+ "hide_custom": 0,
+ "idx": 0,
+ "is_default": 0,
+ "is_standard": 1,
+ "label": "Eskill Support",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Service Orders",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "dependencies": "Customer, Item",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Service Order",
+   "link_to": "Service Order",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Service Level Agreement",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Device SLA",
+   "link_to": "Device SLA",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2021-11-08 14:54:33.994328",
+ "modified_by": "andrew@eskilltrading.com",
+ "module": "Eskill Customisations",
+ "name": "Eskill Support",
+ "owner": "andrew@eskilltrading.com",
+ "pin_to_bottom": 0,
+ "pin_to_top": 0,
+ "shortcuts": [
+  {
+   "doc_view": "List",
+   "format": "{} Open",
+   "label": "Service Order",
+   "link_to": "Service Order",
+   "stats_filter": "{\n    \"docstatus\": 1,\n    \"job_status\": \"Open\"\n}",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Timesheet",
+   "link_to": "Timesheet",
+   "type": "DocType"
+  }
+ ]
+}
