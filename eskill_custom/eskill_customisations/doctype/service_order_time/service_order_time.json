@@ -1,0 +1,60 @@
+{
+ "actions": [],
+ "autoname": "SVST.########",
+ "creation": "2021-08-16 12:11:13.649568",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "technician",
+  "section_break_2",
+  "total_hours",
+  "column_break_4",
+  "billable_hours"
+ ],
+ "fields": [
+  {
+   "fieldname": "technician",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Technician",
+   "options": "Sales Person",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_2",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "total_hours",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Total Hours",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "billable_hours",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Billable Hours",
+   "precision": "2",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2021-08-17 08:41:38.341205",
+ "modified_by": "Administrator",
+ "module": "Eskill Customisations",
+ "name": "Service Order Time",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
