@@ -1,4 +1,6 @@
 {
+ "actions": [],
+ "allow_import": 1,
  "autoname": "format:WSO-{YYYY}-{####}",
  "creation": "2020-10-14 14:47:14.265907",
  "doctype": "DocType",
@@ -6,20 +8,23 @@
  "engine": "InnoDB",
  "field_order": [
   "date",
-  "warranty_claim",
-  "issue",
+  "edit_posting_date",
   "customer",
   "amended_from",
+  "column_break_6",
+  "service_order",
+  "service_device",
+  "approved",
+  "section_break_9",
+  "swap_out_reason",
   "incoming_device_section",
   "model_in",
   "serial_no_in",
-  "column_break_8",
-  "delivery_note_return",
   "outgoing_device_section",
   "model_out",
   "serial_no_out",
   "column_break_12",
-  "new_delivery_note"
+  "delivery_out"
  ],
  "fields": [
   {
@@ -28,35 +33,12 @@
    "fieldname": "date",
    "fieldtype": "Date",
    "label": "Date",
-   "read_only": 1,
+   "read_only_depends_on": "eval: (!doc.edit_posting_date);",
    "reqd": 1
   },
   {
    "allow_in_quick_entry": 1,
-   "fieldname": "warranty_claim",
-   "fieldtype": "Link",
-   "in_global_search": 1,
-   "in_list_view": 1,
-   "in_preview": 1,
-   "in_standard_filter": 1,
-   "label": "Warranty Claim",
-   "options": "Warranty Claim"
-  },
-  {
-   "allow_in_quick_entry": 1,
-   "fieldname": "issue",
-   "fieldtype": "Link",
-   "in_global_search": 1,
-   "in_list_view": 1,
-   "in_preview": 1,
-   "in_standard_filter": 1,
-   "label": "Issue",
-   "options": "Issue",
-   "read_only": 1
-  },
-  {
-   "allow_in_quick_entry": 1,
-   "fetch_from": "issue.customer",
+   "fetch_from": "service_order.customer",
    "fetch_if_empty": 1,
    "fieldname": "customer",
    "fieldtype": "Link",
@@ -66,7 +48,8 @@
    "in_standard_filter": 1,
    "label": "Customer",
    "options": "Customer",
-   "read_only": 1
+   "read_only": 1,
+   "reqd": 1
   },
   {
    "allow_in_quick_entry": 1,
@@ -83,14 +66,6 @@
   },
   {
    "allow_in_quick_entry": 1,
-   "fieldname": "delivery_note_return",
-   "fieldtype": "Link",
-   "in_preview": 1,
-   "label": "Delivery Note Return",
-   "options": "Delivery Note"
-  },
-  {
-   "allow_in_quick_entry": 1,
    "depends_on": "eval: doc.model_out",
    "fieldname": "serial_no_out",
    "fieldtype": "Link",
@@ -100,15 +75,6 @@
    "in_standard_filter": 1,
    "label": "Serial No Out",
    "options": "Serial No"
-  },
-  {
-   "allow_in_quick_entry": 1,
-   "fieldname": "new_delivery_note",
-   "fieldtype": "Link",
-   "in_preview": 1,
-   "label": "New Delivery Note",
-   "options": "Delivery Note",
-   "read_only": 1
   },
   {
    "fieldname": "amended_from",
@@ -123,10 +89,6 @@
    "fieldname": "incoming_device_section",
    "fieldtype": "Section Break",
    "label": "Incoming Device"
-  },
-  {
-   "fieldname": "column_break_8",
-   "fieldtype": "Column Break"
   },
   {
    "fieldname": "outgoing_device_section",
@@ -152,12 +114,72 @@
    "fieldtype": "Link",
    "label": "Model Out",
    "options": "Item"
+  },
+  {
+   "default": "0",
+   "fieldname": "edit_posting_date",
+   "fieldtype": "Check",
+   "label": "Edit Posting Date"
+  },
+  {
+   "fieldname": "column_break_6",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "service_order",
+   "fieldtype": "Link",
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Service Order",
+   "options": "Service Order",
+   "read_only": 1,
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "service_device",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "in_global_search": 1,
+   "label": "Service Device",
+   "options": "Service Device",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "depends_on": "eval: (doc.docstatus);",
+   "fieldname": "approved",
+   "fieldtype": "Check",
+   "label": "Approved",
+   "permlevel": 1
+  },
+  {
+   "allow_in_quick_entry": 1,
+   "fieldname": "delivery_out",
+   "fieldtype": "Link",
+   "in_preview": 1,
+   "label": "Delivery Out",
+   "options": "Delivery Note",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_9",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "swap_out_reason",
+   "fieldtype": "Text Editor",
+   "label": "Swap Out Reason"
   }
  ],
- "in_create": 1,
+ "index_web_pages_for_search": 1,
  "is_submittable": 1,
- "modified": "2020-11-26 09:52:13.258680",
- "modified_by": "andrew@eskilltrading.com",
+ "links": [],
+ "modified": "2021-10-20 16:06:08.455346",
+ "modified_by": "Administrator",
  "module": "Eskill Customisations",
  "name": "Warranty Swap Out",
  "owner": "Administrator",
@@ -169,10 +191,12 @@
    "delete": 1,
    "email": 1,
    "export": 1,
+   "import": 1,
    "print": 1,
    "read": 1,
    "report": 1,
    "role": "System Manager",
+   "select": 1,
    "set_user_permissions": 1,
    "share": 1,
    "submit": 1,
@@ -201,11 +225,9 @@
    "report": 1,
    "role": "Support Team",
    "share": 1,
-   "submit": 1,
    "write": 1
   }
  ],
- "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "track_changes": 1,

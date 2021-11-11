@@ -3,8 +3,8 @@
 
 frappe.ui.form.on('Warranty Swap Out', {
     refresh(frm) {
-        if (!frm.doc.docstatus && frm.doc.serial_no_out && !frm.doc.new_delivery_note) {
-            frm.add_custom_button(__("Delivery Note"), function() {
+        if (frm.doc.docstatus && frm.doc.serial_no_out && !frm.doc.new_delivery_note) {
+            frm.add_custom_button(__("Issue Swap Out"), function() {
                 const delivery = frappe.model.get_new_doc("Delivery Note");
                 console.log("Delivery Note started.");
                 delivery.naming_series = "DN.########";
@@ -32,38 +32,32 @@ frappe.ui.form.on('Warranty Swap Out', {
                 console.log("Delivery Note created.");
             });
         }
-        frm.fields_dict.issue.get_query = function() {
-            return {
-                filters: [
-                    ['Issue', "serial_number", "is", "set"]
-                ]
-            };
-        };
-        frm.fields_dict.customer.get_query = function() {
-            return{
-                filters: [
-                    ['Customer', 'disabled', '=', false]
-                ]
-            };
-        };
         if (frm.doc.new_delivery_note) {
             
         }
-        claim_filter(frm);
         model_out_filter(frm);
         serial_out_filter(frm);
         product_out_read_only(frm);
     },
+
+    before_save(frm) {
+        if (frm.doc.edit_posting_date) {
+            frm.doc.edit_posting_date = 0;
+        }
+    },
+
+    after_save(frm) {
+        update_service_order();
+    },
     
     before_submit(frm) {
-        if (!frm.doc.new_delivery_note) {
-            validated = false;
-            frappe.throw("Delivery note for outgoing product is required!");
+        if (!frm.doc.swap_out_reason) {
+            frappe.throw(__("Before submitting you must provide an explanation for the swap out."));
         }
-        if (!frm.doc.serial_no_out) {
-            validated = false;
-            frappe.throw("Serial number for outgoing product is required!");
-        }
+    },
+
+    after_cancel(frm) {
+        update_service_order();
     },
     
     customer: function(frm) {
@@ -79,26 +73,6 @@ frappe.ui.form.on('Warranty Swap Out', {
     }
 });
 
-function claim_filter(frm) {
-    if (frm.doc.customer) {
-        frm.fields_dict.warranty_claim.get_query = function() {
-            return{
-                filters: [
-                    ['Warranty Claim', 'customer', '=', frm.doc.customer],
-                    ['Warranty Claim', 'status', '!=', 'Cancelled']
-                ]
-            };
-        };
-    } else {
-        frm.fields_dict.warranty_claim.get_query = function() {
-            return {
-                filters: [
-                    ['Warranty Claim', 'status', '!=', 'Cancelled']
-                ]
-            };
-        };
-    }
-}
 
 function model_out_filter(frm) {
     if (frm.doc.model_in) {
@@ -123,6 +97,7 @@ function model_out_filter(frm) {
     }
 }
 
+
 function serial_out_filter(frm) {
     if (!frm.doc.model_out) {
         if (frm.doc.serial_no_out) {
@@ -140,9 +115,17 @@ function serial_out_filter(frm) {
     }
 }
 
+
 function product_out_read_only(frm) {
     if (frm.doc.new_delivery_note) {
         frm.set_df_property("model_out", "read_only", 1);
         frm.set_df_property("serial_no_out", "read_only", 1);
     }
+}
+
+
+function update_service_order() {
+    frappe.call({
+        method: "update_service_order"
+    });
 }
