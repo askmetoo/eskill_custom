@@ -2,22 +2,24 @@
  "actions": [],
  "allow_copy": 1,
  "allow_import": 1,
- "autoname": "format:{customer} - {serial_number}",
+ "autoname": "naming_series:",
  "creation": "2021-07-23 08:37:19.008217",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "naming_series",
+  "title",
   "customer",
+  "customer_name",
   "amended_from",
+  "last_service",
   "column_break_2",
   "status",
   "contract_tier",
   "breach",
   "device_details_section",
-  "model",
-  "column_break_4",
-  "serial_number",
+  "devices",
   "contract_period_section",
   "start_date",
   "period",
@@ -44,39 +46,9 @@
    "set_only_once": 1
   },
   {
-   "fieldname": "model",
-   "fieldtype": "Link",
-   "in_global_search": 1,
-   "in_list_view": 1,
-   "in_preview": 1,
-   "in_standard_filter": 1,
-   "label": "Model",
-   "options": "Item",
-   "reqd": 1,
-   "search_index": 1,
-   "set_only_once": 1
-  },
-  {
-   "fieldname": "serial_number",
-   "fieldtype": "Link",
-   "in_global_search": 1,
-   "in_list_view": 1,
-   "in_preview": 1,
-   "in_standard_filter": 1,
-   "label": "Serial Number",
-   "options": "Serial No",
-   "reqd": 1,
-   "search_index": 1,
-   "set_only_once": 1
-  },
-  {
    "fieldname": "device_details_section",
    "fieldtype": "Section Break",
    "label": "Device Details"
-  },
-  {
-   "fieldname": "column_break_4",
-   "fieldtype": "Column Break"
   },
   {
    "fieldname": "contract_period_section",
@@ -170,12 +142,49 @@
    "fieldname": "breach",
    "fieldtype": "Button",
    "label": "Breach"
+  },
+  {
+   "fieldname": "devices",
+   "fieldtype": "Table",
+   "options": "Service Device",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "customer.customer_name",
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Customer Name"
+  },
+  {
+   "fieldname": "last_service",
+   "fieldtype": "Date",
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Last Service",
+   "read_only": 1
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Naming Series",
+   "options": "SLA-.########",
+   "set_only_once": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Title",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2021-07-29 10:02:16.642617",
+ "modified": "2021-11-05 15:59:58.042979",
  "modified_by": "Administrator",
  "module": "Eskill Customisations",
  "name": "Device SLA",
@@ -211,6 +220,7 @@
    "read": 1,
    "report": 1,
    "role": "Support Manager",
+   "select": 1,
    "set_user_permissions": 1,
    "share": 1,
    "submit": 1,
@@ -222,9 +232,11 @@
    "role": "Support Team"
   }
  ],
+ "search_fields": "customer, customer_name",
  "show_name_in_global_search": 1,
  "show_preview_popup": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
+ "title_field": "title",
  "track_changes": 1
 }

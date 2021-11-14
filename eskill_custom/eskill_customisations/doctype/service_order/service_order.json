@@ -1,0 +1,386 @@
+{
+ "actions": [],
+ "allow_copy": 1,
+ "allow_events_in_timeline": 1,
+ "allow_import": 1,
+ "autoname": "naming_series:",
+ "creation": "2021-08-13 13:35:17.800045",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "job_status",
+  "job_type",
+  "billing_status",
+  "column_break_4",
+  "amended_from",
+  "parts_returned",
+  "section_break_9",
+  "start_date",
+  "column_break_11",
+  "closing_date",
+  "customer_details_section",
+  "customer",
+  "sla",
+  "column_break_15",
+  "customer_name",
+  "customer_reference",
+  "device_details_section",
+  "devices",
+  "device_reading",
+  "section_break_23",
+  "fault_report",
+  "stock_lookup_section",
+  "stock_item",
+  "column_break_27",
+  "search",
+  "section_break_29",
+  "time_taken",
+  "section_break_31",
+  "total_hours",
+  "column_break_33",
+  "billable_hours",
+  "job_resolution_section",
+  "items",
+  "resolution_details"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Naming Series",
+   "options": "SVS-.########",
+   "set_only_once": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Service Order",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "customer_details_section",
+   "fieldtype": "Section Break",
+   "label": "Customer Details"
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "label": "Customer",
+   "options": "Customer",
+   "reqd": 1
+  },
+  {
+   "fieldname": "device_details_section",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "Pending Billing",
+   "fieldname": "billing_status",
+   "fieldtype": "Select",
+   "in_filter": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Billing Status",
+   "options": "Pending Billing\nDelivered\nInvoiced",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "sla",
+   "fieldtype": "Link",
+   "in_global_search": 1,
+   "in_preview": 1,
+   "label": "SLA",
+   "options": "Device SLA",
+   "read_only_depends_on": "eval: (doc.job_status == \"Closed\" || !doc.customer);"
+  },
+  {
+   "fieldname": "column_break_11",
+   "fieldtype": "Column Break"
+  },
+  {
+   "collapsible_depends_on": "eval: (!doc.docstatus);",
+   "fieldname": "section_break_23",
+   "fieldtype": "Section Break",
+   "label": "Fault Report"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "fault_report",
+   "fieldtype": "Text Editor",
+   "read_only_depends_on": "eval: (doc.job_status == \"Closed\");"
+  },
+  {
+   "depends_on": "eval: (doc.docstatus);",
+   "fieldname": "job_resolution_section",
+   "fieldtype": "Section Break",
+   "label": "Job Resolution"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "resolution_details",
+   "fieldtype": "Text Editor",
+   "label": "Resolution Details",
+   "read_only_depends_on": "eval: (doc.job_status != \"Open\");"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "stock_lookup_section",
+   "fieldtype": "Section Break",
+   "label": "Stock Lookup"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "stock_item",
+   "fieldtype": "Link",
+   "label": "Stock Item",
+   "options": "Item"
+  },
+  {
+   "fieldname": "column_break_27",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "search",
+   "fieldtype": "Button",
+   "label": "Search"
+  },
+  {
+   "depends_on": "eval: (doc.docstatus);",
+   "fieldname": "section_break_29",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "time_taken",
+   "fieldtype": "Table",
+   "label": "Time Taken",
+   "options": "Service Order Time",
+   "read_only": 1
+  },
+  {
+   "depends_on": "eval: (doc.docstatus);",
+   "fieldname": "section_break_31",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "total_hours",
+   "fieldtype": "Float",
+   "in_preview": 1,
+   "label": "Total Hours",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_33",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "billable_hours",
+   "fieldtype": "Float",
+   "label": "Billable Hours",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "items",
+   "fieldtype": "Table",
+   "label": "Part List",
+   "options": "Part List",
+   "read_only_depends_on": "eval: (doc.job_status != \"Open\" || doc.parts_returned);"
+  },
+  {
+   "fieldname": "section_break_9",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "Today",
+   "fieldname": "start_date",
+   "fieldtype": "Date",
+   "in_preview": 1,
+   "label": "Start Date",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "closing_date",
+   "fieldtype": "Date",
+   "in_preview": 1,
+   "label": "Closing Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_15",
+   "fieldtype": "Column Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "bold": 1,
+   "fieldname": "job_status",
+   "fieldtype": "Select",
+   "in_filter": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Job Status",
+   "options": "\nOpen\nOn Hold\nClosed",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "depends_on": "eval: (doc.parts_returned);",
+   "description": "This indicates that unused parts have been returned and billing may proceed.",
+   "fieldname": "parts_returned",
+   "fieldtype": "Check",
+   "label": "Parts Returned",
+   "read_only": 1
+  },
+  {
+   "depends_on": "eval: (!doc.docstatus);",
+   "fetch_from": "customer.customer_name",
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "in_filter": 1,
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Customer Name",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "Billable",
+   "fieldname": "job_type",
+   "fieldtype": "Select",
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Job Type",
+   "options": "Billable\nSLA\nWarranty",
+   "read_only": 1
+  },
+  {
+   "description": "i.e. their PO number for the service",
+   "fieldname": "customer_reference",
+   "fieldtype": "Data",
+   "label": "Customer Reference"
+  },
+  {
+   "fieldname": "devices",
+   "fieldtype": "Table",
+   "label": "Device Details",
+   "options": "Service Device"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "device_reading",
+   "fieldtype": "Table",
+   "label": "Device Readings",
+   "options": "Device Reading"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2021-11-08 13:20:27.249375",
+ "modified_by": "Administrator",
+ "module": "Eskill Customisations",
+ "name": "Service Order",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "permlevel": 1,
+   "read": 1,
+   "role": "System Manager",
+   "write": 1
+  },
+  {
+   "delete": 1,
+   "export": 1,
+   "permlevel": 2,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Support Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "permlevel": 1,
+   "read": 1,
+   "role": "Support Manager",
+   "write": 1
+  },
+  {
+   "delete": 1,
+   "permlevel": 2,
+   "read": 1,
+   "report": 1,
+   "role": "Support Manager",
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Support Team",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "permlevel": 1,
+   "read": 1,
+   "role": "Support Team"
+  }
+ ],
+ "search_fields": "customer",
+ "show_name_in_global_search": 1,
+ "show_preview_popup": 1,
+ "sort_field": "name",
+ "sort_order": "DESC",
+ "track_changes": 1,
+ "track_seen": 1
+}

@@ -1,17 +1,27 @@
 {
+ "actions": [],
  "creation": "2020-10-19 11:58:59.950290",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "service_device",
+  "serial_number",
+  "section_break_3",
   "reading_time",
+  "column_break_5",
   "before_after",
+  "section_break_7",
   "reading_type",
-  "reading_value"
+  "column_break_9",
+  "reading_value",
+  "section_break_11",
+  "remarks"
  ],
  "fields": [
   {
    "allow_in_quick_entry": 1,
+   "columns": 2,
    "default": "Now",
    "fieldname": "reading_time",
    "fieldtype": "Datetime",
@@ -21,6 +31,7 @@
    "reqd": 1
   },
   {
+   "columns": 1,
    "fieldname": "before_after",
    "fieldtype": "Select",
    "in_list_view": 1,
@@ -30,31 +41,80 @@
   },
   {
    "allow_in_quick_entry": 1,
+   "columns": 3,
    "fieldname": "reading_type",
    "fieldtype": "Link",
    "in_list_view": 1,
    "in_preview": 1,
    "in_standard_filter": 1,
-   "label": "Reading Type",
+   "label": "Type",
    "options": "Device Reading Type",
    "reqd": 1
   },
   {
    "allow_in_quick_entry": 1,
+   "columns": 2,
    "fieldname": "reading_value",
    "fieldtype": "Data",
    "in_list_view": 1,
    "in_preview": 1,
-   "label": "Reading Value",
+   "label": "Value",
    "reqd": 1
+  },
+  {
+   "columns": 2,
+   "fieldname": "remarks",
+   "fieldtype": "Text Editor",
+   "label": "Remarks"
+  },
+  {
+   "columns": 2,
+   "fetch_from": "service_device.serial_number",
+   "fieldname": "serial_number",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Serial Number",
+   "options": "Serial No",
+   "read_only": 1
+  },
+  {
+   "fieldname": "service_device",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Service Device",
+   "options": "Service Device",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_3",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_7",
+   "fieldtype": "Section Break",
+   "label": "Reading"
+  },
+  {
+   "fieldname": "column_break_9",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_11",
+   "fieldtype": "Section Break"
   }
  ],
+ "index_web_pages_for_search": 1,
  "istable": 1,
- "modified": "2020-10-20 15:48:42.111050",
+ "links": [],
+ "modified": "2021-10-27 12:47:04.738830",
  "modified_by": "Administrator",
  "module": "Eskill Customisations",
  "name": "Device Reading",
- "owner": "neil@eskilltrading.com",
+ "owner": "Administrator",
  "permissions": [],
  "quick_entry": 1,
  "sort_field": "modified",

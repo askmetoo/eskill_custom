@@ -98,7 +98,7 @@ def make_service_invoice(source_name, target_doc=None):
             "doctype": "Sales Invoice",
             "field_map": {
                 "is_return": "is_return",
-                "issue": "issue"
+                "service_order": "service_order"
             },
             "validation": {
                 "docstatus": ["=", 1]
@@ -134,17 +134,76 @@ def make_service_invoice(source_name, target_doc=None):
 
 
 @frappe.whitelist()
-def set_non_billable_status(docname: str):
+def set_non_billable_accounts(delivery_name: str):
+    "If the linked service order is non-billable, set expense accounts to the relevant ones."
+
+    delivery = frappe.get_doc("Delivery Note", delivery_name)
+    account_type = "Cost of Sales - SLA" if delivery.service_order_type == "SLA" else "Warranty"
+    for delivery_item in delivery.items:
+        item = frappe.get_doc("Item", delivery_item.item_code)
+        item_group = frappe.get_doc("Item Group", item.item_group)
+        expense_account = frappe.db.sql(f"""\
+            select
+                A.name
+            from
+                tabAccount A
+            where
+                account_name like '%{account_type}%{item_group.name if item_group.is_group else item_group.parent_item_group}%' and root_type = 'Expense';"""
+        )
+        try:
+            delivery_item.expense_account = expense_account[0][0]
+            delivery_item.save(ignore_permissions=True)
+        except:
+            pass
+
+
+@frappe.whitelist()
+def set_non_billable_status(delivery_name: str):
     "Sets Delivery Note status to 'Completed' upon submission if it is non-billable."
 
-    frappe.db.sql(f"""
-        update
-            `tabDelivery Note`
-        set
-            status = 'Completed',
-            per_billed = 100
-        where
-            name = '{docname}';""")
-    frappe.db.commit()
+    delivery = frappe.get_doc("Delivery Note", delivery_name)
+    delivery.db_set("status", "Completed")
+    delivery.db_set("per_billed", 100)
+    delivery.set_status(update=True)
 
-    return 1
+
+@frappe.whitelist()
+def update_service_order(delivery_name: str):
+    "Updates information on service order to indicate delivery."
+
+    delivery = frappe.get_doc("Delivery Note", delivery_name)
+    service_order = frappe.get_doc("Service Order", delivery.service_order)
+    if delivery.docstatus == 2 and service_order.billing_status == "Delivered":
+        service_order.db_set("billing_status", "Pending Billing")
+    elif service_order.billing_status != "Invoiced":
+        service_order.db_set("billing_status", "Delivered")
+
+    for item in delivery.items:
+        if item.part_list:
+            part = frappe.get_doc("Part List", item.part_list)
+            if delivery.docstatus == 2:
+                part.delivered_qty -= item.qty
+            else:
+                part.delivered_qty += item.qty
+            part.save(ignore_permissions=True)
+
+    service_order.add_comment(
+        comment_type="Info",
+        text="delivered this service order."
+    )
+    
+    try:
+        quotation = frappe.get_last_doc("Quotation", filters={'service_order': service_order.name, 'docstatus': 1})
+        quotation.db_set("status", "Ordered", commit=True)
+        quotations = frappe.db.get_list("Quotation",
+            filters={
+                'service_order': service_order.name
+            },
+            fields=['name', 'status']
+        )
+        for quote in quotations:
+            if quote['status'] != "Ordered" and quote['status'] != "Expired":
+                quotation = frappe.get_doc("Quotation", quote['name'])
+                quotation.db_set("status", "Expired", commit=True)
+    except:
+        pass
