@@ -15,6 +15,7 @@
   "billing_status",
   "column_break_4",
   "amended_from",
+  "assigned_technician",
   "parts_returned",
   "section_break_9",
   "start_date",
@@ -291,12 +292,23 @@
    "fieldtype": "Table",
    "label": "Device Readings",
    "options": "Device Reading"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "assigned_technician",
+   "fieldtype": "Link",
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Assigned Technician",
+   "options": "Sales Person",
+   "permlevel": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2021-11-08 13:20:27.249375",
+ "modified": "2021-11-16 08:35:09.912220",
  "modified_by": "Administrator",
  "module": "Eskill Customisations",
  "name": "Service Order",
