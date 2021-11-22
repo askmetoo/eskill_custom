@@ -34,7 +34,7 @@ def execute(filters=None):
             frappe.throw(_("Start date must not precede end date."))
     elif filters['start_y'] > filters['end_y']:
         frappe.throw(_("Start date must not precede end date."))
-    
+
     # Create columns
     columns = [
         {
@@ -235,7 +235,7 @@ select
     0 {columns[2]['fieldname']},
     1 header,
     A.root_type account_type
-from 
+from
     `tabGL Entry` GLE
 join
     tabAccount A on GLE.account = A.name
@@ -256,7 +256,7 @@ select
     A.parent_account parent,
     A.root_type account_type,
     1 indent
-from 
+from
     `tabGL Entry` GLE
 join
     tabAccount A on GLE.account = A.name
@@ -275,7 +275,7 @@ select
     0 {columns[4]['fieldname']},
     1 header,
     A.root_type account_type
-from 
+from
     `tabGL Entry` GLE
 join
     tabAccount A on GLE.account = A.name
@@ -298,7 +298,7 @@ select
     A.parent_account parent,
     A.root_type account_type,
     1 indent
-from 
+from
     `tabGL Entry` GLE
 join
     tabAccount A on GLE.account = A.name
@@ -385,26 +385,26 @@ select
     sum((GLE.debit - GLE.credit) * (case
     	when
 			doc.multi_currency
-		then 
-			(case when					
+		then
+			(case when
 				1 / (select
 					avg(JEA2.exchange_rate)
 				from
 					`tabJournal Entry Account` JEA2
 				where
 					JEA2.parent = GLE.voucher_no and JEA2.account_currency = "ZWD")
-			then 
+			then
 				1 / (select
 					avg(JEA2.exchange_rate)
 				from
 					`tabJournal Entry Account` JEA2
 				where
 					JEA2.parent = GLE.voucher_no and JEA2.account_currency = "ZWD")
-			else 
+			else
 				doc.auction_bid_rate
 			end)
-		else 
-			doc.auction_bid_rate 
+		else
+			doc.auction_bid_rate
 		end)) {columns[1]['fieldname']}
 from
     `tabGL Entry` GLE
