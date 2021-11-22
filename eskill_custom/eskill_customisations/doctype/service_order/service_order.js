@@ -754,12 +754,12 @@ function update_job_type(frm) {
         }, "Job Type");
     }
 
-    function set_type(frm, type) {
+    function set_type(frm, job_type) {
         frappe.call({
             doc: frm.doc,
             method: "set_job_type",
             args: {
-                type: type
+                job_type: job_type
             },
             callback: () => {
                 frm.reload_doc();

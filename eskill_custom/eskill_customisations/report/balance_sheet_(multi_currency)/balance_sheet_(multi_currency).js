@@ -1,11 +1,11 @@
-// Copyright (c) 2016, Frappe Technologies Pvt. Ltd. and contributors
+// Copyright (c) 2016, Eskill Trading and contributors
 // For license information, please see license.txt
 /* eslint-disable */
 
 frappe.require("assets/erpnext/js/financial_statements.js", function() {
     month_list = "January\nFebruary\nMarch\nApril\nMay\nJune\nJuly\nAugust\nSeptember\nOctober\nNovember\nDecember"
     default_year = frappe.datetime.get_datetime_as_string().substring(0, 4)
-    frappe.query_reports["Profit and Loss (Multi-currency)"] = {
+    frappe.query_reports["Balance Sheet (Multi-Currency)"] = {
         filters: [
             {
                 "fieldname":"start_m",
@@ -95,35 +95,19 @@ frappe.require("assets/erpnext/js/financial_statements.js", function() {
                 }
                 column.is_tree = true;
             }
-    
+
             value = default_formatter(value, row, column, data);
-    
+
             if (data.header || data.total) {
                 value = $(`<span>${value}</span>`);
-    
+
                 var $value = $(value).css("font-weight", "bold");
                 value = $value.wrap("<p></p>").parent().html();
-
-                if (data.account_type == "Expense") {
-                    if (data[column.fieldname] < 0) {
-                        value = "<span style='color:red!important;font-weight:bold'>" + value + "</span>";
-                    } else if (data[column.fieldname] > 0) {
-                        value = "<span style='color:green!important;font-weight:bold'>" + value + "</span>";
-                    }
-                } else {
-                    if (data[column.fieldname] > 0) {
-                        value = "<span style='color:red!important;font-weight:bold'>" + value + "</span>";
-                    }
-                    else if (data[column.fieldname] < 0) {
-                        value = "<span style='color:green!important;font-weight:bold'>" + value + "</span>";
-                    }
-                }
-            } else {
-                if (data.account_type == "Expense" && data[column.fieldname] < 0) {
-                    value = "<span style='color:red!important;font-weight:bold'>" + value + "</span>";
-                } else if (data.account_type != "Expense" && data[column.fieldname] > 0) {
-                    value = "<span style='color:red!important;font-weight:bold'>" + value + "</span>";
-                }
+            }
+            if (data[column.fieldname] < 0) {
+                value = "<span style='color:red!important;'>" + value + "</span>";
+            } else if (data[column.fieldname] > 0) {
+                value = "<span style='color:green!important;'>" + value + "</span>";
             }
 
             return value;
