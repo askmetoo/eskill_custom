@@ -60,6 +60,15 @@
   {
    "hidden": 0,
    "is_query_report": 1,
+   "label": "Balance Sheet (Multi-Currency)",
+   "link_to": "Balance Sheet (Multi-Currency)",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
    "label": "Profit & Loss (Multi-Currency)",
    "link_to": "Profit and Loss (Multi-currency)",
    "link_type": "Report",
@@ -84,7 +93,7 @@
    "type": "Link"
   }
  ],
- "modified": "2021-08-11 17:02:49.366726",
+ "modified": "2021-11-22 12:10:07.509763",
  "modified_by": "andrew@eskilltrading.com",
  "module": "Eskill Customisations",
  "name": "Eskill Accounts",
