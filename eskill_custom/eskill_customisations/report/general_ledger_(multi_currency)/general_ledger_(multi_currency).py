@@ -222,27 +222,32 @@ def get_data(filters: 'dict[str, ]', columns: 'list[dict[str, ]]') -> list:
 
     data = new_data
 
-    def update_parents(account: 'dict[str,]') -> 'list[dict[str,]]':
+    def update_parents(
+        account: 'dict[str,]',
+        current_account: 'dict[str,]' = None
+    ) -> 'list[dict[str,]]':
         "Recursively updates account headers."
 
-        if account['parent']:
-            base_cre_col = f"credit_{filters['base_currency'].lower()}"
-            base_deb_col = f"debit_{filters['base_currency'].lower()}"
-
+        if (
+            (account['parent'] and not current_account) or
+            (current_account and current_account['parent'])
+        ):
             index = next(
                 i
                 for i, record in enumerate(data)
-                if record['account'] == account['parent']
+                if record['account'] == (
+                    account['parent']
+                    if not current_account else
+                    current_account['parent']
+                )
             )
             data[index][base_cre_col] += account[base_cre_col]
             data[index][base_deb_col] += account[base_deb_col]
             if "currency" in filters:
-                cre_col = f"credit_{filters['currency'].lower()}"
-                deb_col = f"debit_{filters['currency'].lower()}"
                 data[index][cre_col] += account[cre_col]
                 data[index][deb_col] += account[deb_col]
 
-            update_parents(data[index])
+            update_parents(account, data[index])
 
 
     for i, account in enumerate(data):
