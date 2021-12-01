@@ -17,6 +17,23 @@
   {
    "hidden": 0,
    "is_query_report": 0,
+   "label": "Accounting Masters",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "General Ledger (Multi-Currency)",
+   "link_to": "General Ledger (Multi-Currency)",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Multi Currency",
    "link_type": "DocType",
    "onboard": 0,
@@ -60,6 +77,15 @@
   {
    "hidden": 0,
    "is_query_report": 1,
+   "label": "Balance Sheet (Multi-Currency)",
+   "link_to": "Balance Sheet (Multi-Currency)",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
    "label": "Profit & Loss (Multi-Currency)",
    "link_to": "Profit and Loss (Multi-currency)",
    "link_type": "Report",
@@ -84,12 +110,19 @@
    "type": "Link"
   }
  ],
- "modified": "2021-08-11 17:02:49.366726",
+ "modified": "2021-12-01 12:06:24.623512",
  "modified_by": "andrew@eskilltrading.com",
  "module": "Eskill Customisations",
  "name": "Eskill Accounts",
  "owner": "andrew@eskilltrading.com",
  "pin_to_bottom": 0,
  "pin_to_top": 0,
- "shortcuts": []
+ "shortcuts": [
+  {
+   "doc_view": "",
+   "label": "General Ledger (Multi-Currency)",
+   "link_to": "General Ledger (Multi-Currency)",
+   "type": "Report"
+  }
+ ]
 }
