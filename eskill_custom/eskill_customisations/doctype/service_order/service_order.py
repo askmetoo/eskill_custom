@@ -32,35 +32,65 @@ class ServiceOrder(Document):
         known_serials = set()
         accepted_devices = list()
         serial_devices = dict()
-        for device in sorted(self.devices, key=lambda device: (device.name if "New" not in device.name else ""), reverse=True):
+        for device in sorted(
+            self.devices,
+            key=lambda device: (device.name if "New" not in device.name else ""),
+            reverse=True
+        ):
             if device.serial_number:
                 if not frappe.db.exists("Serial No", device.serial_number):
                     continue
 
                 serial_number = frappe.get_doc("Serial No", device.serial_number)
-                if device.serial_number not in known_serials and device.model == serial_number.item_code:
+                if (
+                    device.serial_number not in known_serials
+                    and device.model == serial_number.item_code
+                ):
                     known_serials.add(device.serial_number)
                     serial_devices[device.serial_number] = device.name
                 else:
                     continue
             accepted_devices.append(device)
-        
+
         self.devices = accepted_devices
 
         # Delete readings linked to deleted devices
-        if len(self.devices) and len(self.device_reading):
-            self.device_reading = [reading for i, reading in enumerate(self.device_reading) if reading.serial_number in known_serials]
+        if len(self.devices) > 0 and len(self.device_reading) > 0:
+            self.device_reading = [
+                reading
+                for i, reading in enumerate(self.device_reading)
+                if reading.serial_number in known_serials
+            ]
             for i, reading in enumerate(self.device_reading):
                 self.device_reading[i].service_device = serial_devices[reading.serial_number]
-        elif len(self.device_reading):
+        elif len(self.device_reading) > 0:
             self.device_reading.clear()
 
         # Sort the readings table based on serial number, reading type, and date & time
-        for i, item in enumerate(sorted(self.device_reading, key=lambda item: (item.serial_number, item.reading_type, item.reading_time)), 1):
+        for i, item in enumerate(
+            sorted(
+                self.device_reading,
+                key=lambda item: (
+                    item.serial_number,
+                    item.reading_type,
+                    item.reading_time
+                )
+            ),
+            1
+        ):
             item.idx = i
 
-        # Sort the devices table based on model, then serial number. Places entries without a serial number at the top
-        for i, item in enumerate(sorted(self.devices, key=lambda item: (item.model if item.serial_number else "", item.serial_number if item.serial_number else item.model)), 1):
+        # Sort the devices table based on model, then serial number
+        for i, item in enumerate(
+            sorted(
+                self.devices,
+                key=lambda item: (
+                    item.model if item.serial_number else "",
+                    item.serial_number if item.serial_number else item.model
+                )
+            ),
+            1
+        ):
             item.idx = i
 
 
@@ -82,7 +112,7 @@ class ServiceOrder(Document):
                 for key in sorted(devices):
                     message += f"<li>In row {key}, for model {devices[key]}</li>"
 
-            frappe.throw(_(message))        
+            frappe.throw(_(message))
 
 
     @frappe.whitelist()
@@ -90,11 +120,19 @@ class ServiceOrder(Document):
         "Returns list of SLA devices based on selected SLA."
         sla = frappe.get_doc("Device SLA", self.sla)
 
-        device_list = [{'name': device.name, 'model': device.model, 'model_name': device.model_name, 'serial_number': device.serial_number} for device in sla.devices]
+        device_list = [
+            {
+                'name': device.name,
+                'model': device.model,
+                'model_name': device.model_name,
+                'serial_number': device.serial_number
+            }
+            for device in sla.devices
+        ]
 
         for i, device in enumerate(device_list):
             device_list[i]['row_number'] = i
-        
+
         return device_list
 
 
@@ -111,10 +149,27 @@ class ServiceOrder(Document):
         response_table = [["Part", "Part Name", "Requested", "Released", "Already Received"]]
         for part in self.items:
             if part.released_qty > part.received_qty:
-                pending_receipts.append([part.part, part.part_name, part.qty, part.released_qty, part.received_qty, part.name])
-                response_table.append([part.part, part.part_name, part.qty, part.released_qty, part.received_qty])
+                pending_receipts.append(
+                    [
+                        part.part,
+                        part.part_name,
+                        part.qty,
+                        part.released_qty,
+                        part.received_qty,
+                        part.name
+                    ]
+                )
+                response_table.append(
+                    [
+                        part.part,
+                        part.part_name,
+                        part.qty,
+                        part.released_qty,
+                        part.received_qty
+                    ]
+                )
 
-        if len(pending_receipts):
+        if len(pending_receipts) > 0:
             response['receipts'] = pending_receipts
             response['receive'] = True
         else:
@@ -160,7 +215,7 @@ class ServiceOrder(Document):
 
         request.insert(ignore_permissions=True)
         request.submit()
-        
+
         for part in requested_parts:
             line = frappe.get_doc("Part List", part)
             line.request = request.name
@@ -184,7 +239,10 @@ class ServiceOrder(Document):
 
         self.add_comment(
             comment_type="Info",
-            text=f"received {received} {part_list.part}: {part_list.part_name} into the {part_list.warehouse} location."
+            text=(
+                f"received {received} {part_list.part}: {part_list.part_name}"
+                f" into the {part_list.warehouse} location."
+            )
         )
 
 
@@ -276,21 +334,36 @@ class ServiceOrder(Document):
 
 
     @frappe.whitelist()
-    def warranty_update(self, serial_number: str, owned_by: str, purchase_date, warranty_period: int = 0):
+    def warranty_update(
+        self,
+        serial_number: str,
+        owned_by: str,
+        purchase_date,
+        warranty_period: int = 0
+    ):
         "Updates ownership and warranty details for serial number."
 
         serial_no = frappe.get_doc("Serial No", serial_number)
         serial_no.owned_by = self.customer
         message = f"Item {serial_number} is now owned by {self.customer} in our records."
         if warranty_period > 0 and purchase_date:
-            serial_no.warranty_expiry_date = frappe.utils.add_to_date(date=purchase_date, days=warranty_period)
-            message = f"Item {serial_number} is now owned by {self.customer} in our records. The warranty period will expire on date {serial_no.warranty_expiry_date}."
-            
+            serial_no.warranty_expiry_date = frappe.utils.add_to_date(
+                date=purchase_date,
+                days=warranty_period
+            )
+            message = (
+                f"Item {serial_number} is now owned by {self.customer} in our records."
+                f" The warranty period will expire on date {serial_no.warranty_expiry_date}."
+            )
+
         serial_no.save(ignore_permissions=True)
 
         serial_no.add_comment(
             comment_type="Info",
-            text=f"set {owned_by} as owner; set warranty expiry date to {serial_no.warranty_expiry_date}."
+            text=(
+                f"set {owned_by} as owner;"
+                f" set warranty expiry date to {serial_no.warranty_expiry_date}."
+            )
         )
         self.add_comment(
             comment_type="Info",
@@ -307,22 +380,41 @@ def generate_delivery(source_name, target_doc = None):
     delivery = frappe.new_doc("Delivery Note")
 
     try:
-        quotation = frappe.get_last_doc("Quotation", filters={'service_order': source_name, 'docstatus': 1})
+        quotation = frappe.get_last_doc(
+            "Quotation",
+            filters={
+                'service_order': source_name,
+                'docstatus': 1
+            }
+        )
     except:
         quotation = None
 
     def set_missing_values(source, target):
         if not quotation:
-            company_currency = frappe.get_cached_value('Company',  target.company,  "default_currency")
+            company_currency = frappe.get_cached_value(
+                'Company',
+                target.company,
+                "default_currency"
+            )
 
-            party_account_currency = get_party_account_currency("Customer", target.customer, target.company)
+            party_account_currency = get_party_account_currency(
+                "Customer",
+                target.customer,
+                target.company
+            )
 
             target.currency = party_account_currency or company_currency
 
             if company_currency == target.currency:
                 exchange_rate = 1
             else:
-                exchange_rate = get_exchange_rate(target.currency, company_currency, target.posting_date, args="for_selling")
+                exchange_rate = get_exchange_rate(
+                    target.currency,
+                    company_currency,
+                    target.posting_date,
+                    args="for_selling"
+                )
 
             target.usd_to_currency = 1 / exchange_rate
             target.conversion_rate = exchange_rate
@@ -333,9 +425,13 @@ def generate_delivery(source_name, target_doc = None):
             sales_person = target.append("sales_team", {})
             sales_person.sales_person = time.technician
             if service_order.job_type == "Billable":
-                sales_person.allocated_percentage = (time.billable_hours / service_order.billable_hours) * 100
+                sales_person.allocated_percentage = (
+                    time.billable_hours / service_order.billable_hours
+                ) * 100
             else:
-                sales_person.allocated_percentage = (time.total_hours / service_order.total_hours) * 100
+                sales_person.allocated_percentage = (
+                    time.total_hours / service_order.total_hours
+                ) * 100
 
         if len(target.get("items")) == 0:
             frappe.msgprint(_("There are no deliverable items."))
@@ -405,14 +501,23 @@ def generate_quote(source_name, target_doc = None):
     def set_missing_values(source, target):
         company_currency = frappe.get_cached_value('Company',  target.company,  "default_currency")
 
-        party_account_currency = get_party_account_currency("Customer", target.party_name, target.company)
+        party_account_currency = get_party_account_currency(
+            "Customer",
+            target.party_name,
+            target.company
+        )
 
         target.currency = party_account_currency or company_currency
 
         if company_currency == target.currency:
             exchange_rate = 1
         else:
-            exchange_rate = get_exchange_rate(target.currency, company_currency, target.transaction_date, args="for_selling")
+            exchange_rate = get_exchange_rate(
+                target.currency,
+                company_currency,
+                target.transaction_date,
+                args="for_selling"
+            )
 
         target.usd_to_currency = 1 / exchange_rate
         target.conversion_rate = exchange_rate
