@@ -69,7 +69,9 @@ class ServiceOrder(Document):
         devices = dict()
         for device in self.devices:
             if not device.serial_number:
-                devices[device.idx] = device.model
+                item = frappe.get_doc("Item", device.model)
+                if item.has_serial_no:
+                    devices[device.idx] = device.model
 
         if len(devices) > 0:
             if len(devices) == 1:
