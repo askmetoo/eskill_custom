@@ -1,0 +1,70 @@
+{
+ "category": "Modules",
+ "charts": [],
+ "creation": "2021-12-09 14:55:58.337443",
+ "developer_mode_only": 0,
+ "disable_user_customization": 0,
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "extends": "Stock",
+ "extends_another_page": 1,
+ "hide_custom": 0,
+ "idx": 0,
+ "is_default": 0,
+ "is_standard": 1,
+ "label": "Eskill Stock",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Stocktake",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Stocktake Master",
+   "link_to": "Stocktake Master",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Stocktake Sheet",
+   "link_to": "Stocktake Sheet",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Stocktake Summary",
+   "link_to": "Stocktake Summary",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2021-12-09 15:00:57.584606",
+ "modified_by": "andrew@eskilltrading.com",
+ "module": "Eskill Customisations",
+ "name": "Eskill Stock",
+ "owner": "andrew@eskilltrading.com",
+ "pin_to_bottom": 0,
+ "pin_to_top": 0,
+ "shortcuts": [
+  {
+   "doc_view": "List",
+   "format": "{} Pending Review",
+   "label": "Stocktake Summary",
+   "link_to": "Stocktake Summary",
+   "stats_filter": "{\n    \"closed\": 0\n}",
+   "type": "DocType"
+  }
+ ]
+}
