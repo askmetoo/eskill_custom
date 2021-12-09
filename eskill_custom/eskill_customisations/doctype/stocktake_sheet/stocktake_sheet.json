@@ -1,0 +1,176 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:{master}-{count_type}-{full_name}",
+ "creation": "2021-12-01 16:30:52.062071",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "master",
+  "report_date",
+  "last_count",
+  "count_type",
+  "count_complete",
+  "column_break_3",
+  "status",
+  "counter",
+  "full_name",
+  "previous_counter",
+  "previous_counter_full_name",
+  "amended_from",
+  "section_break_6",
+  "items"
+ ],
+ "fields": [
+  {
+   "fieldname": "master",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Master",
+   "options": "Stocktake Master",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fetch_from": "master.report_date",
+   "fieldname": "report_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Report Date",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Stocktake Sheet",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_6",
+   "fieldtype": "Section Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "items",
+   "fieldtype": "Table",
+   "label": "Items",
+   "options": "Stocktake Sheet Item"
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Count in Progress\nRecount Needed\nNo Variances\nVariances Found",
+   "read_only": 1
+  },
+  {
+   "default": "Initial",
+   "fieldname": "count_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Count Type",
+   "options": "Initial\nRecount",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "counter",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "counter.full_name",
+   "fieldname": "full_name",
+   "fieldtype": "Data",
+   "label": "Counter",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "count_complete",
+   "fieldtype": "Check",
+   "label": "Count Complete",
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_count",
+   "fieldtype": "Link",
+   "label": "Last Count",
+   "options": "Stocktake Sheet",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "last_count.counter",
+   "fieldname": "previous_counter",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "previous_counter.full_name",
+   "fieldname": "previous_counter_full_name",
+   "fieldtype": "Data",
+   "label": "Previous Counter",
+   "read_only": 1
+  }
+ ],
+ "in_create": 1,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2021-12-08 10:17:36.886312",
+ "modified_by": "Administrator",
+ "module": "Eskill Customisations",
+ "name": "Stocktake Sheet",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Stocktake User",
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Stock Manager"
+  },
+  {
+   "read": 1,
+   "role": "Accounts User"
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1,
+ "track_seen": 1
+}
