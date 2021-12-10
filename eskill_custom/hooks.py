@@ -29,6 +29,7 @@ app_include_css = [
 
 # include js in doctype views
 doctype_js = {
+    'Accounts Settings' : 'public/js/doctype/accounts_settings.js',
     'Customer' : 'public/js/doctype/customer.js',
     'Delivery Note' : 'public/js/doctype/delivery_note.js',
     'Issue' : 'public/js/doctype/issue.js',
