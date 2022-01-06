@@ -22,6 +22,7 @@ def set_customer_debtors(company: str):
                     `tabParty Account`
                 where
                     company = '{company}'
+                    and parenttype = 'Customer'
             );"""
     )
     customers_without_account = [customer[0] for customer in customers_without_account]
