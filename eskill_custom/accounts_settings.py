@@ -74,7 +74,7 @@ def set_customer_debtors(company: str):
 
 @frappe.whitelist()
 def create_secondary_customers(base_currency: str, currency: str):
-    "Creates secondary custoer accounts based on the selected currency."
+    "Creates secondary customer accounts based on the selected currency."
 
     def set_contact_details(doctype: str, previous_customer: str, customer: str):
         documents = frappe.get_all(
