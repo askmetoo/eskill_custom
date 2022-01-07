@@ -7393,5 +7393,39 @@
   "property_type": "Data",
   "row_name": null,
   "value": "customer_name,customer_code,customer_group,territory, mobile_no,primary_address"
+ },
+ {
+  "default_value": null,
+  "doc_type": "Supplier",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocType",
+  "field_name": null,
+  "modified": "2022-01-07 09:27:20.283959",
+  "name": "Supplier-main-links_order",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "property": "links_order",
+  "property_type": "Small Text",
+  "row_name": null,
+  "value": "[\"533239953b\", \"d52356ef2a\"]"
+ },
+ {
+  "default_value": null,
+  "doc_type": "Customer",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocType",
+  "field_name": null,
+  "modified": "2022-01-07 09:32:08.540892",
+  "name": "Customer-main-links_order",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "property": "links_order",
+  "property_type": "Small Text",
+  "row_name": null,
+  "value": "[\"68cfb78bbc\", \"60744c98ca\"]"
  }
 ]
