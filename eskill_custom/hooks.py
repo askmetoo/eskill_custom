@@ -46,6 +46,7 @@ doctype_js = {
     'Serial No': 'public/js/doctype/serial_no.js',
     'Stock Entry' : 'public/js/doctype/stock_entry.js',
     'Stock Reconciliation' : 'public/js/doctype/stock_reconciliation.js',
+    'Supplier' : 'public/js/doctype/supplier.js',
     'Task' : 'public/js/doctype/task.js',
     'Timesheet' : 'public/js/doctype/timesheet.js',
 }
