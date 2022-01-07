@@ -157,6 +157,12 @@ fixtures = [
         'filters': [
             ["role_name", "=", "Stocktake User"]
         ]
+    },
+    {
+        'dt': "DocType Link",
+        'filters': [
+            ["custom", "=", 1]
+        ]
     }
 ]
 
