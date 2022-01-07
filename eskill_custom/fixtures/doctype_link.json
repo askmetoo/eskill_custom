@@ -1,0 +1,36 @@
+[
+ {
+  "custom": 1,
+  "docstatus": 0,
+  "doctype": "DocType Link",
+  "group": "Sub Accounts",
+  "hidden": 0,
+  "is_child_table": 0,
+  "link_doctype": "Supplier",
+  "link_fieldname": "main_account",
+  "modified": "2022-01-07 09:27:20.255005",
+  "name": "d52356ef2a",
+  "parent": "Supplier",
+  "parent_doctype": null,
+  "parentfield": "links",
+  "parenttype": "Customize Form",
+  "table_fieldname": null
+ },
+ {
+  "custom": 1,
+  "docstatus": 0,
+  "doctype": "DocType Link",
+  "group": "Sub Accounts",
+  "hidden": 0,
+  "is_child_table": 0,
+  "link_doctype": "Customer",
+  "link_fieldname": "main_account",
+  "modified": "2022-01-07 09:32:08.523879",
+  "name": "60744c98ca",
+  "parent": "Customer",
+  "parent_doctype": null,
+  "parentfield": "links",
+  "parenttype": "Customize Form",
+  "table_fieldname": null
+ }
+]
