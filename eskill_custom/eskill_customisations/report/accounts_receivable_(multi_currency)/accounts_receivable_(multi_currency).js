@@ -72,6 +72,7 @@ frappe.query_reports['Accounts Receivable (Multi-Currency)'] = {
                 }
             }
         },
+        // This filter is useful only if all of your currencies are stable. For our purposes we need to force ZWL as the secondary currency
         {
             'fieldname': "currency",
             'label': __("Reported Currency"),
@@ -83,7 +84,9 @@ frappe.query_reports['Accounts Receivable (Multi-Currency)'] = {
                         ["Currency", "name", "!=", frappe.defaults.get_default("Currency")]
                     ]
                 }
-            }
+            },
+            'default': "ZWL",
+            'hidden': 1
         },
         {
             'fieldname':  "aging_based_on",
