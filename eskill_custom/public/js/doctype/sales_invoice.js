@@ -103,10 +103,12 @@ function naming_series_set(frm) {
 }
 
 function update_service_order(frm) {
-    frappe.call({
-        method: "eskill_custom.sales_invoice.update_service_order",
-        args: {
-            invoice_name: frm.doc.name
-        }
-    });
+    if (frm.doc.service_order) {
+        frappe.call({
+            method: "eskill_custom.sales_invoice.update_service_order",
+            args: {
+                invoice_name: frm.doc.name
+            }
+        });
+    }
 }

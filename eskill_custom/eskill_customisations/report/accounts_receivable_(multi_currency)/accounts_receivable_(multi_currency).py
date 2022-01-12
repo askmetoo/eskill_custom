@@ -48,13 +48,13 @@ def get_columns(filters: 'dict[str, ]'):
             'label': _("Customer"),
             'fieldtype': "Link",
             'options': "Customer",
-            'width': 300
+            'width': 115
         },
         {
-            'fieldname': "customer_code",
-            'label': _("Customer Code"),
+            'fieldname': "customer_name",
+            'label': _("Customer Name"),
             'fieldtype': "Text",
-            'width': 115
+            'width': 300
         },
         {
             'fieldname': "currency",
@@ -107,6 +107,12 @@ def get_columns(filters: 'dict[str, ]'):
             'label': _("Age (Days)"),
             'fieldtype': "Data",
             'width': 95
+        },
+        {
+            'fieldname': "exchange_rate",
+            'label': _("Exchange Rate"),
+            'fieldtype': "float",
+            'precision': 4
         },
         {
             'fieldname': "total_debt",
@@ -210,33 +216,61 @@ def get_columns(filters: 'dict[str, ]'):
 def get_data(filters: 'dict[str, ]', columns: 'list[dict]') -> list:
     "Get report data."
 
-    total_columns = [col for col in columns[-10:]]
+    total_columns = list(columns[-10:])
 
     data = initialise_data(filters, columns)
-    rates = get_exchange_rates(filters)
+    # rates = get_exchange_rates(filters)
 
     values = get_debts(filters)
     if values:
         for value in values:
             if value['against_voucher']:
                 try:
-                    index = next(i for i, record in enumerate(data) if record['voucher_no'] == value['against_voucher'] and record['customer'] == value['customer'])
+                    index = next(
+                        i
+                        for i, record in enumerate(data)
+                        if record['voucher_no'] == value['against_voucher']
+                        and record['customer'] == value['customer']
+                    )
                 except StopIteration:
-                    index = next(i for i, record in enumerate(data) if record['voucher_no'] == value['voucher_no'] and record['customer'] == value['customer'])
+                    index = next(
+                        i
+                        for i, record in enumerate(data)
+                        if record['voucher_no'] == value['voucher_no']
+                        and record['customer'] == value['customer']
+                    )
             else:
-                index = next(i for i, record in enumerate(data) if record['voucher_no'] == value['voucher_no'] and record['customer'] == value['customer'])
+                index = next(
+                    i
+                    for i, record in enumerate(data)
+                    if record['voucher_no'] == value['voucher_no']
+                    and record['customer'] == value['customer']
+                )
             data[index]['total_debt'] += value['main']
-            if "currency" in filters and filters['currency'] != data[index]['currency']:
-                if rates:
-                    try:
-                        data[index]['total_debt_account'] += value['main'] * next(record['rate'] for record in rates if record['date'] <= value['posting_date'])
-                    except StopIteration:
-                        data[index]['total_debt_account'] += value['main'] * rates[-1]['rate']
-            else:
+            if data[index]['currency'] == "ZWL":
                 data[index]['total_debt_account'] += value['account']
+                if data[index]['voucher_no'] is not None:
+                    data[index]['exchange_rate'] = (
+                        data[index]['total_debt_account']
+                        / data[index]['total_debt']
+                    )
+            else:
+                data[index]['total_debt_account'] += value['main'] * data[index]['exchange_rate']
+            # if "currency" in filters and filters['currency'] != data[index]['currency']:
+            #     if rates:
+            #         try:
+            #             data[index]['total_debt_account'] += value['main'] * next(
+            #                 record['rate']
+            #                 for record in rates
+            #                 if record['date'] <= value['posting_date']
+            #             )
+            #         except StopIteration:
+            #             data[index]['total_debt_account'] += value['main'] * rates[-1]['rate']
+            # else:
+            #     data[index]['total_debt_account'] += value['account']
 
-    if "currency" in filters and not rates:
-        frappe.msgprint(f"There are no exchange rates to convert to {filters['currency']}")
+    # if "currency" in filters and not rates:
+    #     frappe.msgprint(f"There are no exchange rates to convert to {filters['currency']}")
 
     data = [record for record in data if record['total_debt'] or record['total_debt_account']]
 
@@ -260,11 +294,11 @@ def get_data(filters: 'dict[str, ]', columns: 'list[dict]') -> list:
             age_range = 6
         else:
             age_range = 8
-        
+
         data[index][total_columns[age_range]['fieldname']] = record['total_debt']
         data[index][total_columns[age_range + 1]['fieldname']] = record['total_debt_account']
 
-    if len(data):
+    if len(data) > 0:
         if 'group_by_party' in filters:
             old_data = data
             data = [old_data[0]]
@@ -272,7 +306,7 @@ def get_data(filters: 'dict[str, ]', columns: 'list[dict]') -> list:
             customer_total = {
                 'currency': data[0]['currency'],
                 'customer': data[0]['customer'],
-                'customer_code': data[0]['customer_code'],
+                'customer_name': data[0]['customer_name'],
                 'posting_date': data[0]['posting_date'],
                 'total': 1,
                 'total_debt': data[0]['total_debt'],
@@ -282,7 +316,7 @@ def get_data(filters: 'dict[str, ]', columns: 'list[dict]') -> list:
                 customer_total[col['fieldname']] = data[0][col['fieldname']]
 
             for index, record in enumerate(old_data[1:]):
-                if customer_total['customer_code'] == record['customer_code']:
+                if customer_total['customer_name'] == record['customer_name']:
                     if record['posting_date'] > customer_total['posting_date']:
                         customer_total['posting_date'] = record['posting_date']
                     customer_total['total_debt'] += record['total_debt']
@@ -295,7 +329,7 @@ def get_data(filters: 'dict[str, ]', columns: 'list[dict]') -> list:
                     customer_total = {
                         'currency': record['currency'],
                         'customer': record['customer'],
-                        'customer_code': record['customer_code'],
+                        'customer_name': record['customer_name'],
                         'posting_date': record['posting_date'],
                         'total': 1,
                         'total_debt': record['total_debt'],
@@ -308,7 +342,10 @@ def get_data(filters: 'dict[str, ]', columns: 'list[dict]') -> list:
                 data.append(customer_total)
 
         data.extend([{}, add_total_row(data, columns)])
-        data[-1][columns[0]['fieldname']] = date(*[int(i) for i in filters['report_date'].split("-")])
+        data[-1][columns[0]['fieldname']] = date(*[
+            int(i)
+            for i in filters['report_date'].split("-")
+        ])
         data[-1]['customer'] = "Final Total"
 
     if "currency" in filters:
@@ -316,7 +353,7 @@ def get_data(filters: 'dict[str, ]', columns: 'list[dict]') -> list:
             data[index]['report_currency'] = filters['currency']
 
     return data
-    
+
 
 def initialise_data(filters: 'dict[str, ]', columns: 'list[dict]'):
     "Initialise report data."
@@ -329,7 +366,7 @@ def initialise_data(filters: 'dict[str, ]', columns: 'list[dict]'):
             A.account_currency currency,
             GLE.cost_center,
             GLE.party customer,
-            C.customer_code,
+            C.customer_name,
             C.customer_group,
             GLE.due_date,
             GLE.posting_date,
@@ -360,9 +397,15 @@ def initialise_data(filters: 'dict[str, ]', columns: 'list[dict]'):
         group by
             GLE.party, GLE.voucher_no
         order by
-            C.customer_code, GLE.posting_date, GLE.voucher_no;""", as_dict=1)
+            C.customer_name, GLE.posting_date, GLE.voucher_no;""", as_dict=1)
 
-    for i in range(len(data)):
+    for i, row in enumerate(data):
+        if row['currency'] != "ZWL":
+            data[i]['exchange_rate'] = frappe.get_value(
+                row['voucher_type'],
+                row['voucher_no'],
+                "auction_bid_rate"
+            )
         for col in columns:
             if col['fieldname'] in data[i]:
                 if not data[i][col['fieldname']]:
@@ -449,15 +492,23 @@ def add_total_row(data: 'list[dict]', columns: 'list[dict]') -> 'dict[str, ]':
 
 def get_chart_data(filters: 'dict[str]', data: 'list[dict]', columns: 'list[dict]'):
     "Returns chart data for visualising debt age."
-    
+
     chart = {}
 
     if "group_by_party" in filters:
         rows = []
         rows.append({
-            'values': [record['total_debt'] for record in data[:-1] if "total" in record and record['total']]
+            'values': [
+                record['total_debt']
+                for record in data[:-1]
+                if "total" in record and record['total']
+            ]
         })
-        column_labels = [record['customer_code'] for record in data if "total" in record and record['total']]
+        column_labels = [
+            record['customer_name']
+            for record in data
+            if "total" in record and record['total']
+        ]
 
         chart = {
             'barOptions': {

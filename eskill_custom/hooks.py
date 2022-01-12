@@ -32,7 +32,6 @@ doctype_js = {
     'Accounts Settings' : 'public/js/doctype/accounts_settings.js',
     'Customer' : 'public/js/doctype/customer.js',
     'Delivery Note' : 'public/js/doctype/delivery_note.js',
-    'Issue' : 'public/js/doctype/issue.js',
     'Item' : 'public/js/doctype/item.js',
     'Journal Entry' : 'public/js/doctype/journal_entry.js',
     'Landed Cost Voucher' : 'public/js/doctype/landed_cost_voucher.js',
