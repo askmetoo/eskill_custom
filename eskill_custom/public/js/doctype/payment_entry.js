@@ -24,6 +24,9 @@ function name_series(frm) {
     } else if (frm.doc.payment_type == "Pay") {
         frm.set_value('naming_series', "PYE.########");
         frm.set_df_property('naming_series', 'read_only', 1);
+    } else {
+        frm.set_value('naming_series', "INTER-CO-.########");
+        frm.set_df_property('naming_series', 'read_only', 1);
     }
 }
 
