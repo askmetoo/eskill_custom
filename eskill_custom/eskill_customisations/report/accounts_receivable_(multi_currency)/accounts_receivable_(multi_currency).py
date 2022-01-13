@@ -249,11 +249,6 @@ def get_data(filters: 'dict[str, ]', columns: 'list[dict]') -> list:
             data[index]['total_debt'] += value['main']
             if data[index]['currency'] == "ZWL":
                 data[index]['total_debt_account'] += value['account']
-                if data[index]['voucher_no'] is not None:
-                    data[index]['exchange_rate'] = (
-                        data[index]['total_debt_account']
-                        / data[index]['total_debt']
-                    )
             else:
                 data[index]['total_debt_account'] += value['main'] * data[index]['exchange_rate']
             # if "currency" in filters and filters['currency'] != data[index]['currency']:
@@ -273,6 +268,12 @@ def get_data(filters: 'dict[str, ]', columns: 'list[dict]') -> list:
     #     frappe.msgprint(f"There are no exchange rates to convert to {filters['currency']}")
 
     data = [record for record in data if record['total_debt'] or record['total_debt_account']]
+    for i, row in enumerate(data):
+        if row['voucher_no'] is not None:
+            data[i]['exchange_rate'] = (
+                row['total_debt_account']
+                / row['total_debt']
+            )
 
     if "cost_center" in filters:
         data = [record for record in data if record['cost_center'] == filters['cost_center']]
