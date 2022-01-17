@@ -1,0 +1,33 @@
+{
+ "add_total_row": 0,
+ "columns": [],
+ "creation": "2022-01-12 15:47:03.309100",
+ "disable_prepared_report": 0,
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [],
+ "idx": 0,
+ "is_standard": "Yes",
+ "letter_head": "Eskill Trading",
+ "modified": "2022-01-12 15:47:03.309100",
+ "modified_by": "Administrator",
+ "module": "Eskill Customisations",
+ "name": "Accounts Payable (Multi-Currency)",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "ref_doctype": "GL Entry",
+ "report_name": "Accounts Payable (Multi-Currency)",
+ "report_type": "Script Report",
+ "roles": [
+  {
+   "role": "Accounts User"
+  },
+  {
+   "role": "Accounts Manager"
+  },
+  {
+   "role": "Employee"
+  }
+ ]
+}

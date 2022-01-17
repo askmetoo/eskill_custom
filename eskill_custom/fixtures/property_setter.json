@@ -6849,5 +6849,22 @@
   "property_type": "Data",
   "row_name": null,
   "value": "posting_date, due_date, customer, base_grand_total, outstanding_amount,service_order"
+ },
+ {
+  "default_value": null,
+  "doc_type": "Payment Entry",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocField",
+  "field_name": "target_exchange_rate",
+  "modified": "2022-01-14 08:43:55.752455",
+  "name": "Payment Entry-target_exchange_rate-precision",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "property": "precision",
+  "property_type": "Select",
+  "row_name": null,
+  "value": "9"
  }
 ]
