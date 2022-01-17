@@ -111,7 +111,7 @@ def get_columns(filters: 'dict[str, ]'):
         {
             'fieldname': "exchange_rate",
             'label': _("Exchange Rate"),
-            'fieldtype': "float",
+            'fieldtype': "Float",
             'precision': 4
         },
         {
