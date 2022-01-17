@@ -269,7 +269,7 @@ def get_data(filters: 'dict[str, ]', columns: 'list[dict]') -> list:
 
     data = [record for record in data if record['total_debt'] or record['total_debt_account']]
     for i, row in enumerate(data):
-        if row['voucher_no'] is not None:
+        if row['voucher_no'] is not None and row['currency'] == filters['currency']:
             data[i]['exchange_rate'] = (
                 row['total_debt_account']
                 / row['total_debt']
