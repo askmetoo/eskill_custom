@@ -34,34 +34,33 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Multi Currency",
+   "label": "Accounts Payable",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
   },
   {
    "hidden": 0,
-   "is_query_report": 0,
-   "label": "Auction Exchange Rate",
-   "link_to": "Auction Exchange Rate",
-   "link_type": "DocType",
+   "is_query_report": 1,
+   "label": "Accounts Payable (Multi-Currency)",
+   "link_to": "Accounts Payable (Multi-Currency)",
+   "link_type": "Report",
    "onboard": 0,
    "type": "Link"
   },
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Profitability",
+   "label": "Accounts Receivable",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
   },
   {
-   "dependencies": "",
    "hidden": 0,
    "is_query_report": 1,
-   "label": "Sales Invoice Income & Expense",
-   "link_to": "Sales Invoice Income & Expense",
+   "label": "Accounts Receivable (Multi-Currency)",
+   "link_to": "Accounts Receivable (Multi-Currency)",
    "link_type": "Report",
    "onboard": 0,
    "type": "Link"
@@ -95,22 +94,40 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Accounts Receivable",
+   "label": "Multi Currency",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
   },
   {
    "hidden": 0,
+   "is_query_report": 0,
+   "label": "Auction Exchange Rate",
+   "link_to": "Auction Exchange Rate",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Profitability",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
    "is_query_report": 1,
-   "label": "Accounts Receivable (Multi-Currency)",
-   "link_to": "Accounts Receivable (Multi-Currency)",
+   "label": "Sales Invoice Income & Expense",
+   "link_to": "Sales Invoice Income & Expense",
    "link_type": "Report",
    "onboard": 0,
    "type": "Link"
   }
  ],
- "modified": "2021-12-01 12:06:24.623512",
+ "modified": "2022-01-17 09:10:55.676304",
  "modified_by": "andrew@eskilltrading.com",
  "module": "Eskill Customisations",
  "name": "Eskill Accounts",
