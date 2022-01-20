@@ -43,11 +43,7 @@ frappe.ui.form.on('Sales Order', {
     },
     
     search: function(frm) {
-        if (frm.doc.stock_item) {
-            stock_lookup(frm);
-        } else {
-            frappe.throw("You must select a stocked item before performing a stock lookup.");
-        }
+        stock_lookup(frm);
     },
 
     usd_to_currency: function(frm) {
