@@ -20,6 +20,7 @@
   "parts_returned",
   "section_break_9",
   "start_date",
+  "edit_start_date",
   "column_break_11",
   "closing_date",
   "customer_details_section",
@@ -217,7 +218,8 @@
    "fieldtype": "Date",
    "in_preview": 1,
    "label": "Start Date",
-   "read_only": 1
+   "read_only": 1,
+   "read_only_depends_on": "eval: (!doc.edit_start_date);"
   },
   {
    "allow_on_submit": 1,
@@ -304,12 +306,18 @@
    "label": "Assigned Technician",
    "options": "Sales Person",
    "permlevel": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "edit_start_date",
+   "fieldtype": "Check",
+   "label": "Edit Start Date"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2021-12-02 16:27:13.698517",
+ "modified": "2022-01-19 09:03:27.546409",
  "modified_by": "Administrator",
  "module": "Eskill Customisations",
  "name": "Service Order",

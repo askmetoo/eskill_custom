@@ -94,7 +94,6 @@ frappe.ui.form.on('Service Order', {
     },
 
     before_submit(frm) {
-        frm.set_value("start_date", frappe.datetime.get_today());
         frm.set_value("job_status", "Open");
         if (frm.doc.sla) {
             frappe.confirm(
