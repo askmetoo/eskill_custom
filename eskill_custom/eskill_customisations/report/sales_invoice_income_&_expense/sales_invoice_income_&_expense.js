@@ -7,8 +7,8 @@ frappe.query_reports["Sales Invoice Income & Expense"] = {
             "options": "Customer"
         },
         {
-            "fieldname":"customer_code",
-            "label": __("Customer Code"),
+            "fieldname":"customer_name",
+            "label": __("Customer Name"),
             "fieldtype": "Data",
         },
         {
