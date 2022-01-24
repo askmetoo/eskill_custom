@@ -1,39 +1,39 @@
 function assign_sales_person(frm) {
-    frappe.call({
-        method: "eskill_custom.api.invoice_sales_person",
-        args: {
-            user: frappe.session.user,
-            service_invoice: (frm.doc.issue) ? true : false,
-            issue: (frm.doc.issue) ? frm.doc.issue : ""
-        },
-        callback: function(response) {
-            frm.clear_table('sales_team');
-            response.message.forEach( function(person) {
-                frm.add_child('sales_team', {
-                    'sales_person': person.sales_person,
-                    'allocated_percentage': person.contribution
-                });
-            });
-            frm.refresh_field('sales_team');
-        }
-    });
+    // frappe.call({
+    //     method: "eskill_custom.api.invoice_sales_person",
+    //     args: {
+    //         user: frappe.session.user,
+    //         service_invoice: (frm.doc.issue) ? true : false,
+    //         issue: (frm.doc.issue) ? frm.doc.issue : ""
+    //     },
+    //     callback: function(response) {
+    //         frm.clear_table('sales_team');
+    //         response.message.forEach( function(person) {
+    //             frm.add_child('sales_team', {
+    //                 'sales_person': person.sales_person,
+    //                 'allocated_percentage': person.contribution
+    //             });
+    //         });
+    //         frm.refresh_field('sales_team');
+    //     }
+    // });
 }
 
 function issue_billing_update(frm, dtype) {
-    frappe.call({
-        method: "eskill_custom.api.update_issue_billing",
-        args: {
-            docfield: dtype,
-            docname: frm.doc.name,
-            docfield_status: frm.doc.status,
-            issue: frm.doc.issue
-        },
-        callback: function(response) {
-            if (response.message != 1) {
-                frappe.throw(__("Error encountered when updating issue."));
-            }
-        }
-    });
+    // frappe.call({
+    //     method: "eskill_custom.api.update_issue_billing",
+    //     args: {
+    //         docfield: dtype,
+    //         docname: frm.doc.name,
+    //         docfield_status: frm.doc.status,
+    //         issue: frm.doc.issue
+    //     },
+    //     callback: function(response) {
+    //         if (response.message != 1) {
+    //             frappe.throw(__("Error encountered when updating issue."));
+    //         }
+    //     }
+    // });
 }
 
 function limit_rate(frm) {
