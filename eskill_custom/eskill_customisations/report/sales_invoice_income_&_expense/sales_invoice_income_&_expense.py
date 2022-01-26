@@ -41,7 +41,7 @@ def get_columns(filters: dict) -> 'list[dict]':
         },
         {
             'fieldname': "customer_name",
-            'label': _("Customer Code"),
+            'label': _("Customer Name"),
             'fieldtype': "Text",
             'width': 400
         },
