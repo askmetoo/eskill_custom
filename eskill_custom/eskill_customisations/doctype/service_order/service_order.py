@@ -421,17 +421,23 @@ def generate_delivery(source_name, target_doc = None):
 
         target.ignore_pricing_rule = 1
 
-        for time in service_order.time_taken:
-            sales_person = target.append("sales_team", {})
-            sales_person.sales_person = time.technician
-            if service_order.job_type == "Billable":
-                sales_person.allocated_percentage = (
-                    time.billable_hours / service_order.billable_hours
-                ) * 100
-            else:
-                sales_person.allocated_percentage = (
-                    time.total_hours / service_order.total_hours
-                ) * 100
+        if len(service_order.time_taken) > 0:
+            for time in service_order.time_taken:
+                sales_person = target.append("sales_team", {})
+                sales_person.sales_person = time.technician
+                if service_order.job_type == "Billable":
+                    sales_person.allocated_percentage = (
+                        time.billable_hours / service_order.billable_hours
+                    ) * 100
+                else:
+                    sales_person.allocated_percentage = (
+                        time.total_hours / service_order.total_hours
+                    ) * 100
+        else:
+            target.append("sales_team", {
+                'sales_person': service_order.assigned_technician,
+                'allocated_percentage': 100
+            })
 
         if len(target.get("items")) == 0:
             frappe.msgprint(_("There are no deliverable items."))
