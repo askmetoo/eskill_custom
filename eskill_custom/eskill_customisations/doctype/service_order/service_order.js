@@ -89,6 +89,12 @@ frappe.ui.form.on('Service Order', {
         warehouse_filter(frm);
     },
 
+    before_save(frm) {
+        if(frm.doc.edit_start_date) {
+            frm.set_value("edit_start_date", 0)
+        }
+    },
+
     after_save(frm) {
         frm.reload_doc();
     },
