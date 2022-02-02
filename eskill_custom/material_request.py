@@ -42,6 +42,8 @@ def update_part(doc: str):
             else:
                 part_list.status = "Requested"
             part_list.save(ignore_permissions=True)
+            service_order = frappe.get_doc("Service Order", part_list.parent)
+            service_order.update_modified()
 
             if transferred_qty:
                 comment = f"has released {transferred_qty} {part_list.part}: {part_list.part_name}."
