@@ -38,5 +38,13 @@ frappe.ui.form.on("Accounts Settings", {
                 })
             })
         }, __("Customer Validation"));
+        frm.add_custom_button(__("Set Supplier Accounts"), () => {
+            frappe.call({
+                method: "eskill_custom.accounts_settings.set_supplier_creditors",
+                args: {
+                    company: frappe.user_defaults.company
+                }
+            });
+        }, __("Supplier Validation"));
     }
 });
