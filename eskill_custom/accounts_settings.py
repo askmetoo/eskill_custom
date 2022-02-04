@@ -177,3 +177,68 @@ def create_secondary_customers(base_currency: str, currency: str):
 
         for doc in ("Address", "Contact"):
             set_contact_details(doc, old_customer.name, new_customer.name)
+
+
+@frappe.whitelist()
+def set_supplier_creditors(company: str):
+    "Sets creditors' control account for suppliers."
+
+    suppliers_without_account = frappe.db.sql(
+        f"""select
+            name
+        from
+            `tabSupplier`
+        where
+            name not in (
+                select
+                    parent
+                from
+                    `tabParty Account`
+                where
+                    company = '{company}'
+                    and parenttype = 'Supplier'
+            );"""
+    )
+    suppliers_without_account = [supplier[0] for supplier in suppliers_without_account]
+
+    creditors_accounts = frappe.db.sql(
+        f"""select
+            name,
+            account_currency currency
+        from
+            tabAccount
+        where
+            not disabled
+            and company = '{company}'
+            and creditors_account;""",
+        as_dict=True
+    )
+    creditors_accounts = {account['currency']: account['name'] for account in creditors_accounts}
+
+    failed_suppliers = list()
+
+    for supplier_name in suppliers_without_account:
+        supplier = frappe.get_doc("Supplier", supplier_name)
+        if supplier.default_currency in creditors_accounts:
+            supplier.append("accounts", {
+                'account': creditors_accounts[supplier.default_currency],
+                'company': company
+            })
+            supplier.save(ignore_permissions=True)
+        else:
+            failed_suppliers.append("<li>{}: {} | {}</li>".format(
+                supplier.name,
+                supplier.supplier_name,
+                supplier.default_currency
+            ))
+
+    if len(failed_suppliers) > 0:
+        message = (
+            "The following suppliers could not have their account "
+            "set as there are no creditors' accounts with their currency:<br>"
+        )
+        for supplier in failed_suppliers:
+            message += supplier
+        frappe.msgprint(_(message))
+    else:
+        frappe.msgprint(_("All suppliers have a creditors' control account set."))
