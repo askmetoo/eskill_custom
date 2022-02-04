@@ -306,19 +306,15 @@ class ServiceOrder(Document):
 
 
     @frappe.whitelist()
-    def set_job_status(self, status: str):
+    def set_job_status(self, status: str, reason: str = None):
         "Updates the status of the job and adds comment to describe who updated it."
 
         self.job_status = status
+        self.reason_on_hold = reason
         if status == "Closed":
             self.closing_date = frappe.utils.today()
             self.parts_returned = 1
         self.save(ignore_permissions=True)
-
-        self.add_comment(
-            comment_type="Info",
-            text=f"set job as \"{status}\"."
-        )
 
 
     @frappe.whitelist()

@@ -721,16 +721,41 @@ function update_job_status(frm) {
     }
 
     function set_status(frm, status) {
-        frappe.call({
-            doc: frm.doc,
-            method: "set_job_status",
-            args: {
-                status: status
-            },
-            callback: () => {
-                frm.reload_doc();
-            }
-        });
+        if (status == "On Hold") {
+            frappe.prompt([
+                {
+                    label: "Reason on Hold",
+                    fieldname: "reason_on_hold",
+                    fieldtype: "Link",
+                    options: "Service Order On Hold Type",
+                    description: "Please select a reason for the job being put on hold.",
+                    reqd: 1
+                }
+            ], (values) => {
+                frappe.call({
+                    doc: frm.doc,
+                    method: "set_job_status",
+                    args: {
+                        status: status,
+                        reason: values.reason_on_hold
+                    },
+                    callback: () => {
+                        frm.reload_doc();
+                    }
+                });
+            });
+        } else {
+            frappe.call({
+                doc: frm.doc,
+                method: "set_job_status",
+                args: {
+                    status: status
+                },
+                callback: () => {
+                    frm.reload_doc();
+                }
+            });
+        }
     }
 }
 

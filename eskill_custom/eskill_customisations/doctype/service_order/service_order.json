@@ -17,6 +17,7 @@
   "column_break_4",
   "amended_from",
   "assigned_technician",
+  "reason_on_hold",
   "parts_returned",
   "section_break_9",
   "start_date",
@@ -312,12 +313,21 @@
    "fieldname": "edit_start_date",
    "fieldtype": "Check",
    "label": "Edit Start Date"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "reason_on_hold",
+   "fieldtype": "Link",
+   "label": "Reason on Hold",
+   "mandatory_depends_on": "eval: (doc.job_status == \"On Hold\");",
+   "options": "Service Order On Hold Type",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-01-19 09:03:27.546409",
+ "modified": "2022-02-03 09:47:37.745098",
  "modified_by": "Administrator",
  "module": "Eskill Customisations",
  "name": "Service Order",
