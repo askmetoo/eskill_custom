@@ -49,7 +49,14 @@ def execute(filters=None):
 
     # Generate report data
     data = []
-    data.extend(get_data(filters=filters, columns=columns, start_m=start_m, end_m=end_m, single_period=single_period, accumulated=filters['accumulated']))
+    data.extend(get_data(
+        filters=filters,
+        columns=columns,
+        start_m=start_m,
+        end_m=end_m,
+        single_period=single_period,
+        accumulated=filters['accumulated']
+    ))
 
     # Generate chart
     try:
@@ -101,13 +108,20 @@ def get_columns(filters: 'dict[str, ]', single_period: bool = True):
         })
 
     if filters['accumulated']:
-        for i in range(len(columns)):
+        for i, row in enumerate(columns):
             columns[i]['label'] = "Up to " + columns[i]['label']
 
     return columns
 
 
-def get_data(start_m: int, end_m: int, filters: 'dict[str, ]', columns: 'list[dict[str, ]]', single_period: bool = False, accumulated: bool = False) -> list:
+def get_data(
+    start_m: int,
+    end_m: int,
+    filters: 'dict[str, ]',
+    columns: 'list[dict[str, ]]',
+    single_period: bool = False,
+    accumulated: bool = False
+) -> list:
     "Get report data."
 
     blank_row = {'account': ""}
@@ -167,29 +181,46 @@ def get_data(start_m: int, end_m: int, filters: 'dict[str, ]', columns: 'list[di
     # Get account totals
     for doctype in doc_list:
         new_data = get_account_data([columns[1], columns[2]], date_range[0], cost_center, doctype)
-        for i in range(len(new_data)):
-            index = next(j for j, account in enumerate(data) if account['account'] == new_data[i]['account'])
-            data[index][columns[1]['fieldname']] += new_data[i][columns[1]['fieldname']]
-            data[index][columns[2]['fieldname']] += new_data[i][columns[2]['fieldname']]
+        for i, row in enumerate(new_data):
+            index = next(
+                j
+                for j, account in enumerate(data)
+                if account['account'] == row['account']
+            )
+            data[index][columns[1]['fieldname']] += row[columns[1]['fieldname']]
+            data[index][columns[2]['fieldname']] += row[columns[2]['fieldname']]
         if not single_period:
-            new_data = get_account_data([columns[3], columns[4]], date_range[1], cost_center, doctype)
-            for i in range(len(new_data)):
-                index = next(j for j, account in enumerate(data) if account['account'] == new_data[i]['account'])
-                data[index][columns[3]['fieldname']] += new_data[i][columns[3]['fieldname']]
-                data[index][columns[4]['fieldname']] += new_data[i][columns[4]['fieldname']]
+            new_data = get_account_data(
+                [columns[3], columns[4]],
+                date_range[1],
+                cost_center,
+                doctype
+            )
+            for i, row in enumerate(new_data):
+                index = next(
+                    j
+                    for j, account in enumerate(data)
+                    if account['account'] == row['account']
+                )
+                data[index][columns[3]['fieldname']] += row[columns[3]['fieldname']]
+                data[index][columns[4]['fieldname']] += row[columns[4]['fieldname']]
 
     # Get data from journal entries
     new_data = get_journal_data([columns[1], columns[2]], date_range[0], cost_center)
-    for i in range(len(new_data)):
-        index = next(j for j, account in enumerate(data) if account['account'] == new_data[i]['account'])
-        data[index][columns[1]['fieldname']] += new_data[i][columns[1]['fieldname']]
-        data[index][columns[2]['fieldname']] += new_data[i][columns[2]['fieldname']]
+    for i, row in enumerate(new_data):
+        index = next(j for j, account in enumerate(data) if account['account'] == row['account'])
+        data[index][columns[1]['fieldname']] += row[columns[1]['fieldname']]
+        data[index][columns[2]['fieldname']] += row[columns[2]['fieldname']]
     if not single_period:
         new_data = get_journal_data([columns[3], columns[4]], date_range[1], cost_center)
-        for i in range(len(new_data)):
-            index = next(j for j, account in enumerate(data) if account['account'] == new_data[i]['account'])
-            data[index][columns[3]['fieldname']] += new_data[i][columns[3]['fieldname']]
-            data[index][columns[4]['fieldname']] += new_data[i][columns[4]['fieldname']]
+        for i, row in enumerate(new_data):
+            index = next(
+                j
+                for j, account in enumerate(data)
+                if account['account'] == row['account']
+            )
+            data[index][columns[3]['fieldname']] += row[columns[3]['fieldname']]
+            data[index][columns[4]['fieldname']] += row[columns[4]['fieldname']]
 
     # Calculate header totals
     for header in headers:
@@ -204,7 +235,9 @@ def get_data(start_m: int, end_m: int, filters: 'dict[str, ]', columns: 'list[di
                         data[index][columns[4]['fieldname']] += account[columns[4]['fieldname']]
 
     # Adding in start and end dates for opening ledger report on specific accounts
-    first_day = frappe.db.sql(f"select date_format('{filters['start_y']}-{start_m}-1', '%Y-%m-%d')")[0][0]
+    first_day = frappe.db.sql(
+        f"select date_format('{filters['start_y']}-{start_m}-1', '%Y-%m-%d')"
+    )[0][0]
     for i, account in enumerate(data):
         data[i]['from_date'] = first_day if account['account'] else ""
         data[i]['to_date'] = last_day_1 if account['account'] else ""
@@ -222,90 +255,106 @@ def get_data(start_m: int, end_m: int, filters: 'dict[str, ]', columns: 'list[di
     return data
 
 
-def initialise_data(columns: 'list[dict[str, ]]', date_range: 'list[str]', cost_center: str, single_period: bool, blank_row: 'dict[str, ]') -> list:
+def initialise_data(
+    columns: 'list[dict[str, ]]',
+    date_range: 'list[str]',
+    cost_center: str,
+    single_period: bool,
+    blank_row: 'dict[str, ]'
+) -> list:
     "Initialises data table."
 
     headers, data =  [], []
 
     if single_period:
-        headers.extend(frappe.db.sql(f"""\
-select
-    A.parent_account account,
-    0 {columns[1]['fieldname']},
-    0 {columns[2]['fieldname']},
-    1 header,
-    A.root_type account_type
-from
-    `tabGL Entry` GLE
-join
-    tabAccount A on GLE.account = A.name
-where
-    (A.root_type = 'Income' or A.root_type = 'Expense') and {date_range[0]}{cost_center}
-group by
-    A.parent_account
-order by
-    A.parent_account""", as_dict=1))
+        headers.extend(frappe.db.sql(f"""
+            select
+                A.parent_account account,
+                0 {columns[1]['fieldname']},
+                0 {columns[2]['fieldname']},
+                1 header,
+                A.root_type account_type
+            from
+                `tabGL Entry` GLE
+            join
+                tabAccount A on GLE.account = A.name
+            where
+                (A.root_type = 'Income' or A.root_type = 'Expense') and {date_range[0]}{cost_center}
+            group by
+                A.parent_account
+            order by
+                A.parent_account;""",
+                as_dict=1
+        ))
 
         for header in headers:
             data.append(header)
-            data.extend(frappe.db.sql(f"""\
-select
-    A.name account,
-    0 {columns[1]['fieldname']},
-    0 {columns[2]['fieldname']},
-    A.parent_account parent,
-    A.root_type account_type,
-    1 indent
-from
-    `tabGL Entry` GLE
-join
-    tabAccount A on GLE.account = A.name
-where
-    A.root_type = '{header['account_type']}' and A.parent_account = '{header['account']}' and {date_range[0]}{cost_center}
-group by
-    A.name""", as_dict=1))
+            data.extend(frappe.db.sql(f"""
+                select
+                    A.name account,
+                    0 {columns[1]['fieldname']},
+                    0 {columns[2]['fieldname']},
+                    A.parent_account parent,
+                    A.root_type account_type,
+                    1 indent
+                from
+                    `tabGL Entry` GLE
+                join
+                    tabAccount A on GLE.account = A.name
+                where
+                    A.root_type = '{header['account_type']}' and A.parent_account = '{header['account']}' and {date_range[0]}{cost_center}
+                group by
+                    A.name;""",
+                as_dict=1
+            ))
             data.append(blank_row)
     else:
-        headers.extend(frappe.db.sql(f"""\
-select
-    A.parent_account account,
-    0 {columns[1]['fieldname']},
-    0 {columns[2]['fieldname']},
-    0 {columns[3]['fieldname']},
-    0 {columns[4]['fieldname']},
-    1 header,
-    A.root_type account_type
-from
-    `tabGL Entry` GLE
-join
-    tabAccount A on GLE.account = A.name
-where
-    (A.root_type = 'Income' or A.root_type = 'Expense') and ({date_range[0]} or {date_range[1]}){cost_center}
-group by
-    A.parent_account
-order by
-    A.parent_account""", as_dict=1))
+        headers.extend(frappe.db.sql(f"""
+            select
+                A.parent_account account,
+                0 {columns[1]['fieldname']},
+                0 {columns[2]['fieldname']},
+                0 {columns[3]['fieldname']},
+                0 {columns[4]['fieldname']},
+                1 header,
+                A.root_type account_type
+            from
+                `tabGL Entry` GLE
+            join
+                tabAccount A on GLE.account = A.name
+            where
+                (A.root_type = 'Income' or A.root_type = 'Expense') and ({date_range[0]} or {date_range[1]}){cost_center}
+            group by
+                A.parent_account
+            order by
+                A.parent_account;""",
+            as_dict=1
+        ))
 
         for header in headers:
             data.append(header)
-            data.extend(frappe.db.sql(f"""\
-select
-    A.name account,
-    0 {columns[1]['fieldname']},
-    0 {columns[2]['fieldname']},
-    0 {columns[3]['fieldname']},
-    0 {columns[4]['fieldname']},
-    A.parent_account parent,
-    A.root_type account_type,
-    1 indent
-from
-    `tabGL Entry` GLE
-join
-    tabAccount A on GLE.account = A.name
-where
-    A.root_type = '{header['account_type']}' and A.parent_account = '{header['account']}' and ({date_range[0]} or {date_range[1]}){cost_center}
-group by
-    A.name""", as_dict=1))
+            data.extend(frappe.db.sql(f"""
+                select
+                    A.name account,
+                    0 {columns[1]['fieldname']},
+                    0 {columns[2]['fieldname']},
+                    0 {columns[3]['fieldname']},
+                    0 {columns[4]['fieldname']},
+                    A.parent_account parent,
+                    A.root_type account_type,
+                    1 indent
+                from
+                    `tabGL Entry` GLE
+                join
+                    tabAccount A on GLE.account = A.name
+                where
+                    A.root_type = '{header['account_type']}'
+                    and A.parent_account = '{header['account']}'
+                    and ({date_range[0]} or {date_range[1]}){cost_center}
+                group by
+                    A.name;""",
+                as_dict=1
+            ))
             data.append(blank_row)
 
     total_row = {'account': 'Net Profit/Loss', 'total': 1}
@@ -327,48 +376,58 @@ group by
     return headers, data
 
 
-def get_account_data(columns: 'list[dict[str, ]]', date_range: str, cost_center: str, doctype: str) -> list:
+def get_account_data(
+    columns: 'list[dict[str, ]]',
+    date_range: str,
+    cost_center: str,
+    doctype: str
+) -> list:
     "Get data based on GL Entries."
 
     data = []
 
-    has_currency = frappe.db.sql(f"""\
-select
-    true
-from
-    information_schema.columns
-where
-    table_schema = '{frappe.conf.get('db_name')}' and table_name = 'tab{doctype}' and column_name = 'currency'""")
+    has_currency = frappe.db.sql(f"""
+        select
+            true
+        from
+            information_schema.columns
+        where
+            table_schema = '{frappe.conf.get('db_name')}'
+            and table_name = 'tab{doctype}'
+            and column_name = 'currency';"""
+    )
 
     if len(has_currency):
-        column2 = """\
-sum(case when
-        doc.currency = "ZWD"
-    then
-        (debit - credit) / doc.conversion_rate
-    else
-        (debit - credit) * doc.auction_bid_rate
-    end)"""
+        column2 = """
+            sum(case when
+                    doc.currency = "ZWD"
+                then
+                    (debit - credit) / doc.conversion_rate
+                else
+                    (debit - credit) * doc.auction_bid_rate
+                end)"""
     else:
         column2 = "sum((debit - credit) * doc.auction_bid_rate)"
 
-    data.extend(frappe.db.sql(f"""\
-select
-    GLE.account account,
-    sum(debit - credit) {columns[0]['fieldname']},
-    {column2} {columns[1]['fieldname']}
-from
-    `tabGL Entry` GLE
-join
-    tabAccount A on GLE.account = A.name
-join
-    `tab{doctype}` doc on GLE.voucher_no = doc.name
-where
-    {date_range} and (A.root_type = 'Income' or A.root_type = 'Expense'){cost_center}
-group by
-    GLE.account
-having
-    {columns[0]['fieldname']} <> 0""", as_dict=1))
+    data.extend(frappe.db.sql(f"""
+        select
+            GLE.account account,
+            sum(debit - credit) {columns[0]['fieldname']},
+            {column2} {columns[1]['fieldname']}
+        from
+            `tabGL Entry` GLE
+        join
+            tabAccount A on GLE.account = A.name
+        join
+            `tab{doctype}` doc on GLE.voucher_no = doc.name
+        where
+            {date_range} and (A.root_type = 'Income' or A.root_type = 'Expense'){cost_center}
+        group by
+            GLE.account
+        having
+            {columns[0]['fieldname']} <> 0;""",
+        as_dict=1
+    ))
 
     return data
 
@@ -378,46 +437,48 @@ def get_journal_data(columns: 'list[dict[str, ]]', date_range: str, cost_center:
 
     data = []
 
-    data.extend(frappe.db.sql(f"""\
-select
-    GLE.account account,
-    sum(GLE.debit - GLE.credit) {columns[0]['fieldname']},
-    sum((GLE.debit - GLE.credit) * (case
-    	when
-			doc.multi_currency
-		then
-			(case when
-				1 / (select
-					avg(JEA2.exchange_rate)
-				from
-					`tabJournal Entry Account` JEA2
-				where
-					JEA2.parent = GLE.voucher_no and JEA2.account_currency = "ZWD")
-			then
-				1 / (select
-					avg(JEA2.exchange_rate)
-				from
-					`tabJournal Entry Account` JEA2
-				where
-					JEA2.parent = GLE.voucher_no and JEA2.account_currency = "ZWD")
-			else
-				doc.auction_bid_rate
-			end)
-		else
-			doc.auction_bid_rate
-		end)) {columns[1]['fieldname']}
-from
-    `tabGL Entry` GLE
-join
-    tabAccount A on GLE.account = A.name
-join
-    `tabJournal Entry` doc on GLE.voucher_no = doc.name
-where
-    {date_range} and (A.root_type = 'Income' or A.root_type = 'Expense'){cost_center}
-group by
-    GLE.account
-having
-    {columns[0]['fieldname']} <> 0""", as_dict=1))
+    data.extend(frappe.db.sql(f"""
+        select
+            GLE.account account,
+            sum(GLE.debit - GLE.credit) {columns[0]['fieldname']},
+            sum((GLE.debit - GLE.credit) * (case
+                when
+                    doc.multi_currency
+                then
+                    (case when
+                        1 / (select
+                            avg(JEA2.exchange_rate)
+                        from
+                            `tabJournal Entry Account` JEA2
+                        where
+                            JEA2.parent = GLE.voucher_no and JEA2.account_currency = "ZWD")
+                    then
+                        1 / (select
+                            avg(JEA2.exchange_rate)
+                        from
+                            `tabJournal Entry Account` JEA2
+                        where
+                            JEA2.parent = GLE.voucher_no and JEA2.account_currency = "ZWD")
+                    else
+                        doc.auction_bid_rate
+                    end)
+                else
+                    doc.auction_bid_rate
+                end)) {columns[1]['fieldname']}
+        from
+            `tabGL Entry` GLE
+        join
+            tabAccount A on GLE.account = A.name
+        join
+            `tabJournal Entry` doc on GLE.voucher_no = doc.name
+        where
+            {date_range} and (A.root_type = 'Income' or A.root_type = 'Expense'){cost_center}
+        group by
+            GLE.account
+        having
+            {columns[0]['fieldname']} <> 0;""",
+        as_dict=1
+    ))
 
     return data
 
@@ -447,7 +508,11 @@ def get_chart_data(columns: 'list[dict[str, ]]', data: 'list[dict[str, ]]') -> d
     if expense_data:
         datasets.append({'name': _('Expense'), 'chartType': "bar", 'values': expense_data})
     if net_profit:
-        datasets.append({'name': _('Net Profit/Loss'), 'chartType': "line" if len(columns) > 1 else "bar", 'values': net_profit})
+        datasets.append({
+            'name': _('Net Profit/Loss'),
+            'chartType': "line" if len(columns) > 1 else "bar",
+            'values': net_profit
+        })
 
     chart = {
         'data': {
