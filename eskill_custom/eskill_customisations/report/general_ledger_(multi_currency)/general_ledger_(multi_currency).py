@@ -380,7 +380,7 @@ def get_account_data(account: 'dict[str,]', filters: 'dict[str,]') -> list:
     data = []
 
     cost_center = (
-        "and cost_center = '{}'".format(filters['cost_center'])
+        f"and cost_center = '{filters['cost_center']}'"
         if "cost_center" in filters else
         ""
     )
@@ -431,64 +431,49 @@ def get_account_data(account: 'dict[str,]', filters: 'dict[str,]') -> list:
         for i, record in enumerate(data):
             if record['account_currency'] != filters['currency']:
                 if record['document_type'] in basic_docs:
-                    exchange_rate = frappe.db.sql(f"""\
-                        select
-                            (case when currency = '{filters['currency']}' then 1 / conversion_rate else auction_bid_rate end)
-                        from
-                            `tab{record['document_type']}`
-                        where
-                            name = '{record['account']}';""")[0][0]
+                    doc = frappe.get_doc(record['document_type'], record['account'])
+                    if doc.currency == filters['currency']:
+                        exchange_rate = 1 / doc.conversion_rate
+                    else:
+                        exchange_rate = doc.auction_bid_rate
                 elif record['document_type'] == "Payment Entry":
-                    exchange_rate = frappe.db.sql(f"""\
-                        select
-                            (case when
-                                paid_from = '{account['account']}' and paid_from_account_currency = '{filters['currency']}'
-                            then
-                                1 / source_exchange_rate
-                            else
-                                (case when
-                                    paid_to_account_currency = '{filters['currency']}'
-                                then
-                                    1 / target_exchange_rate
-                                else
-                                    auction_bid_rate
-                                end)
-                            end)
-                        from
-                            `tab{record['document_type']}`
-                        where
-                            name = '{record['account']}';""")[0][0]
+                    payment = frappe.get_doc("Payment Entry", record['account'])
+                    exchange_rate = 0
+                    if payment.paid_from == record['account']:
+                        if payment.paid_from_account_currency == filters['currency']:
+                            exchange_rate = 1 / payment.source_exchange_rate
+                        elif payment.paid_to_account_currency == filters['currency']:
+                            exchange_rate = 1 / payment.target_exchange_rate
+                    elif payment.paid_to == record['account']:
+                        if payment.paid_to_account_currency == filters['currency']:
+                            exchange_rate = 1 / payment.target_exchange_rate
+                        elif payment.paid_from_account_currency == filters['currency']:
+                            exchange_rate = 1 / payment.source_exchange_rate
+                    if not exchange_rate:
+                        exchange_rate = payment.auction_bid_rate
                 elif record['document_type'] == "Journal Entry":
-                    exchange_rate = frappe.db.sql(f"""\
-                        select
-                            (case when
-                                not JE.multi_currency
-                            then
-                                JE.auction_bid_rate
-                            else
-                                (case when
-                                    JEA.account_currency = '{filters['currency']}'
-                                then
-                                    1 / avg(JEA.exchange_rate)
-                                else
-                                    JE.auction_bid_rate
-                                end)
-                            end)
-                        from
-                            `tab{record['document_type']}` JE
-                        join
-                            `tabJournal Entry Account` JEA on JE.name = JEA.parent
-                        where
-                            JE.name = '{record['account']}'
-                            and JEA.account = '{account['account']}';""")[0][0]
+                    journal_entry = frappe.get_doc("Journal Entry", record['account'])
+                    if not journal_entry.multi_currency:
+                        exchange_rate = journal_entry.auction_bid_rate
+                    else:
+                        totals = {
+                            'count': 0,
+                            'exchange_total': 0
+                        }
+                        for row in journal_entry.accounts:
+                            if row.account_currency == filters['currency']:
+                                totals['count'] += 1
+                                totals['exchange_total'] += 1 / row.exchange_rate
+                        if totals['count'] and totals['exchange_total']:
+                            exchange_rate = totals['exchange_total'] / totals['count']
+                        else:
+                            exchange_rate = journal_entry.auction_bid_rate
                 else:
-                    exchange_rate = frappe.db.sql(f"""\
-                        select
-                            auction_bid_rate
-                        from
-                            `tab{record['document_type']}`
-                        where
-                            name = '{record['account']}';""")[0][0]
+                    exchange_rate = frappe.get_value(
+                        record['document_type'],
+                        record['account'],
+                        "auction_bid_rate"
+                    )
                 data[i][deb_col] = data[i][base_deb_col] * exchange_rate
                 data[i][cre_col] = data[i][base_cre_col] * exchange_rate
     else:
