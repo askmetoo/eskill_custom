@@ -36,16 +36,7 @@ def execute(filters=None):
         frappe.throw(_("Start date must not precede end date."))
 
     # Create columns
-    columns = [
-        {
-            'fieldname': "account",
-            'label': _("Accounts"),
-            'fieldtype': "Link",
-            'options': "Account",
-            'width': 300
-        },
-    ]
-    columns.extend(get_columns(filters=filters, single_period=single_period))
+    columns = get_columns(filters=filters, single_period=single_period)
 
     # Generate report data
     data = []
@@ -68,37 +59,45 @@ def execute(filters=None):
     return columns, data, None, chart
 
 
-def get_columns(filters: 'dict[str, ]', single_period: bool = True):
+def get_columns(filters: 'dict[str]', single_period: bool = True):
     "Returns list of period based columns."
 
     if filters['periodicity'] == "Monthly":
         if single_period:
             cols = (
                 f"{filters['start_m']} {filters['start_y']} (USD)",
-                f"{filters['start_m']} {filters['start_y']} (ZWD)"
+                f"{filters['start_m']} {filters['start_y']} ({filters['currency']})"
             )
         else:
             cols = (
                 f"{filters['start_m']} {filters['start_y']} (USD)",
-                f"{filters['start_m']} {filters['start_y']} (ZWD)",
+                f"{filters['start_m']} {filters['start_y']} ({filters['currency']})",
                 f"{filters['end_m']} {filters['end_y']} (USD)",
-                f"{filters['end_m']} {filters['end_y']} (ZWD)"
+                f"{filters['end_m']} {filters['end_y']} ({filters['currency']})"
             )
     else:
         if single_period:
             cols = (
                 f"{filters['start_y']} (USD)",
-                f"{filters['start_y']} (ZWD)"
+                f"{filters['start_y']} ({filters['currency']})"
             )
         else:
             cols = (
                 f"{filters['start_y']} (USD)",
-                f"{filters['start_y']} (ZWD)",
+                f"{filters['start_y']} ({filters['currency']})",
                 f"{filters['end_y']} (USD)",
-                f"{filters['end_y']} (ZWD)"
+                f"{filters['end_y']} ({filters['currency']})"
             )
 
-    columns = []
+    columns = [
+        {
+            'fieldname': "account",
+            'label': _("Accounts"),
+            'fieldtype': "Link",
+            'options': "Account",
+            'width': 300
+        }
+    ]
     for col in cols:
         columns.append({
             'fieldname': col.lower().replace(" ", "_").replace("(", "").replace(")", ""),
@@ -106,9 +105,11 @@ def get_columns(filters: 'dict[str, ]', single_period: bool = True):
             'fieldtype': "Currency",
             'width': 150
         })
+        if filters['currency'] in col:
+            columns[-1]['options'] = "currency"
 
     if filters['accumulated']:
-        for i, row in enumerate(columns):
+        for i in range(1, len(columns)):
             columns[i]['label'] = "Up to " + columns[i]['label']
 
     return columns
@@ -180,7 +181,13 @@ def get_data(
 
     # Get account totals
     for doctype in doc_list:
-        new_data = get_account_data([columns[1], columns[2]], date_range[0], cost_center, doctype)
+        new_data = get_account_data(
+            [columns[1], columns[2]],
+            date_range[0],
+            cost_center,
+            doctype,
+            filters
+        )
         for i, row in enumerate(new_data):
             index = next(
                 j
@@ -194,7 +201,8 @@ def get_data(
                 [columns[3], columns[4]],
                 date_range[1],
                 cost_center,
-                doctype
+                doctype,
+                filters
             )
             for i, row in enumerate(new_data):
                 index = next(
@@ -206,13 +214,23 @@ def get_data(
                 data[index][columns[4]['fieldname']] += row[columns[4]['fieldname']]
 
     # Get data from journal entries
-    new_data = get_journal_data([columns[1], columns[2]], date_range[0], cost_center)
+    new_data = get_journal_data(
+        [columns[1], columns[2]],
+        date_range[0],
+        cost_center,
+        filters
+    )
     for i, row in enumerate(new_data):
         index = next(j for j, account in enumerate(data) if account['account'] == row['account'])
         data[index][columns[1]['fieldname']] += row[columns[1]['fieldname']]
         data[index][columns[2]['fieldname']] += row[columns[2]['fieldname']]
     if not single_period:
-        new_data = get_journal_data([columns[3], columns[4]], date_range[1], cost_center)
+        new_data = get_journal_data(
+            [columns[3], columns[4]],
+            date_range[1],
+            cost_center,
+            filters
+        )
         for i, row in enumerate(new_data):
             index = next(
                 j
@@ -251,6 +269,9 @@ def get_data(
             if not single_period:
                 data[index][columns[3]['fieldname']] += account[columns[3]['fieldname']]
                 data[index][columns[4]['fieldname']] += account[columns[4]['fieldname']]
+
+    for i, row in enumerate(data):
+        data[i]['currency'] = filters['currency']
 
     return data
 
@@ -377,10 +398,11 @@ def initialise_data(
 
 
 def get_account_data(
-    columns: 'list[dict[str, ]]',
+    columns: 'list[dict[str]]',
     date_range: str,
     cost_center: str,
-    doctype: str
+    doctype: str,
+    filters: 'dict[str]'
 ) -> list:
     "Get data based on GL Entries."
 
@@ -398,9 +420,9 @@ def get_account_data(
     )
 
     if len(has_currency):
-        column2 = """
+        column2 = f"""
             sum(case when
-                    doc.currency = "ZWD"
+                    doc.currency = "{filters['currency']}"
                 then
                     (debit - credit) / doc.conversion_rate
                 else
@@ -432,7 +454,7 @@ def get_account_data(
     return data
 
 
-def get_journal_data(columns: 'list[dict[str, ]]', date_range: str, cost_center: str) -> list:
+def get_journal_data(columns: 'list[dict[str, ]]', date_range: str, cost_center: str, filters: 'dict[str]') -> list:
     "Get data based from Journal Entries."
 
     data = []
@@ -441,46 +463,58 @@ def get_journal_data(columns: 'list[dict[str, ]]', date_range: str, cost_center:
         select
             GLE.account account,
             sum(GLE.debit - GLE.credit) {columns[0]['fieldname']},
-            sum((GLE.debit - GLE.credit) * (case
-                when
-                    doc.multi_currency
-                then
-                    (case when
-                        1 / (select
-                            avg(JEA2.exchange_rate)
-                        from
-                            `tabJournal Entry Account` JEA2
-                        where
-                            JEA2.parent = GLE.voucher_no and JEA2.account_currency = "ZWD")
-                    then
-                        1 / (select
-                            avg(JEA2.exchange_rate)
-                        from
-                            `tabJournal Entry Account` JEA2
-                        where
-                            JEA2.parent = GLE.voucher_no and JEA2.account_currency = "ZWD")
-                    else
-                        doc.auction_bid_rate
-                    end)
-                else
-                    doc.auction_bid_rate
-                end)) {columns[1]['fieldname']}
+            sum(GLE.debit_in_account_currency - GLE.credit_in_account_currency) {columns[1]['fieldname']},
+            GLE.voucher_no doc,
+            A.account_currency currency
         from
             `tabGL Entry` GLE
         join
             tabAccount A on GLE.account = A.name
-        join
-            `tabJournal Entry` doc on GLE.voucher_no = doc.name
         where
-            {date_range} and (A.root_type = 'Income' or A.root_type = 'Expense'){cost_center}
+            {date_range} and (A.root_type = 'Income' or A.root_type = 'Expense') and GLE.voucher_type = 'Journal Entry'{cost_center}
         group by
-            GLE.account
+            GLE.account, GLE.voucher_no
         having
             {columns[0]['fieldname']} <> 0;""",
         as_dict=1
     ))
 
-    return data
+    for i, row in enumerate(data):
+        if row.currency != filters['currency']:
+            journal_entry = frappe.get_doc("Journal Entry", row['doc'])
+            if not journal_entry.multi_currency:
+                exchange_rate = journal_entry.auction_bid_rate
+            else:
+                totals = {
+                    'count': 0,
+                    'exchange_total': 0
+                }
+                for record in journal_entry.accounts:
+                    if record.account_currency == filters['currency']:
+                        totals['count'] += 1
+                        totals['exchange_total'] += 1 / record.exchange_rate
+                if totals['count'] and totals['exchange_total']:
+                    exchange_rate = totals['exchange_total'] / totals['count']
+                else:
+                    exchange_rate = journal_entry.auction_bid_rate
+            data[i][columns[1]['fieldname']] = row[columns[0]['fieldname']] * exchange_rate
+
+    accounts = set()
+    new_data = []
+    for record in data:
+        if record.account in accounts:
+            index = next(i for i, row in enumerate(new_data) if row['account'] == record['account'])
+            new_data[index][columns[0]['fieldname']] += record[columns[0]['fieldname']]
+            new_data[index][columns[1]['fieldname']] += record[columns[1]['fieldname']]
+        else:
+            new_data.append({
+                'account': record['account'],
+                columns[0]['fieldname']: record[columns[0]['fieldname']],
+                columns[1]['fieldname']: record[columns[1]['fieldname']]
+            })
+            accounts.add(record['account'])
+
+    return new_data
 
 
 def get_chart_data(columns: 'list[dict[str, ]]', data: 'list[dict[str, ]]') -> dict:
