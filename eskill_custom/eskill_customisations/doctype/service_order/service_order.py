@@ -5,12 +5,15 @@ import frappe
 from erpnext.accounts.party import get_party_account_currency
 from erpnext.setup.utils import get_exchange_rate
 from frappe import _
+from frappe.exceptions import DoesNotExistError
 from frappe.model.document import Document
 from frappe.model.mapper import get_mapped_doc
 
 
 class ServiceOrder(Document):
+    "Service Order DocType."
     def before_save(self):
+        "Method run before saving."
         # Ensure that data set by the system is not overwritten when the form is saved
         if not self.get("__islocal"):
             old_order = frappe.get_doc("Service Order", self.name)
@@ -20,14 +23,15 @@ class ServiceOrder(Document):
                 self.billable_hours = old_order.billable_hours
 
             if self.items != old_order.items:
-                for index in range(len(self.items)):
+                for i, _ in enumerate(self.items):
                     for part in old_order.items:
-                        if self.items[index].name == part.name:
-                            self.items[index] = part
+                        if self.items[i].name == part.name:
+                            self.items[i] = part
                             break
 
 
     def validate(self):
+        "Method run during validation before saving."
         # Remove entries with duplicate serial numbers or invalid serial numbers
         known_serials = set()
         accepted_devices = list()
@@ -95,6 +99,7 @@ class ServiceOrder(Document):
 
 
     def before_submit(self):
+        "Method run before submission."
         # Throw an exception if there are serial numbers missing
         devices = dict()
         for device in self.devices:
@@ -105,12 +110,12 @@ class ServiceOrder(Document):
 
         if len(devices) > 0:
             if len(devices) == 1:
-                for key in devices:
-                    message = f"Serial number is missing for model {devices[key]} in row {key}."
+                for key, val in devices.items():
+                    message = f"Serial number is missing for model {val} in row {key}."
             else:
                 message = "Serial numbers are missing:<br>"
-                for key in sorted(devices):
-                    message += f"<li>In row {key}, for model {devices[key]}</li>"
+                for key, val in sorted(devices.items()):
+                    message += f"<li>In row {key}, for model {val}</li>"
 
             frappe.throw(_(message))
 
@@ -383,7 +388,7 @@ def generate_delivery(source_name, target_doc = None):
                 'docstatus': 1
             }
         )
-    except:
+    except DoesNotExistError:
         quotation = None
 
     def set_missing_values(source, target):
