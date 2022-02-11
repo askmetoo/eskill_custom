@@ -101,7 +101,7 @@ class ServiceOrder(Document):
     def before_submit(self):
         "Method run before submission."
         # Throw an exception if there are serial numbers missing
-        devices = dict()
+        devices = {}
         for device in self.devices:
             if not device.serial_number:
                 item = frappe.get_doc("Item", device.model)
@@ -366,6 +366,10 @@ class ServiceOrder(Document):
                 f" set warranty expiry date to {serial_no.warranty_expiry_date}."
             )
         )
+        serial_no.reload()
+        index = next(i for i, row in enumerate(self.devices) if row.serial_number == serial_number)
+        self.devices[index].warranty_status = serial_no.maintenance_status
+        self.save(ignore_permissions=True)
         self.add_comment(
             comment_type="Info",
             text=f"updated ownership and warranty of serial number {serial_number}."

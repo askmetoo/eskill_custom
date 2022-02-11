@@ -841,8 +841,7 @@ function warranty_update(frm, model, serial_number) {
                     warranty_period: values.warranty_period || 0
                 },
                 callback: (response) => {
-                    frm.dirty();
-                    frm.save();
+                    frm.reload_doc();
                     frappe.msgprint(response.message);
                 }
             });
