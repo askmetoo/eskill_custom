@@ -454,7 +454,12 @@ def get_account_data(
     return data
 
 
-def get_journal_data(columns: 'list[dict[str, ]]', date_range: str, cost_center: str, filters: 'dict[str]') -> list:
+def get_journal_data(
+    columns: 'list[dict[str, ]]',
+    date_range: str,
+    cost_center: str,
+    filters: 'dict[str]'
+) -> list:
     "Get data based from Journal Entries."
 
     data = []
