@@ -52,7 +52,7 @@ frappe.require("assets/erpnext/js/financial_statements.js", function() {
                         ]
                     }
                 },
-                "default": "ZWD",
+                "default": "ZWL",
                 "hidden": 1
             },
             {

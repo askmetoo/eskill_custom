@@ -74,6 +74,21 @@ frappe.require("assets/erpnext/js/financial_statements.js", function() {
                 "hidden": 1
             },
             {
+                "fieldname": "currency",
+                "label": __("Currency"),
+                "fieldtype": "Link",
+                "options": "Currency",
+                "get_query": () => {
+                    return {
+                        filters: [
+                            ["Currency", "name", "!=", frappe.sys_defaults.currency]
+                        ]
+                    }
+                },
+                "default": "ZWL",
+                "hidden": 1
+            },
+            {
                 "fieldname": "accumulated",
                 "label": __("Accumulated Values"),
                 "fieldtype": "Check",
