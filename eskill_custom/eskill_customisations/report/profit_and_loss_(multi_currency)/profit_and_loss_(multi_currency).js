@@ -121,23 +121,23 @@ frappe.require("assets/erpnext/js/financial_statements.js", function() {
 
                 if (data.account_type == "Expense") {
                     if (data[column.fieldname] < 0) {
-                        value = "<span style='color:red!important;font-weight:bold'>" + value + "</span>";
+                        value = "<span style='color: green !important;'>" + value + "</span>";
                     } else if (data[column.fieldname] > 0) {
-                        value = "<span style='color:green!important;font-weight:bold'>" + value + "</span>";
+                        value = "<span style='color: red !important;'>" + value + "</span>";
                     }
                 } else {
                     if (data[column.fieldname] > 0) {
-                        value = "<span style='color:red!important;font-weight:bold'>" + value + "</span>";
+                        value = "<span style='color: red !important;'>" + value + "</span>";
                     }
                     else if (data[column.fieldname] < 0) {
-                        value = "<span style='color:green!important;font-weight:bold'>" + value + "</span>";
+                        value = "<span style='color: green !important;'>" + value + "</span>";
                     }
                 }
             } else {
                 if (data.account_type == "Expense" && data[column.fieldname] < 0) {
-                    value = "<span style='color:red!important;font-weight:bold'>" + value + "</span>";
+                    value = "<span style='color: green !important;'>" + value + "</span>";
                 } else if (data.account_type != "Expense" && data[column.fieldname] > 0) {
-                    value = "<span style='color:red!important;font-weight:bold'>" + value + "</span>";
+                    value = "<span style='color: red !important;'>" + value + "</span>";
                 }
             }
 
