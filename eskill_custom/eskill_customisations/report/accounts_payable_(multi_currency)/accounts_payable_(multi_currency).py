@@ -277,7 +277,7 @@ def get_data(filters: 'dict[str, ]', columns: 'list[dict]') -> list:
                     row['total_credit_account']
                     / row['total_credit']
                 )
-            except DivisionByZero:
+            except (DivisionByZero, ZeroDivisionError):
                 data[i]['exchange_rate'] = 0
 
     if "cost_center" in filters:
