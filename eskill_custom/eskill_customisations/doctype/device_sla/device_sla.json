@@ -26,8 +26,6 @@
   "column_break_8",
   "end_date",
   "section_break_14",
-  "cp_name",
-  "cover_page",
   "tc_name",
   "terms"
  ],
@@ -108,18 +106,6 @@
    "options": "Terms and Conditions"
   },
   {
-   "fieldname": "cp_name",
-   "fieldtype": "Link",
-   "label": "Cover Page",
-   "options": "Terms and Conditions"
-  },
-  {
-   "fetch_from": "cp_name.terms",
-   "fieldname": "cover_page",
-   "fieldtype": "Text Editor",
-   "label": "Cover Page Details"
-  },
-  {
    "fieldname": "amended_from",
    "fieldtype": "Link",
    "label": "Amended From",
@@ -184,7 +170,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2021-11-05 15:59:58.042979",
+ "modified": "2022-02-18 15:00:36.454534",
  "modified_by": "Administrator",
  "module": "Eskill Customisations",
  "name": "Device SLA",

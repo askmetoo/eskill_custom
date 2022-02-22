@@ -2,6 +2,7 @@
 # For license information, please see license.txt
 
 from datetime import date
+from decimal import DivisionByZero
 from locale import currency
 
 import frappe
@@ -264,13 +265,20 @@ def get_data(filters: 'dict[str, ]', columns: 'list[dict]') -> list:
     if "currency" in filters and filters['currency'] != "ZWL" and not rates:
         frappe.msgprint(f"There are no exchange rates to convert to {filters['currency']}")
 
-    data = [record for record in data if record['total_credit'] or record['total_credit_account']]
+    data = [
+        record
+        for record in data
+        if round(record['total_credit'], 2) or round(record['total_credit_account'], 2)
+    ]
     for i, row in enumerate(data):
         if row['voucher_no'] is not None and row['currency'] == filters['currency']:
-            data[i]['exchange_rate'] = (
-                row['total_credit_account']
-                / row['total_credit']
-            )
+            try:
+                data[i]['exchange_rate'] = (
+                    row['total_credit_account']
+                    / row['total_credit']
+                )
+            except DivisionByZero:
+                data[i]['exchange_rate'] = 0
 
     if "cost_center" in filters:
         data = [record for record in data if record['cost_center'] == filters['cost_center']]
@@ -334,8 +342,7 @@ def get_data(filters: 'dict[str, ]', columns: 'list[dict]') -> list:
                     for col in total_columns:
                         supplier_total[col['fieldname']] = record[col['fieldname']]
                 data.append(record)
-            else:
-                data.append(supplier_total)
+            data.append(supplier_total)
 
         data.extend([{}, add_total_row(data, columns)])
         data[-1][columns[0]['fieldname']] = date(*[

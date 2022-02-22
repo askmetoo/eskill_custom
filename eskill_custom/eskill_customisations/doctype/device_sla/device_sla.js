@@ -217,15 +217,6 @@ function set_status(frm) {
 
 
 function terms_filter(frm) {
-    frm.fields_dict.cp_name.get_query = function() {
-        return {
-            filters : [
-                ['Terms and Conditions', 'name', 'like', '%Cover Page'],
-                ['Terms and Conditions', 'sla', '=', 1],
-                ['Terms and Conditions', 'sla_level', '=', frm.doc.contract_tier],
-            ]
-        }
-    }
     frm.fields_dict.tc_name.get_query = function() {
         return {
             filters : [
