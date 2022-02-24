@@ -1,6 +1,8 @@
+"General methods that can be used in various DocTypes."
 from __future__ import unicode_literals
 
 import frappe
+from erpnext.stock.dashboard.item_dashboard import get_data as get_stock_levels
 
 
 @frappe.whitelist()
@@ -61,55 +63,20 @@ def sales_invoice_tax(doctype, currency, customer):
 
 
 @frappe.whitelist()
-def stock_lookup(doctype, user, item):
+def stock_lookup(item):
     "Returns stock locations and quantities."
-    try:
-        stock = frappe.db.sql(f"""\
-            select
-                (case when
-                    (W.warehouse_type in (select
-                        for_value
-                    from
-                        `tabUser Permission`
-                    where
-                        allow = 'Warehouse Type' and user = '{user}') or
-                    W.name in (select
-                        for_value
-                    from
-                        `tabUser Permission`
-                    where
-                        allow = 'Warehouse' and user = '{user}')) or
-                    ((select
-                        count(*)
-                    from
-                        `tabUser Permission`
-                    where
-                        (allow = 'Warehouse Type' or allow = 'Warehouse') and user = '{user}') = 0)
-                then
-                    W.name
-                else
-                    'Other'
-                end) location,
-                sum(actual_qty) quantity
-            from
-                `tabStock Ledger Entry` as SLE
-            join
-                `tabItem` as I on SLE.item_code = I.name
-            join
-                `tabWarehouse` as W on SLE.warehouse =  W.name 
-            where
-                I.is_stock_item and I.name = '{item}' and W.disabled = 0
-            group by
-                location
-            having
-                quantity > 0 or location = 'Other'
-            order by
-                (case when location = 'Other' then 1 else 0 end), quantity desc, location;""",
-            as_dict = True
-        )
-        return stock
-    except:
-        return None
+
+    items = [
+        {
+            'warehouse': record['warehouse'],
+            'reserved_qty': record['reserved_qty'],
+            'actual_qty': record['actual_qty'],
+            'valuation_rate': record['valuation_rate']
+        }
+        for record in get_stock_levels(item_code=item)
+    ]
+
+    return items
 
 
 @frappe.whitelist()
