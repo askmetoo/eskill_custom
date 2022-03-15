@@ -165,6 +165,8 @@ def get_data(filters: dict, columns: 'list[dict]') -> 'list[dict]':
     invoices = tuple({row['invoice'] for row in data})
 
     if len(invoices) > 0:
+        if len(invoices) == 1:
+            invoices = f"({invoices})"
         deliveries = get_deliveries(invoices)
         for delivery in deliveries:
             index = next(i for i, row in enumerate(data) if row['invoice'] == delivery['invoice'])
@@ -258,7 +260,7 @@ def initialise_data(filters: dict, columns: 'list[dict]'):
     return data
 
 
-def get_deliveries(invoices: tuple):
+def get_deliveries(invoices: "tuple | str"):
     "Get cost of sales information from delivery notes."
 
     data = frappe.db.sql(f"""
