@@ -28,6 +28,7 @@
   "customer",
   "sla",
   "column_break_15",
+  "customer_main_account",
   "customer_name",
   "customer_reference",
   "device_details_section",
@@ -322,12 +323,20 @@
    "mandatory_depends_on": "eval: (doc.job_status == \"On Hold\");",
    "options": "Service Order On Hold Type",
    "read_only": 1
+  },
+  {
+   "depends_on": "eval: (doc.customer != doc.customer_main_account);",
+   "fieldname": "customer_main_account",
+   "fieldtype": "Link",
+   "label": "Customer Main Account",
+   "options": "Customer",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-02-03 09:47:37.745098",
+ "modified": "2022-03-15 10:15:32.136048",
  "modified_by": "Administrator",
  "module": "Eskill Customisations",
  "name": "Service Order",
