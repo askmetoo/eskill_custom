@@ -53,15 +53,6 @@ frappe.form.link_formatters['Serial No'] = (value, doc) => {
 
 
 frappe.ui.form.on('Service Order', {
-    make_dashboard(frm) {
-        frm.dashboard.add_transactions([{
-            fieldname: "service_order",
-            label: "Time",
-            items: [
-                "Material Request"
-            ]
-        }])
-    },
     refresh(frm) {
         set_breadcrumbs(frm);
         if (frm.doc.docstatus == 1) {
@@ -114,6 +105,20 @@ frappe.ui.form.on('Service Order', {
     customer(frm) {
         if (frm.doc.sla) {
             frm.set_value("sla", null);
+        }
+        if (frm.doc.customer) {
+            frappe.db.get_value("Customer", frm.doc.customer, "main_account").then(
+                (response) => {
+                    let main_account = response.message.main_account;
+                    if (main_account) {
+                        frm.set_value("customer_main_account", main_account);
+                    } else {
+                        frm.set_value("customer_main_account", frm.doc.customer);
+                    }
+                }
+            );
+        } else {
+            frm.set_value("customer_main_account", undefined);
         }
     },
 
@@ -254,7 +259,7 @@ function customer_filter(frm) {
     frm.fields_dict.customer.get_query = function() {
         return {
             filters: [
-                ["Customer", "default_currency", "=", frappe.sys_defaults.currency]
+                ["Customer", "disabled", "=", 0]
             ]
         };
     };
@@ -693,7 +698,7 @@ function sla_filter(frm) {
     frm.fields_dict.sla.get_query = function() {
         return {
             filters: {
-                customer: frm.doc.customer,
+                customer: frm.doc.customer_main_account,
                 docstatus: 1,
                 status: "Active"
             }
