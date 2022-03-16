@@ -1,10 +1,11 @@
 frappe.ui.form.on('Item', {
-    refresh(frm) {
-        kba_buttons(frm);
-    },
-
     onload(frm) {
         account_filter(frm);
+    },
+
+    refresh(frm) {
+        duplicate_item(frm);
+        create_asset_code(frm);
     }
 });
 
@@ -34,21 +35,37 @@ function account_filter(frm) {
 }
 
 
-function kba_buttons(frm) {
-    frm.add_custom_button(__("KB Articles"), function () {
-        frm.save();
-        frappe.route_options = {
-            "type": "Product",
-            "product": cur_frm.doc.item_code
-        };
-        frappe.set_route("List", "KBA", "List");
-    });
-    frm.add_custom_button(__("New KBA"), function () {
-        frm.save();
-        frappe.route_options = {
-            "type": "Product",
-            "product": cur_frm.doc.item_code
-        };
-        frappe.set_route("Form", "KBA", "New KBA");
-    });
+function create_asset_code(frm) {
+    if (frm.doc.has_serial_no) {
+        frm.add_custom_button(__("Create Asset Code"), function() {
+            var new_item = frappe.model.copy_doc(frm.doc);
+            // Duplicate item could have different name, causing "copy paste" error.
+            if (new_item.item_name===new_item.item_code) {
+                new_item.item_name = null;
+            }
+            if (new_item.item_code===new_item.description || new_item.item_code===new_item.description) {
+                new_item.description = null;
+            }
+            new_item.is_fixed_asset = 1;
+            new_item.has_serial_no = 0;
+            new_item.item_code = new_item.item_code + " - ASSET"
+            frappe.set_route("Form", "Item", new_item.name);
+        }, "Actions");
+    }
+}
+
+
+function duplicate_item(frm) {
+    frm.remove_custom_button("Duplicate")
+    frm.add_custom_button(__("Duplicate Item"), function() {
+        var new_item = frappe.model.copy_doc(frm.doc);
+        // Duplicate item could have different name, causing "copy paste" error.
+        if (new_item.item_name===new_item.item_code) {
+            new_item.item_name = null;
+        }
+        if (new_item.item_code===new_item.description || new_item.item_code===new_item.description) {
+            new_item.description = null;
+        }
+        frappe.set_route("Form", "Item", new_item.name);
+    }, "Actions");
 }
