@@ -1,0 +1,32 @@
+{
+ "category": "Modules",
+ "charts": [],
+ "creation": "2022-03-17 13:54:34.828380",
+ "developer_mode_only": 0,
+ "disable_user_customization": 0,
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "extends": "Settings",
+ "extends_another_page": 1,
+ "hide_custom": 0,
+ "idx": 0,
+ "is_default": 0,
+ "is_standard": 1,
+ "label": "Eskill Settings",
+ "links": [],
+ "modified": "2022-03-17 13:54:34.828380",
+ "modified_by": "Administrator",
+ "module": "Eskill Customisations",
+ "name": "Eskill Settings",
+ "owner": "Administrator",
+ "pin_to_bottom": 0,
+ "pin_to_top": 0,
+ "shortcuts": [
+  {
+   "doc_view": "",
+   "label": "Service Order Settings",
+   "link_to": "Service Order Settings",
+   "type": "DocType"
+  }
+ ]
+}
