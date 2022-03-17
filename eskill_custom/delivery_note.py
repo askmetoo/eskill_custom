@@ -138,21 +138,16 @@ def set_non_billable_accounts(delivery_name: str):
     "If the linked service order is non-billable, set expense accounts to the relevant ones."
 
     delivery = frappe.get_doc("Delivery Note", delivery_name)
-    for delivery_item in delivery.items:
-        expense_account = frappe.db.sql(f"""
-            select
-                A.name
-            from
-                tabAccount A
-            where
-                account_name like '%{delivery.service_order_type}%'
-                and account_type = 'Cost of Goods Sold';"""
-        )
-        try:
-            delivery_item.expense_account = expense_account[0][0]
-        except IndexError:
-            delivery_item.expense_account = None
-        delivery_item.save(ignore_permissions=True)
+    service_order_settings = frappe.get_doc("Service Order Settings")
+    if delivery.docstatus == 0:
+        expense_account = str({
+            'Internal': service_order_settings.internal_cos_account,
+            'SLA': service_order_settings.sla_cos_account,
+            'Warranty': service_order_settings.warranty_cos_account
+        }[delivery.service_order_type])
+        for delivery_item in delivery.items:
+            delivery_item.expense_account = expense_account
+            delivery_item.save(ignore_permissions=True)
 
 
 @frappe.whitelist()
