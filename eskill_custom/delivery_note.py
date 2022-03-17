@@ -155,9 +155,9 @@ def set_non_billable_status(delivery_name: str):
     "Sets Delivery Note status to 'Completed' upon submission if it is non-billable."
 
     delivery = frappe.get_doc("Delivery Note", delivery_name)
-    delivery.db_set("status", "Completed")
-    delivery.db_set("per_billed", 100)
-    delivery.set_status(update=True)
+    delivery.set_status(update=True, status="Closed")
+    delivery.notify_update()
+    clear_doctype_notifications(delivery)
 
 
 @frappe.whitelist()
