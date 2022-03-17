@@ -4,6 +4,7 @@ import frappe
 from erpnext.stock.doctype.serial_no.serial_no import \
     get_delivery_note_serial_no
 from frappe.contacts.doctype.address.address import get_company_address
+from frappe.desk.notifications import clear_doctype_notifications
 from frappe.model.mapper import get_mapped_doc
 from frappe.model.utils import get_fetch_values
 from frappe.utils import flt
@@ -13,25 +14,41 @@ def get_invoiced_qty_map(delivery_note):
     """returns a map: {dn_detail: invoiced_qty}"""
     invoiced_qty_map = {}
 
-    for dn_detail, qty in frappe.db.sql("""select dn_detail, qty from `tabSales Invoice Item`
-        where delivery_note=%s and docstatus=1""", delivery_note):
-            if not invoiced_qty_map.get(dn_detail):
-                invoiced_qty_map[dn_detail] = 0
-            invoiced_qty_map[dn_detail] += qty
+    for dn_detail, qty in frappe.db.sql("""
+        select 
+            dn_detail,
+            qty
+        from
+            `tabSales Invoice Item`
+        where
+            delivery_note=%s
+            and docstatus=1""",
+        delivery_note
+    ):
+        if not invoiced_qty_map.get(dn_detail):
+            invoiced_qty_map[dn_detail] = 0
+        invoiced_qty_map[dn_detail] += qty
 
     return invoiced_qty_map
 
 
 def get_returned_qty_map(delivery_note):
     """returns a map: {so_detail: returned_qty}"""
-    returned_qty_map = frappe._dict(frappe.db.sql("""select dn_item.item_code, sum(abs(dn_item.qty)) as qty
-        from `tabDelivery Note Item` dn_item, `tabDelivery Note` dn
-        where dn.name = dn_item.parent
+    returned_qty_map = frappe._dict(frappe.db.sql("""
+        select
+            dn_item.item_code,
+            sum(abs(dn_item.qty)) as qty
+        from
+            `tabDelivery Note Item` dn_item, `tabDelivery Note` dn
+        where
+            dn.name = dn_item.parent
             and dn.docstatus = 1
             and dn.is_return = 1
             and dn.return_against = %s
-        group by dn_item.item_code
-    """, delivery_note))
+        group by
+            dn_item.item_code;""",
+        delivery_note
+    ))
 
     return returned_qty_map
 
@@ -184,9 +201,12 @@ def update_service_order(delivery_name: str):
         comment_type="Info",
         text="delivered this service order."
     )
-    
+
     try:
-        quotation = frappe.get_last_doc("Quotation", filters={'service_order': service_order.name, 'docstatus': 1})
+        quotation = frappe.get_last_doc(
+            "Quotation",
+            filters={'service_order': service_order.name, 'docstatus': 1}
+        )
         quotation.db_set("status", "Ordered", commit=True)
         quotations = frappe.db.get_list("Quotation",
             filters={
