@@ -41,13 +41,13 @@ frappe.ui.form.on('Delivery Note', {
     on_submit(frm) {
         if (frm.doc.service_order) {
             update_service_order(frm);
-            if (frm.doc.service_order_type == "Billable") {
+            if (frm.doc.goodwill) {
+                service_delivery_unbillable(frm);
+            } else {
                 frappe.model.open_mapped_doc({
                     method: "eskill_custom.delivery_note.make_service_invoice",
                     frm: frm,
                 });
-            } else {
-                service_delivery_unbillable(frm);
             }
         } else {
             frappe.model.open_mapped_doc({
