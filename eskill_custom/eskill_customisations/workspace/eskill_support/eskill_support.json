@@ -1,6 +1,11 @@
 {
  "category": "Modules",
- "charts": [],
+ "charts": [
+  {
+   "chart_name": "Service Order Heatmap",
+   "label": "Service Orders Opened"
+  }
+ ],
  "creation": "2021-11-08 14:04:22.186010",
  "developer_mode_only": 0,
  "disable_user_customization": 0,
@@ -50,8 +55,8 @@
    "type": "Link"
   }
  ],
- "modified": "2021-11-08 14:54:33.994328",
- "modified_by": "andrew@eskilltrading.com",
+ "modified": "2022-03-17 09:56:00.157697",
+ "modified_by": "Administrator",
  "module": "Eskill Customisations",
  "name": "Eskill Support",
  "owner": "andrew@eskilltrading.com",
