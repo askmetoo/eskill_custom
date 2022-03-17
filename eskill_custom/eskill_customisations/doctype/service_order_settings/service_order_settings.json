@@ -1,0 +1,102 @@
+{
+ "actions": [],
+ "creation": "2022-03-17 09:46:06.985092",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "cost_of_sales_accounts_section",
+  "internal_cos_account",
+  "sla_cos_account",
+  "warranty_cos_account"
+ ],
+ "fields": [
+  {
+   "description": "The below fields are used to set the Cost of Sales accounts used when a Service Order is non-billable.",
+   "fieldname": "cost_of_sales_accounts_section",
+   "fieldtype": "Section Break",
+   "label": "Cost of Sales Accounts"
+  },
+  {
+   "fieldname": "internal_cos_account",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Internal Cost of Sales Account",
+   "length": 1,
+   "options": "Account",
+   "reqd": 1
+  },
+  {
+   "fieldname": "sla_cos_account",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "SLA Cost of Sales Account",
+   "length": 1,
+   "options": "Account",
+   "reqd": 1
+  },
+  {
+   "fieldname": "warranty_cos_account",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Warranty Cost of Sales Account",
+   "length": 1,
+   "options": "Account",
+   "reqd": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2022-03-17 12:05:13.395330",
+ "modified_by": "Administrator",
+ "module": "Eskill Customisations",
+ "name": "Service Order Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Accounts Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Support Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "delete": 1,
+   "email": 1,
+   "permlevel": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1,
+ "track_seen": 1
+}
