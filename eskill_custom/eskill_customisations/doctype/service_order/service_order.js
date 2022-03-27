@@ -9,7 +9,7 @@ frappe.require([
 
 
 frappe.form.link_formatters['Customer'] = (value, doc) => {
-    if (value && doc.customer_name && (doc.customer_name != value)) {
+    if (value && doc.customer_name && (doc.customer_name != value) && (value == doc.customer)) {
         return value + ": " + doc.customer_name;
     } else {
         return value;
