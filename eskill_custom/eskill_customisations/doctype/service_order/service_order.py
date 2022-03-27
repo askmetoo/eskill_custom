@@ -326,7 +326,14 @@ class ServiceOrder(Document):
     def set_job_type(self, job_type: str):
         "Updates the billability of the job and adds comment to describe who updated it."
 
-        self.db_set("job_type", job_type)
+        self.job_type = job_type
+
+        if job_type == "Warranty":
+            self.goodwill = 1
+        else:
+            self.goodwill = 0
+
+        self.save(ignore_permissions=True)
 
         self.add_comment(
             comment_type="Info",
