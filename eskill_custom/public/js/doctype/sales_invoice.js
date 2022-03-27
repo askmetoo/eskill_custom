@@ -26,6 +26,10 @@ frappe.ui.form.on('Sales Invoice', {
         limit_rate(frm);
     },
 
+    validate(frm) {
+        validate_line_item_gp(frm);
+    },
+
     before_submit(frm) {
         assign_sales_person(frm);
     },

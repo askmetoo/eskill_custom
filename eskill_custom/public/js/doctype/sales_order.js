@@ -19,6 +19,10 @@ frappe.ui.form.on('Sales Order', {
         limit_rate(frm);
     },
 
+    validate(frm) {
+        validate_line_item_gp(frm);
+    },
+
     before_submit(frm) {
         set_tax_template(frm);
         assign_sales_person(frm);
