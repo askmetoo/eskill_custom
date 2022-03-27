@@ -326,7 +326,14 @@ class ServiceOrder(Document):
     def set_job_type(self, job_type: str):
         "Updates the billability of the job and adds comment to describe who updated it."
 
-        self.db_set("job_type", job_type)
+        self.job_type = job_type
+
+        if job_type == "Warranty":
+            self.goodwill = 1
+        else:
+            self.goodwill = 0
+
+        self.save(ignore_permissions=True)
 
         self.add_comment(
             comment_type="Info",
@@ -345,15 +352,15 @@ class ServiceOrder(Document):
         "Updates ownership and warranty details for serial number."
 
         serial_no = frappe.get_doc("Serial No", serial_number)
-        serial_no.owned_by = self.customer
-        message = f"Item {serial_number} is now owned by {self.customer} in our records."
+        serial_no.owned_by = self.customer_main_account
+        message = f"Item {serial_number} is now owned by {self.customer_main_account} in our records."
         if warranty_period > 0 and purchase_date:
             serial_no.warranty_expiry_date = frappe.utils.add_to_date(
                 date=purchase_date,
                 days=warranty_period
             )
             message = (
-                f"Item {serial_number} is now owned by {self.customer} in our records."
+                f"Item {serial_number} is now owned by {self.customer_main_account} in our records."
                 f" The warranty period will expire on date {serial_no.warranty_expiry_date}."
             )
 

@@ -9,7 +9,7 @@ frappe.require([
 
 
 frappe.form.link_formatters['Customer'] = (value, doc) => {
-    if (value && doc.customer_name && (doc.customer_name != value)) {
+    if (value && doc.customer_name && (doc.customer_name != value) && (value == doc.customer)) {
         return value + ": " + doc.customer_name;
     } else {
         return value;
@@ -119,6 +119,16 @@ frappe.ui.form.on('Service Order', {
             );
         } else {
             frm.set_value("customer_main_account", undefined);
+        }
+    },
+
+    is_internal_customer(frm) {
+        if (frm.doc.is_internal_customer) {
+            frm.set_value("job_type", "Internal");
+            frm.set_value("goodwill", 1);
+        } else {
+            frm.set_value("job_type", "Billable");
+            frm.set_value("goodwill", 0);
         }
     },
 
@@ -766,40 +776,51 @@ function update_job_status(frm) {
 
 
 function update_job_type(frm) {
-    if (frm.doc.job_type == "Billable") {
-        frm.add_custom_button("SLA", () => {
-            set_type(frm, "SLA");
-        }, "Job Type");
-        frm.add_custom_button("Warranty", () => {
-            set_type(frm, "Warranty");
-        }, "Job Type");
-    } else if (frm.doc.job_type == "SLA") {
-        frm.add_custom_button("Billable", () => {
-            set_type(frm, "Billable");
-        }, "Job Type");
-        frm.add_custom_button("Warranty", () => {
-            set_type(frm, "Warranty");
-        }, "Job Type");
-    } else {
-        frm.add_custom_button("Billable", () => {
-            set_type(frm, "Billable");
-        }, "Job Type");
-        frm.add_custom_button("SLA", () => {
-            set_type(frm, "SLA");
-        }, "Job Type");
-    }
+    if (frm.doc.job_type != "Internal") {
+        if (frm.doc.job_type == "Billable") {
+            frm.add_custom_button("SLA", () => {
+                set_type(frm, "SLA");
+            }, "Job Type");
+            frm.add_custom_button("Warranty", () => {
+                set_type(frm, "Warranty");
+            }, "Job Type");
+        } else if (frm.doc.job_type == "SLA") {
+            frm.add_custom_button("Billable", () => {
+                set_type(frm, "Billable");
+            }, "Job Type");
+            frm.add_custom_button("Warranty", () => {
+                set_type(frm, "Warranty");
+            }, "Job Type");
+        } else {
+            frm.add_custom_button("Billable", () => {
+                set_type(frm, "Billable");
+            }, "Job Type");
+            frm.add_custom_button("SLA", () => {
+                set_type(frm, "SLA");
+            }, "Job Type");
+        }
 
-    function set_type(frm, job_type) {
-        frappe.call({
-            doc: frm.doc,
-            method: "set_job_type",
-            args: {
-                job_type: job_type
-            },
-            callback: () => {
-                frm.reload_doc();
-            }
-        });
+        function set_type(frm, job_type) {
+            frappe.run_serially([
+                () => {
+                    if (frm.is_dirty()) {
+                        frm.save();
+                    }
+                },
+                () => {
+                    frappe.call({
+                        doc: frm.doc,
+                        method: "set_job_type",
+                        args: {
+                            job_type: job_type
+                        },
+                        callback: () => {
+                            frm.reload_doc();
+                        }
+                    });
+                }
+            ]);
+        }
     }
 }
 

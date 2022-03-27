@@ -4,7 +4,7 @@ frappe.require([
 ]);
 
 frappe.ui.form.on('Delivery Note', {
-    refresh: function(frm) {
+    refresh(frm) {
         tax_template_filter(frm);
         if (frm.doc.service_order && frm.doc.docstatus == 1 && frm.doc.status == "To Bill") {
             setTimeout(() => {
@@ -28,6 +28,10 @@ frappe.ui.form.on('Delivery Note', {
         limit_rate(frm);
     },
 
+    validate(frm) {
+        validate_line_item_gp(frm);
+    },
+
     after_save(frm) {
         set_non_billable_accounts(frm);
     },
@@ -41,13 +45,13 @@ frappe.ui.form.on('Delivery Note', {
     on_submit(frm) {
         if (frm.doc.service_order) {
             update_service_order(frm);
-            if (frm.doc.service_order_type == "Billable") {
+            if (frm.doc.goodwill) {
+                service_delivery_unbillable(frm);
+            } else {
                 frappe.model.open_mapped_doc({
                     method: "eskill_custom.delivery_note.make_service_invoice",
                     frm: frm,
                 });
-            } else {
-                service_delivery_unbillable(frm);
             }
         } else {
             frappe.model.open_mapped_doc({
@@ -61,29 +65,29 @@ frappe.ui.form.on('Delivery Note', {
         update_service_order(frm);
     },
 
-    conversion_rate: function(frm) {
+    conversion_rate(frm) {
         limit_rate(frm);
         convert_selected_to_base(frm);
     },
 
-    currency: function(frm) {
+    currency(frm) {
         get_bid_rate(frm, frm.doc.posting_date);
         if (frm.doc.customer) {
             set_tax_template(frm);
         }
     },
     
-    customer: function(frm) {
+    customer(frm) {
         set_tax_template(frm);
     },
 
-    posting_date: function(frm) {
+    posting_date(frm) {
         if (frm.doc.posting_date) {
             get_bid_rate(frm, frm.doc.posting_date);
         }
     },
 
-    usd_to_currency: function(frm) {
+    usd_to_currency(frm) {
         convert_base_to_selected(frm);
     }
 });
@@ -103,7 +107,7 @@ function service_delivery_unbillable(frm) {
 
 
 function set_non_billable_accounts(frm) {
-    if (frm.doc.service_order_type != "Billable") {
+    if (frm.doc.service_order && frm.doc.service_order_type != "Billable") {
         frappe.call({
             method: "eskill_custom.delivery_note.set_non_billable_accounts",
             args: {
@@ -118,7 +122,7 @@ function set_non_billable_accounts(frm) {
 
 
 function set_tax_template(frm) {
-    if (frm.doc.service_order_type == "Billable") {
+    if (!frm.doc.goodwill) {
         frappe.call({
             method: "eskill_custom.api.sales_invoice_tax",
             args: {
@@ -126,7 +130,7 @@ function set_tax_template(frm) {
                 "currency": frm.doc.currency,
                 "customer": frm.doc.customer
             },
-            callback: function (data) {
+            callback (data) {
                 var template = data.message[0][0];
                 if (template) {
                     frappe.run_serially([
@@ -143,10 +147,12 @@ function set_tax_template(frm) {
 
 
 function update_service_order(frm) {
-    frappe.call({
-        method: "eskill_custom.delivery_note.update_service_order",
-        args: {
-            delivery_name: frm.doc.name
-        }
-    });
+    if (frm.doc.service_order) {
+        frappe.call({
+            method: "eskill_custom.delivery_note.update_service_order",
+            args: {
+                delivery_name: frm.doc.name
+            }
+        });
+    }
 }

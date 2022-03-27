@@ -33,6 +33,7 @@ doctype_js = {
     'Customer' : 'public/js/doctype/customer.js',
     'Delivery Note' : 'public/js/doctype/delivery_note.js',
     'Item' : 'public/js/doctype/item.js',
+    'Item Group': 'public/js/doctype/item_group.js',
     'Journal Entry' : 'public/js/doctype/journal_entry.js',
     'Landed Cost Voucher' : 'public/js/doctype/landed_cost_voucher.js',
     'Material Request': 'public/js/doctype/material_request.js',

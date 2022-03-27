@@ -1,6 +1,8 @@
 "General methods that can be used in various DocTypes."
 from __future__ import unicode_literals
 
+import json
+
 import frappe
 from erpnext.stock.dashboard.item_dashboard import get_data as get_stock_levels
 
@@ -10,7 +12,17 @@ def issue_total_hours(doctype, filters):
     "Return all time related to the given issue."
     try:
         hours_worked = frappe.db.sql(
-            "select round(sum(hours), 3) total, round(sum(billing_hours), 3) billable from `tabTimesheet Detail` where activity_doctype = 'Issue' and activity_document = '%s' and docstatus <> 2;" % filters, as_dict=True)
+            f"""select
+                round(sum(hours), 3) total,
+                round(sum(billing_hours), 3) billable 
+            from
+                `tabTimesheet Detail`
+            where
+                activity_doctype = 'Issue'
+                and activity_document = '{filters}'
+                and docstatus <> 2;""",
+            as_dict=True
+        )
         return hours_worked
     except:
         return False
@@ -366,7 +378,8 @@ def non_billable_item(item_code: str, sla_job: int) -> 'dict[str, str | int]':
         from
             tabAccount A
         where
-            account_name like '{'Cost of Sales - SLA ' if int(sla_job) else 'Warranty%'}{item_group}' and root_type = 'Expense';"""
+            account_name like '{'Cost of Sales - SLA ' if int(sla_job) else 'Warranty%'}{item_group}'
+            and root_type = 'Expense';"""
     )
 
 
@@ -376,4 +389,71 @@ def non_billable_item(item_code: str, sla_job: int) -> 'dict[str, str | int]':
         results['expense_account'] = ''
 
     return results
-    
+
+
+@frappe.whitelist()
+def validate_line_item_gp(items, exchange_rate) -> "str | None":
+    "Validates line item GP based on item_group then returns an error message if any bad GPs are found."
+
+    # items table is passed from the front end as a JSON and exchange_rate is passed as a string
+    items = json.loads(items)
+    exchange_rate = float(exchange_rate)
+
+    # accounting for differing names for the valuation_rate field
+    if items[0]['parenttype'] in ("Delivery Note", "Sales Invoice"):
+        valuation_field = "incoming_rate"
+    else:
+        valuation_field = "valuation_rate"
+
+    # identify the unique Item Groups in the document using a set
+    # then create a dictionary with minimum and maximum GPs
+    item_groups_set = {
+        item['item_group']
+        for item in items
+    }
+    item_groups = {}
+    for group in item_groups_set:
+        item_group = frappe.get_doc("Item Group", group)
+        item_groups[group] = {
+            'minimum_gp': item_group.minimum_gp,
+            'maximum_gp': item_group.maximum_gp
+        }
+
+    # iterate over each item to validate GP based on item_group field
+    # append error messages to a list if a GP % is found outside of the given range
+    error_list = []
+    for item in items:
+        if item['override_gp_limit']:
+            continue
+        gross_profit = (
+            (item['base_net_rate'] - item[valuation_field]) / item[valuation_field]
+        ) * 100
+        if gross_profit < item_groups[item['item_group']]['minimum_gp']:
+            min_price = round(
+                (item[valuation_field] + (
+                    item[valuation_field] * item_groups[item['item_group']]['minimum_gp']
+                ) / 100) / exchange_rate,
+                2
+            )
+            error_list.append(
+                f"{item['item_code']} in row {item['idx']} does not meet the minimum gross profit %. "
+                f"The minimum price excluding tax is {min_price}."
+            )
+        elif gross_profit > item_groups[item['item_group']]['maximum_gp']:
+            max_price = round(
+                (item[valuation_field] + (
+                    item[valuation_field] * item_groups[item['item_group']]['maximum_gp']
+                ) / 100) / exchange_rate,
+                2
+            )
+            error_list.append(
+                f"{item['item_code']} in row {item['idx']} exceeds the maximum gross profit %. "
+                f"The maximum price excluding tax is {max_price}."
+            )
+
+    # return error message by joining list if any errors are found, otherwise return nothing
+    if len(error_list) > 0:
+        error_message = "<br>".join(error_list)
+        return error_message
+
+    return None

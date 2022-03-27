@@ -4,6 +4,7 @@ import frappe
 from erpnext.stock.doctype.serial_no.serial_no import \
     get_delivery_note_serial_no
 from frappe.contacts.doctype.address.address import get_company_address
+from frappe.desk.notifications import clear_doctype_notifications
 from frappe.model.mapper import get_mapped_doc
 from frappe.model.utils import get_fetch_values
 from frappe.utils import flt
@@ -13,25 +14,41 @@ def get_invoiced_qty_map(delivery_note):
     """returns a map: {dn_detail: invoiced_qty}"""
     invoiced_qty_map = {}
 
-    for dn_detail, qty in frappe.db.sql("""select dn_detail, qty from `tabSales Invoice Item`
-        where delivery_note=%s and docstatus=1""", delivery_note):
-            if not invoiced_qty_map.get(dn_detail):
-                invoiced_qty_map[dn_detail] = 0
-            invoiced_qty_map[dn_detail] += qty
+    for dn_detail, qty in frappe.db.sql("""
+        select 
+            dn_detail,
+            qty
+        from
+            `tabSales Invoice Item`
+        where
+            delivery_note=%s
+            and docstatus=1""",
+        delivery_note
+    ):
+        if not invoiced_qty_map.get(dn_detail):
+            invoiced_qty_map[dn_detail] = 0
+        invoiced_qty_map[dn_detail] += qty
 
     return invoiced_qty_map
 
 
 def get_returned_qty_map(delivery_note):
     """returns a map: {so_detail: returned_qty}"""
-    returned_qty_map = frappe._dict(frappe.db.sql("""select dn_item.item_code, sum(abs(dn_item.qty)) as qty
-        from `tabDelivery Note Item` dn_item, `tabDelivery Note` dn
-        where dn.name = dn_item.parent
+    returned_qty_map = frappe._dict(frappe.db.sql("""
+        select
+            dn_item.item_code,
+            sum(abs(dn_item.qty)) as qty
+        from
+            `tabDelivery Note Item` dn_item, `tabDelivery Note` dn
+        where
+            dn.name = dn_item.parent
             and dn.docstatus = 1
             and dn.is_return = 1
             and dn.return_against = %s
-        group by dn_item.item_code
-    """, delivery_note))
+        group by
+            dn_item.item_code;""",
+        delivery_note
+    ))
 
     return returned_qty_map
 
@@ -138,21 +155,16 @@ def set_non_billable_accounts(delivery_name: str):
     "If the linked service order is non-billable, set expense accounts to the relevant ones."
 
     delivery = frappe.get_doc("Delivery Note", delivery_name)
-    for delivery_item in delivery.items:
-        expense_account = frappe.db.sql(f"""
-            select
-                A.name
-            from
-                tabAccount A
-            where
-                account_name like '%{delivery.service_order_type}%'
-                and account_type = 'Cost of Goods Sold';"""
-        )
-        try:
-            delivery_item.expense_account = expense_account[0][0]
-        except IndexError:
-            delivery_item.expense_account = None
-        delivery_item.save(ignore_permissions=True)
+    service_order_settings = frappe.get_doc("Service Order Settings")
+    if delivery.docstatus == 0:
+        expense_account = str({
+            'Internal': service_order_settings.internal_cos_account,
+            'SLA': service_order_settings.sla_cos_account,
+            'Warranty': service_order_settings.warranty_cos_account
+        }[delivery.service_order_type])
+        for delivery_item in delivery.items:
+            delivery_item.expense_account = expense_account
+            delivery_item.save(ignore_permissions=True)
 
 
 @frappe.whitelist()
@@ -160,9 +172,9 @@ def set_non_billable_status(delivery_name: str):
     "Sets Delivery Note status to 'Completed' upon submission if it is non-billable."
 
     delivery = frappe.get_doc("Delivery Note", delivery_name)
-    delivery.db_set("status", "Completed")
-    delivery.db_set("per_billed", 100)
-    delivery.set_status(update=True)
+    delivery.set_status(update=True, status="Closed")
+    delivery.notify_update()
+    clear_doctype_notifications(delivery)
 
 
 @frappe.whitelist()
@@ -189,9 +201,12 @@ def update_service_order(delivery_name: str):
         comment_type="Info",
         text="delivered this service order."
     )
-    
+
     try:
-        quotation = frappe.get_last_doc("Quotation", filters={'service_order': service_order.name, 'docstatus': 1})
+        quotation = frappe.get_last_doc(
+            "Quotation",
+            filters={'service_order': service_order.name, 'docstatus': 1}
+        )
         quotation.db_set("status", "Ordered", commit=True)
         quotations = frappe.db.get_list("Quotation",
             filters={
