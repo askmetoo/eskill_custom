@@ -122,6 +122,16 @@ frappe.ui.form.on('Service Order', {
         }
     },
 
+    is_internal_customer(frm) {
+        if (frm.doc.is_internal_customer) {
+            frm.set_value("job_type", "Internal");
+            frm.set_value("goodwill", 1);
+        } else {
+            frm.set_value("job_type", "Billable");
+            frm.set_value("goodwill", 0);
+        }
+    },
+
     sla(frm) {
         if (frm.doc.sla) {
             frappe.run_serially([
