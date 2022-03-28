@@ -81,18 +81,19 @@ function tax_template_filter(frm) {
 }
 
 function validate_line_item_gp(frm) {
-    console.log(frm.doc.items)
-    frappe.call({
-        method: "eskill_custom.api.validate_line_item_gp",
-        args: {
-            items: frm.doc.items,
-            exchange_rate: frm.doc.conversion_rate
-        },
-        callback: (response) => {
-            if (response.message) {
-                frappe.validated = false;
-                frappe.throw(response.message);
+    if (!frm.doc.is_return) {
+        frappe.call({
+            method: "eskill_custom.api.validate_line_item_gp",
+            args: {
+                items: frm.doc.items,
+                exchange_rate: frm.doc.conversion_rate
+            },
+            callback: (response) => {
+                if (response.message) {
+                    frappe.validated = false;
+                    frappe.throw(response.message);
+                }
             }
-        }
-    });
+        });
+    }
 }
