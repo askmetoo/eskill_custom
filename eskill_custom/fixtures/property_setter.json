@@ -3316,23 +3316,6 @@
  },
  {
   "default_value": null,
-  "doc_type": "Quotation",
-  "docstatus": 0,
-  "doctype": "Property Setter",
-  "doctype_or_field": "DocType",
-  "field_name": null,
-  "modified": "2020-11-10 16:15:32.367748",
-  "name": "Quotation-search_fields",
-  "parent": null,
-  "parentfield": null,
-  "parenttype": null,
-  "property": "search_fields",
-  "property_type": "Data",
-  "row_name": null,
-  "value": "status,transaction_date,party_name,order_type,issue"
- },
- {
-  "default_value": null,
   "doc_type": "Supplier",
   "docstatus": 0,
   "doctype": "Property Setter",
@@ -7716,5 +7699,22 @@
   "property_type": "Small Text",
   "row_name": null,
   "value": "[\"68cfb78bbc\", \"de6028034c\"]"
+ },
+ {
+  "default_value": null,
+  "doc_type": "Quotation",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocType",
+  "field_name": null,
+  "modified": "2022-03-28 13:41:45.725934",
+  "name": "Quotation-main-search_fields",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "property": "search_fields",
+  "property_type": "Data",
+  "row_name": null,
+  "value": "status,transaction_date,party_name,order_type,service_order"
  }
 ]
