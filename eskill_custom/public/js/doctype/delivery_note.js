@@ -24,7 +24,6 @@ frappe.ui.form.on('Delivery Note', {
     
     before_save(frm) {
         set_tax_template(frm);
-        assign_sales_person(frm);
         limit_rate(frm);
     },
 
@@ -39,7 +38,6 @@ frappe.ui.form.on('Delivery Note', {
     before_submit(frm) {
         get_bid_rate(frm, frm.doc.posting_date);
         set_tax_template(frm);
-        assign_sales_person(frm);
     },
         
     on_submit(frm) {

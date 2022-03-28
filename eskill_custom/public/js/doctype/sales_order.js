@@ -12,7 +12,6 @@ frappe.ui.form.on('Sales Order', {
     
     before_save(frm) {
         set_tax_template(frm);
-        assign_sales_person(frm);
         if (frm.doc.stock_item) {
             frm.doc.stock_item = undefined;
         }
@@ -25,7 +24,6 @@ frappe.ui.form.on('Sales Order', {
 
     before_submit(frm) {
         set_tax_template(frm);
-        assign_sales_person(frm);
     },
 
     conversion_rate: function(frm) {

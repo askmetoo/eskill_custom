@@ -18,7 +18,6 @@ frappe.ui.form.on('Sales Invoice', {
     
     before_save(frm) {
         set_tax_template(frm);
-        assign_sales_person(frm);
         if (frm.doc.stock_item) {
             frm.doc.stock_item = undefined;
         }
@@ -35,7 +34,6 @@ frappe.ui.form.on('Sales Invoice', {
     },
 
     before_submit(frm) {
-        assign_sales_person(frm);
         if (!frm.doc.return_against && frm.doc.is_return) {
             frappe.validated = false;
             frm.add_custom_button(__("Return Against Invoice"), () => {
