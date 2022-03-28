@@ -423,7 +423,7 @@ def validate_line_item_gp(items, exchange_rate) -> "str | None":
     # append error messages to a list if a GP % is found outside of the given range
     error_list = []
     for item in items:
-        if item['override_gp_limit']:
+        if item['override_gp_limit'] or not item[valuation_field]:
             continue
         gross_profit = (
             (item['base_net_rate'] - item[valuation_field]) / item[valuation_field]
