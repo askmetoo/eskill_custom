@@ -342,6 +342,31 @@ class ServiceOrder(Document):
 
 
     @frappe.whitelist()
+    def update_customer_billing_currency(self, currency: str):
+        "Updates the customer field to reflect the change in currency."
+
+        new_customer = "-".join((*self.customer_main_account.split("-")[0:2], currency[0:2]))
+        if new_customer != self.customer:
+            if new_customer == self.customer_main_account:
+                self.db_set("customer", new_customer)
+                self.update_modified()
+            else:
+                customer_list = frappe.get_list(
+                    "Customer",
+                    filters={
+                        'main_account': self.customer_main_account
+                    },
+                    pluck="name"
+                )
+
+                if new_customer in customer_list:
+                    self.db_set("customer", new_customer)
+                    self.update_modified()
+                else:
+                    frappe.throw(_("Customer account does not exist."))
+
+
+    @frappe.whitelist()
     def warranty_update(
         self,
         serial_number: str,

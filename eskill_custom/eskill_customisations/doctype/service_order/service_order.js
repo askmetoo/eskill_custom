@@ -65,6 +65,7 @@ frappe.ui.form.on('Service Order', {
             if (frm.doc.parts_returned && frm.doc.job_status == "Closed") {
                 generate_delivery(frm);
             }
+            update_customer_billing_currency(frm);
             update_job_status(frm);
             if (frm.doc.job_status != "Closed" && (frappe.user_roles.includes("Support Manager") || frappe.user_roles.includes("System Manager"))) {
                 update_job_type(frm);
@@ -713,6 +714,39 @@ function sla_filter(frm) {
                 status: "Active"
             }
         }
+    }
+}
+
+
+function update_customer_billing_currency(frm) {
+    if (frm.doc.billing_status == "Pending Billing") {
+        frm.add_custom_button("Change Customer Account", () => {
+            if (!frm.is_dirty()) {
+                frappe.prompt([
+                    {
+                        fieldname: 'currency',
+                        fieldtype: 'Link',
+                        label: 'Currency',
+                        options: 'Currency',
+                        reqd: 1
+                    }
+                ], (values) => {
+                    console.log(values)    
+                    frappe.call({
+                        doc: frm.doc,
+                        method: "update_customer_billing_currency",
+                        args: {
+                            currency: values.currency
+                        },
+                        callback: () => {
+                            frm.reload_doc();
+                        }
+                    });
+                });
+            } else {
+                frappe.msgprint(__("Please save any changes before changing the customer account."));
+            }
+        });
     }
 }
 

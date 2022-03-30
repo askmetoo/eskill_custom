@@ -18,7 +18,6 @@ frappe.ui.form.on('Sales Invoice', {
     
     before_save(frm) {
         set_tax_template(frm);
-        assign_sales_person(frm);
         if (frm.doc.stock_item) {
             frm.doc.stock_item = undefined;
         }
@@ -30,12 +29,21 @@ frappe.ui.form.on('Sales Invoice', {
         validate_line_item_gp(frm);
     },
 
+    after_save(frm) {
+        link_credit_to_invoice(frm);
+    },
+
     before_submit(frm) {
-        assign_sales_person(frm);
+        if (!frm.doc.return_against && frm.doc.is_return) {
+            frappe.validated = false;
+            frm.add_custom_button(__("Return Against Invoice"), () => {
+                link_credit_to_invoice(frm);
+            });
+            frappe.throw("Return against invoice is required.");
+        }
     },
     
     on_submit(frm) {
-        link_credit_to_invoice(frm);
         update_service_order(frm);
     },
 
@@ -83,17 +91,35 @@ frappe.ui.form.on('Sales Invoice', {
 });
 
 function link_credit_to_invoice(frm) {
-    if (frm.doc.is_return) {
-        frappe.call({
-            method: "eskill_custom.api.set_invoice_as_credited",
-            args: {
-                credit: frm.doc.name
-            },
-            callback: function (message) {
-                if (message) {
-                    console.log(message);
-                }
+    if (frm.doc.is_return && !frm.doc.return_against) {
+        frappe.prompt([
+            {
+                fieldname: 'invoice',
+                fieldtype: 'Link',
+                get_query: () => {
+                    return {
+                        filters: [
+                            ["Sales Invoice", "customer", "=", frm.doc.customer],
+                            ["Sales Invoice", "posting_date", "<=", frm.doc.posting_date],
+                            ["Sales Invoice", "currency", "=", frm.doc.currency],
+                            ["Sales Invoice", "conversion_rate", "=", frm.doc.conversion_rate],
+                            ["Sales Invoice", "is_return", "=", 0],
+                            ["Sales Invoice", "docstatus", "=", 1],
+                            ["Sales Invoice", "status", "!=", "Credit Note Issued"],
+                            ["Sales Invoice", "total", ">=", frm.doc.total],
+                        ]
+                    }
+                },
+                label: 'Sales Invoice',
+                options: 'Sales Invoice',
+                reqd: 1
             }
+        ], (values) => {
+            frappe.run_serially([
+                () => frm.set_value("return_against", values.invoice),
+                () => frm.save(),
+                () => frm.reload_doc(),
+            ]);
         });
     }
 }

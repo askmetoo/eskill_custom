@@ -12,7 +12,6 @@ frappe.ui.form.on('Quotation', {
     
     before_save(frm) {
         set_tax_template(frm);
-        assign_sales_person(frm);
         if (frm.doc.stock_item) {
             frm.doc.stock_item = undefined;
         }
@@ -25,33 +24,8 @@ frappe.ui.form.on('Quotation', {
     
     before_submit(frm) {
         set_tax_template(frm);
-        assign_sales_person(frm);
     },
-    
-    after_save(frm) {
-        if (frm.doc.issue){
-            issue_billing_update(frm, "quotation");
-        }
-    },
-    
-    on_submit(frm) {
-        if (frm.doc.issue){
-            issue_billing_update(frm, "quotation");
-        }
-    },
-    
-    on_update(frm) {
-        if (frm.doc.issue){
-            issue_billing_update(frm, "quotation");
-        }
-    },
-    
-    after_cancel(frm) {
-        if (frm.doc.issue){
-            issue_billing_update(frm, "quotation");
-        }
-    },
-    
+
     party_name: function(frm) {
         set_tax_template(frm);
     },
