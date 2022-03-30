@@ -47,8 +47,10 @@ function validate_line_item_gp(frm) {
         frappe.call({
             method: "eskill_custom.api.validate_line_item_gp",
             args: {
+                doctype: frm.doctype,
+                exchange_rate: frm.doc.conversion_rate,
                 items: frm.doc.items,
-                exchange_rate: frm.doc.conversion_rate
+                new_doc: frm.is_new() ? true : false,
             },
             callback: (response) => {
                 if (response.message) {

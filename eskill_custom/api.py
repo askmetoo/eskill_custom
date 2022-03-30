@@ -231,7 +231,7 @@ def non_billable_item(item_code: str, sla_job: int) -> 'dict[str, str | int]':
 
 
 @frappe.whitelist()
-def validate_line_item_gp(items, exchange_rate) -> "str | None":
+def validate_line_item_gp(doctype: str, exchange_rate, items, new_doc: bool) -> "str | None":
     "Validates line item GP based on item_group then returns an error message if any bad GPs are found."
 
     # items table is passed from the front end as a JSON and exchange_rate is passed as a string
@@ -239,10 +239,16 @@ def validate_line_item_gp(items, exchange_rate) -> "str | None":
     exchange_rate = float(exchange_rate)
 
     # accounting for differing names for the valuation_rate field
-    if items[0]['parenttype'] in ("Delivery Note", "Sales Invoice"):
+    if doctype in ("Delivery Note", "Sales Invoice"):
         valuation_field = "incoming_rate"
     else:
         valuation_field = "valuation_rate"
+
+    # ensure that the override_gp_limit field is set in new documents
+    if json.loads(new_doc):
+        for i, row in enumerate(items):
+            if "override_gp_limit" not in row:
+                items[i]['override_gp_limit'] = 0
 
     # identify the unique Item Groups in the document using a set
     # then create a dictionary with minimum and maximum GPs
