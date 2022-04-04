@@ -10,7 +10,7 @@
  "idx": 0,
  "is_standard": "Yes",
  "letter_head": "Eskill Trading",
- "modified": "2022-01-12 15:47:03.309100",
+ "modified": "2022-04-04 12:24:16.032909",
  "modified_by": "Administrator",
  "module": "Eskill Customisations",
  "name": "Accounts Payable (Multi-Currency)",
@@ -27,7 +27,7 @@
    "role": "Accounts Manager"
   },
   {
-   "role": "Employee"
+   "role": "Purchase Manager"
   }
  ]
 }
