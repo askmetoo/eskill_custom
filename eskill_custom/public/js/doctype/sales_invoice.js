@@ -51,33 +51,33 @@ frappe.ui.form.on('Sales Invoice', {
         update_service_order(frm);
     },
 
-    conversion_rate: function(frm) {
+    conversion_rate(frm) {
         limit_rate(frm);
         convert_selected_to_base(frm);
     },
 
-    currency: function(frm) {
+    currency(frm) {
         get_bid_rate(frm, frm.doc.posting_date);
         if (frm.doc.customer) {
             set_tax_template(frm);
         }
     },
 
-    customer: function(frm) {
+    customer(frm) {
         set_tax_template(frm);
     },
 
-    is_return: function(frm) {
+    is_return(frm) {
         naming_series_set(frm);
     },
 
-    posting_date: function(frm) {
+    posting_date(frm) {
         if (frm.doc.posting_date) {
             get_bid_rate(frm, frm.doc.posting_date);
         }
     },
 
-    search: function(frm) {
+    search(frm) {
         if (frm.doc.stock_item) {
             stock_lookup(frm);
         } else {
@@ -85,7 +85,7 @@ frappe.ui.form.on('Sales Invoice', {
         }
     },
 
-    usd_to_currency: function(frm) {
+    usd_to_currency(frm) {
         convert_base_to_selected(frm);
     }
 });

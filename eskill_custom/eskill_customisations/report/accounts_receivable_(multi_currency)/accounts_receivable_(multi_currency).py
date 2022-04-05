@@ -304,6 +304,18 @@ def get_data(filters: 'dict[str, ]', columns: 'list[dict]') -> list:
         data[index][total_columns[age_range]['fieldname']] = record['total_debt']
         data[index][total_columns[age_range + 1]['fieldname']] = record['total_debt_account']
 
+    data = [
+        row
+        for row in data
+        if (
+            row['currency'] == filters['currency'] and (
+                abs(row['total_debt_account']) >= 0.01 or abs(row['total_debt']) >= 0.01
+            )
+        ) or (
+            row['currency'] != filters['currency'] and abs(row['total_debt']) >= 0.01
+        )
+    ]
+
     if len(data) > 0:
         if 'group_by_party' in filters:
             old_data = data
@@ -322,7 +334,7 @@ def get_data(filters: 'dict[str, ]', columns: 'list[dict]') -> list:
                 customer_total[col['fieldname']] = data[0][col['fieldname']]
 
             for index, record in enumerate(old_data[1:]):
-                if customer_total['customer_name'] == record['customer_name']:
+                if customer_total['customer'] == record['customer']:
                     if record['posting_date'] > customer_total['posting_date']:
                         customer_total['posting_date'] = record['posting_date']
                     customer_total['total_debt'] += record['total_debt']
@@ -402,7 +414,7 @@ def initialise_data(filters: 'dict[str, ]', columns: 'list[dict]'):
         group by
             GLE.party, GLE.voucher_no
         order by
-            C.customer_name, GLE.posting_date, GLE.voucher_no;""", as_dict=1)
+            C.name, GLE.posting_date, GLE.voucher_no;""", as_dict=1)
 
     for i, row in enumerate(data):
         if row['currency'] != "ZWL":
