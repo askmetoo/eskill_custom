@@ -358,7 +358,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-03-17 09:18:06.074140",
+ "modified": "2022-04-04 12:23:35.591870",
  "modified_by": "Administrator",
  "module": "Eskill Customisations",
  "name": "Service Order",
@@ -436,6 +436,12 @@
    "permlevel": 1,
    "read": 1,
    "role": "Support Team"
+  },
+  {
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Employee"
   }
  ],
  "search_fields": "customer",
