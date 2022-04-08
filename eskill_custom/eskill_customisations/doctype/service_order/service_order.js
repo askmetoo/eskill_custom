@@ -81,6 +81,10 @@ frappe.ui.form.on('Service Order', {
         warehouse_filter(frm);
     },
 
+    onload_post_render(frm) {
+        frm.get_field("items").grid.set_multiple_add("part", "qty");
+    },
+
     before_save(frm) {
         if(frm.doc.edit_start_date) {
             frm.set_value("edit_start_date", 0)
