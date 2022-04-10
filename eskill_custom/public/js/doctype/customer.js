@@ -1,5 +1,5 @@
 frappe.ui.form.on('Customer', {
-    refresh : function(frm) {
+    refresh(frm) {
         if (!frm.doc.__islocal && frm.doc.default_currency == frappe.defaults.get_default('currency')) {
             frm.add_custom_button(__("Secondary Account"), function() {
                 create_secondary_account(frm);
@@ -7,7 +7,21 @@ frappe.ui.form.on('Customer', {
         }
     },
 
-    default_currency : function(frm) {
+    onload_post_render(frm) {
+        frappe.run_serially([
+            () => frm.remove_custom_button("Accounts Receivable", "View"),
+            () => frm.add_custom_button(__('Accounts Receivable'), function () {
+                frappe.set_route('query-report', 'Accounts Receivable (Multi-Currency)',
+                    {customer: frm.doc.name});
+            }, __('View')),
+            () => frm.add_custom_button(__('Customer Statement'), function () {
+                frappe.set_route('query-report', 'Customer Statement',
+                    {party_type: 'Customer', party: frm.doc.name});
+            }, __('View'))
+        ]);
+    },
+
+    default_currency(frm) {
         if (frm.doc.default_currency) {
             frappe.call({
                 method: "eskill_custom.api.customer_account_selector",
