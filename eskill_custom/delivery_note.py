@@ -182,12 +182,6 @@ def update_service_order(delivery_name: str):
     "Updates information on service order to indicate delivery."
 
     delivery = frappe.get_doc("Delivery Note", delivery_name)
-    service_order = frappe.get_doc("Service Order", delivery.service_order)
-    if delivery.docstatus == 2 and service_order.billing_status == "Delivered":
-        service_order.db_set("billing_status", "Pending Billing")
-    elif service_order.billing_status != "Invoiced":
-        service_order.db_set("billing_status", "Delivered")
-
     for item in delivery.items:
         if item.part_list:
             part = frappe.get_doc("Part List", item.part_list)
@@ -195,19 +189,40 @@ def update_service_order(delivery_name: str):
                 part.delivered_qty -= item.qty
             else:
                 part.delivered_qty += item.qty
+            if part.delivered_qty == part.used_qty:
+                part.status = "Delivered"
+            else:
+                part.status = "Partially Delivered"
             part.save(ignore_permissions=True)
+            part.notify_update()
+
+    service_order = frappe.get_doc("Service Order", delivery.service_order)
+    total_delivered_qty = 0
+    for item in service_order.items:
+        total_delivered_qty += item.delivered_qty
+    service_order.db_set("total_delivered_qty", total_delivered_qty, notify=True)
+    if total_delivered_qty == service_order.total_used_qty:
+        if service_order.goodwill:
+            status = "Delivered"
+        else:
+            status = "Pending Invoicing"
+    else:
+        status = "Pending Delivery"
+    service_order.db_set("billing_status", status)
 
     service_order.add_comment(
         comment_type="Info",
         text="delivered this service order."
     )
+    service_order.notify_update()
 
     try:
         quotation = frappe.get_last_doc(
             "Quotation",
             filters={'service_order': service_order.name, 'docstatus': 1}
         )
-        quotation.db_set("status", "Ordered", commit=True)
+        quotation.set_status(update=True, status="Ordered")
+        quotation.notify_update()
         quotations = frappe.db.get_list("Quotation",
             filters={
                 'service_order': service_order.name
@@ -217,6 +232,7 @@ def update_service_order(delivery_name: str):
         for quote in quotations:
             if quote['status'] != "Ordered" and quote['status'] != "Expired":
                 quotation = frappe.get_doc("Quotation", quote['name'])
-                quotation.db_set("status", "Expired", commit=True)
+                quotation.set_status(update=True, status="Expired")
+                quotation.notify_update()
     except:
         pass

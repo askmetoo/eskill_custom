@@ -23,48 +23,77 @@ def update_part(doc: str):
     stock_entry = frappe.get_doc("Stock Entry", doc)
 
     service_orders_affected = []
-    for line in stock_entry.items:
-        if line.part_list:
-            transferred_qty = frappe.db.sql(f"""\
-                select
-                    ifnull(sum(transfer_qty), 0) total
-                from
-                    `tabStock Entry Detail`
-                where
-                    docstatus = 1
-                    and part_list = '{line.part_list}';""")[0][0]
-            part_list = frappe.get_doc("Part List", line.part_list)
-            part_list.released_qty = transferred_qty
-            if part_list.released_qty == part_list.qty:
-                part_list.status = "Released"
-            elif part_list.released_qty > 0:
-                part_list.status = "Partially Released"
-            else:
-                part_list.status = "Requested"
-            part_list.save(ignore_permissions=True)
-            service_order = frappe.get_doc("Service Order", part_list.parent)
-            service_order.update_modified()
-
-            if transferred_qty:
-                comment = f"has released {transferred_qty} {part_list.part}: {part_list.part_name}."
-            else:
-                comment = f"has reversed all transfers of {part_list.part}: {part_list.part_name} for this order."
-            service_order = frappe.get_doc("Service Order", part_list.parent)
-            service_order.add_comment(
-                comment_type="Info",
-                text=comment,
-                link_doctype="Material Request",
-                link_name=part_list.request
-            )
-
-            if part_list.parent not in service_orders_affected:
-                service_orders_affected.append(part_list.parent)
-
-            if stock_entry.docstatus == 1:
-                frappe.publish_realtime(
-                    event="msgprint",
-                    message=f"{line.transfer_qty} {part_list.part} are ready for collection.",
-                    user=part_list.owner
+    if stock_entry.docstatus == 1:
+        for line in stock_entry.items:
+            if line.part_list:
+                part_list = frappe.get_doc("Part List", line.part_list)
+                transfer_qty = (
+                    line.transfer_qty
+                    if line.t_warehouse == part_list.warehouse
+                    else 0 - line.transfer_qty
                 )
+                part_list.released_qty += transfer_qty
+                if part_list.released_qty == part_list.qty:
+                    part_list.status = "Released"
+                elif part_list.released_qty > 0:
+                    part_list.status = "Partially Released"
+                else:
+                    part_list.status = "Requested"
+                part_list.save(ignore_permissions=True)
+                service_order = frappe.get_doc("Service Order", part_list.parent)
+                total_released_qty = 0
+                if len(service_order.items) > 0:
+                    for item in service_order.items:
+                        total_released_qty += item.released_qty
+                service_order.db_set("total_released_qty", total_released_qty, notify=True)
+
+                if transfer_qty:
+                    comment = f"has released {transfer_qty} {part_list.part}: {part_list.part_name}."
+                else:
+                    comment = f"has reversed all transfers of {part_list.part}: {part_list.part_name} for this order."
+                service_order = frappe.get_doc("Service Order", part_list.parent)
+                service_order.add_comment(
+                    comment_type="Info",
+                    text=comment,
+                    link_doctype="Material Request",
+                    link_name=part_list.request
+                )
+
+                if part_list.parent not in service_orders_affected:
+                    service_orders_affected.append(part_list.parent)
+
+                if transfer_qty > 0:
+                    frappe.publish_realtime(
+                        event="msgprint",
+                        message=f"{line.transfer_qty} {part_list.part} are ready for collection.",
+                        user=part_list.owner
+                    )
+    else:
+        for line in stock_entry.items:
+            if line.part_list:
+                part_list = frappe.get_doc("Part List", line.part_list)
+                transfer_qty = (
+                    0 - line.transfer_qty
+                    if line.t_warehouse == part_list.warehouse
+                    else line.transfer_qty
+                )
+                part_list.released_qty += transfer_qty
+                if part_list.released_qty == part_list.qty:
+                    part_list.status = "Released"
+                elif part_list.released_qty > 0:
+                    part_list.status = "Partially Released"
+                else:
+                    part_list.status = "Requested"
+                part_list.save(ignore_permissions=True)
+                service_order = frappe.get_doc("Service Order", part_list.parent)
+                total_released_qty = 0
+                if len(service_order.items) > 0:
+                    for item in service_order.items:
+                        total_released_qty += item.released_qty
+                service_order.db_set("total_released_qty", total_released_qty, notify=True)
+
+                if part_list.parent not in service_orders_affected:
+                    service_orders_affected.append(part_list.parent)
+
 
     return service_orders_affected

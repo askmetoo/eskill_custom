@@ -1,0 +1,66 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2022-04-06 13:30:46.540124",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_1",
+  "fiscal_device_in_error",
+  "zimra_fiscal_code"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_1",
+   "fieldtype": "Section Break",
+   "label": "Fiscal Device Error Handling"
+  },
+  {
+   "depends_on": "eval: (doc.fiscal_device_in_error);",
+   "fieldname": "zimra_fiscal_code",
+   "fieldtype": "Data",
+   "label": "ZIMRA Fiscal Code",
+   "mandatory_depends_on": "eval: (doc.fiscal_device_in_error);"
+  },
+  {
+   "default": "0",
+   "fieldname": "fiscal_device_in_error",
+   "fieldtype": "Check",
+   "label": "Fiscal Device in Error"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2022-04-06 13:32:49.707964",
+ "modified_by": "Administrator",
+ "module": "Eskill Customisations",
+ "name": "Sales Invoice Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Accounts Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

@@ -16,4 +16,5 @@ def update_service_order(invoice_name: str):
             text="invoiced this service order."
         )
     else:
-        service_order.db_set("billing_status", "Delivered")
+        service_order.db_set("billing_status", "Pending Invoicing")
+    service_order.notify_update()

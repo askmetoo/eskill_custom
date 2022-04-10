@@ -7716,5 +7716,39 @@
   "property_type": "Data",
   "row_name": null,
   "value": "status,transaction_date,party_name,order_type,service_order"
+ },
+ {
+  "default_value": null,
+  "doc_type": "Delivery Note Item",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocField",
+  "field_name": "item_code",
+  "modified": "2022-04-10 20:11:37.193644",
+  "name": "Delivery Note Item-item_code-read_only_depends_on",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "property": "read_only_depends_on",
+  "property_type": "Data",
+  "row_name": null,
+  "value": "eval: (doc.part_list);"
+ },
+ {
+  "default_value": null,
+  "doc_type": "Delivery Note Item",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocField",
+  "field_name": "qty",
+  "modified": "2022-04-10 20:11:37.302395",
+  "name": "Delivery Note Item-qty-read_only_depends_on",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "property": "read_only_depends_on",
+  "property_type": "Data",
+  "row_name": null,
+  "value": "eval: (doc.part_list);"
  }
 ]

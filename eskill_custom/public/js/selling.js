@@ -43,14 +43,13 @@ function tax_template_filter(frm) {
 }
 
 function validate_line_item_gp(frm) {
-    if (!frm.doc.is_return) {
+    if (!frm.doc.is_return && !frm.is_new()) {
         frappe.call({
             method: "eskill_custom.api.validate_line_item_gp",
             args: {
                 doctype: frm.doctype,
                 exchange_rate: frm.doc.conversion_rate,
                 items: frm.doc.items,
-                new_doc: frm.is_new() ? true : false,
             },
             callback: (response) => {
                 if (response.message) {
