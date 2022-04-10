@@ -16,18 +16,13 @@ frappe.listview_settings['Service Order'] = {
             colour = "orange";
         } else {
             doc_status = __(doc_status + doc.billing_status)
-            if (doc.job_type == "Billable") {
-                colour = {
-                    "Pending Billing": "red",
-                    "Delivered": "blue",
-                    "Invoiced": "dark grey",
-                }[doc.billing_status];
-            } else {
-                colour = {
-                    "Pending Billing": "red",
-                    "Delivered": "dark grey",
-                }[doc.billing_status];
-            }
+            colour = {
+                'Pending Delivery': "red",
+                'Pending Invoicing': "blue",
+                'Delivered': "dark grey",
+                'Invoiced': "dark grey",
+                'Billing Not Required': "dark grey"
+            }[doc.billing_status];
         }
         return [doc_status, colour];
     },

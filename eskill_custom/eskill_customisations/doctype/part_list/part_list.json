@@ -14,6 +14,7 @@
   "released_qty",
   "received_qty",
   "used_qty",
+  "returned_qty",
   "delivered_qty",
   "column_break_9",
   "uom",
@@ -50,7 +51,7 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
-   "options": "Not Requested\nRequested\nPartially Released\nReleased\nPartially Received\nReceived",
+   "options": "Not Requested\nRequested\nPartially Released\nReleased\nPartially Received\nReceived\nPartially Used\nUsed\nPartially Delivered\nDelivered",
    "read_only": 1
   },
   {
@@ -147,6 +148,7 @@
    "fieldname": "used_qty",
    "fieldtype": "Float",
    "label": "Used",
+   "non_negative": 1,
    "read_only": 1
   },
   {
@@ -157,12 +159,21 @@
    "fieldtype": "Float",
    "label": "Delivered",
    "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "returned_qty",
+   "fieldtype": "Float",
+   "label": "Returned",
+   "non_negative": 1,
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2021-10-05 13:39:57.603841",
+ "modified": "2022-04-09 18:51:08.436860",
  "modified_by": "Administrator",
  "module": "Eskill Customisations",
  "name": "Part List",

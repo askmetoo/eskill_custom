@@ -120,6 +120,14 @@ class ServiceOrder(Document):
             frappe.throw(_(message))
 
 
+    def on_update_after_submit(self):
+        "Run methods after document has been updated in db."
+        total_requested_qty = 0
+        for item in self.items:
+            total_requested_qty += item.qty
+        self.db_set("total_requested_qty", total_requested_qty, notify=True)
+
+
     @frappe.whitelist()
     def get_sla_devices(self):
         "Returns list of SLA devices based on selected SLA."
@@ -235,12 +243,20 @@ class ServiceOrder(Document):
         "Update received quantity for the given part."
 
         part_list = frappe.get_doc("Part List", part)
-        part_list.received_qty += received
-        if part_list.received_qty == part_list.qty:
-            part_list.status = "Received"
-        elif (part_list.received_qty < part_list.qty) and (part_list.released_qty == part_list.qty):
-            part_list.status = "Partially Received"
-        part_list.save(ignore_permissions=True)
+        received_qty = part_list.received_qty + received
+        if received_qty > part_list.released_qty:
+            frappe.throw(_("You can not receive more parts than have been released."))
+        if received_qty == part_list.qty:
+            part_list.db_set("status", "Received")
+        elif (received_qty < part_list.qty) and (part_list.released_qty == part_list.qty):
+            part_list.db_set("status", "Partially Received")
+        part_list.db_set("received_qty", received_qty, notify=True)
+
+        self.reload()
+        total_received_qty = 0
+        for item in self.items:
+            total_received_qty += item.received_qty
+        self.db_set("total_received_qty", total_received_qty, notify=True)
 
         self.add_comment(
             comment_type="Info",
@@ -255,57 +271,120 @@ class ServiceOrder(Document):
     def return_parts_table(self):
         "Generate table for part return dialog."
 
-        table = []
-        for part in self.items:
-            table.append({
-                'part_list': part.name,
-                'part': part.part,
-                'warehouse': part.warehouse,
-                'qty': part.qty,
-                'received_qty': part.received_qty,
-                'used_qty': part.used_qty
-            })
+        response = {
+            'parts_returnable': True,
+            'message': ""
+        }
+        returnable_qty = self.total_received_qty - (self.total_used_qty + self.total_returned_qty)
+        if returnable_qty > 0:
+            response["message"] = """\
+                Are you sure that you want to return the following?<br>
+                <br>
+                <table id="items" class="layout-table">
+                    <tbody>
+                        <tr class="layout-row">
+                            <td class="layout-cell" style="width: 20%; text-align: center;">
+                                <div>
+                                    Quantity
+                                </div>
+                            </td>
+                            <td class="layout-cell">
+                                <div>
+                                    Line Item
+                                </div>
+                            </td>
+                        </tr>"""
+            for part in self.items:
+                part_returnable_qty = part.received_qty - (part.used_qty + part.returned_qty)
+                if part_returnable_qty > 0:
+                    response['message'] += f"""
+                        <tr class="layout-row">
+                            <td class="layout-cell" style="text-align: center;">
+                                <div>
+                                    {part_returnable_qty}
+                                </div>
+                            </td>
+                            <td class="layout-cell">
+                                <div>
+                                    <strong>{part.part}</strong>: {part.part_name}
+                                </div>
+                            </td>
+                        </tr>"""
+            response['message'] += "</tbody></table>"
+        else:
+            response["parts_returnable"] = False
+            response["message"] = "There are no parts to return."
 
-        return table
+        return response
 
 
     @frappe.whitelist()
-    def return_parts(self, used_parts: dict):
+    def return_parts(self):
         "Generate the Material Request to return unused parts to storage."
 
-        parts_unused = False
-        message = "used all requested parts."
+        message = """
+            Returned:<br><br>
+            <table id="items" class="layout-table">
+                <tbody>
+                    <tr class="layout-row">
+                        <td class="layout-cell" style="width: 20%; text-align: center;">
+                            <div>
+                                Quantity
+                            </div>
+                        </td>
+                        <td class="layout-cell">
+                            <div>
+                                Line Item
+                            </div>
+                        </td>
+                    </tr>"""
+
+        request = frappe.new_doc("Material Request")
+        request.material_request_type = "Material Transfer"
+        request.service_order = self.name
+
         for item in self.items:
-            if item.name in used_parts:
-                item.used_qty = used_parts[item.name]
-            if (item.released_qty - item.used_qty) > 0:
-                parts_unused = True
-            item.save(ignore_permissions=True)
-
-        if parts_unused:
-            message = "returned- "
-
-            request = frappe.new_doc("Material Request")
-            request.material_request_type = "Material Transfer"
-            request.service_order = self.name
-
-            for item in self.items:
+            if (item.received_qty - (item.used_qty + item.returned_qty)) > 0:
                 request_item = request.append("items", {})
                 request_item.item_code = item.part
                 request_item.from_warehouse = item.warehouse
                 request_item.uom = item.uom
-                request_item.qty = item.released_qty - item.used_qty
-                message += f"{item.part_name}: {request_item.qty}; "
+                request_item.qty = item.received_qty - (item.used_qty + item.returned_qty)
+                message += f"""
+                    <tr class="layout-row">
+                        <td class="layout-cell" style="text-align: center;">
+                            <div>
+                                {request_item.qty}
+                            </div>
+                        </td>
+                        <td class="layout-cell">
+                            <div>
+                                <strong>{item.part}</strong>: {item.part_name}
+                            </div>
+                        </td>
+                    </tr>"""
+                frappe.db.set_value(
+                    dt="Part List",
+                    dn=item.name,
+                    field="returned_qty",
+                    val=request_item.qty,
+                    debug=True
+                )
 
-            request.insert(ignore_permissions=True)
-            request.submit()
+        request.insert(ignore_permissions=True)
+        request.submit()
 
-        self.db_set('parts_returned', 1)
-
+        message += "</tbody></table>"
         self.add_comment(
             comment_type="Info",
             text=message
         )
+
+        self.reload()
+        total_returned_qty = 0
+        for item in self.items:
+            total_returned_qty += item.returned_qty
+        self.db_set("total_returned_qty", total_returned_qty, notify=True)
 
         return message
 
@@ -318,8 +397,10 @@ class ServiceOrder(Document):
         self.reason_on_hold = reason
         if status == "Closed":
             self.closing_date = frappe.utils.today()
-            self.parts_returned = 1
+            if self.goodwill and (self.total_used_qty <= 0):
+                self.billing_status = "Billing Not Required"
         self.save(ignore_permissions=True)
+        self.notify_update()
 
 
     @frappe.whitelist()
@@ -364,6 +445,35 @@ class ServiceOrder(Document):
                     self.update_modified()
                 else:
                     frappe.throw(_("Customer account does not exist."))
+
+
+    @frappe.whitelist()
+    def use_part(self, part: str, used):
+        "Update used quantity for the given part."
+
+        part_list = frappe.get_doc("Part List", part)
+        used_qty = part_list.used_qty + used
+        if used_qty > part_list.received_qty:
+            frappe.throw(_("You can not use more parts than have been released."))
+        if used_qty == part_list.received_qty:
+            part_list.db_set("status", "Used")
+        elif (
+            (used_qty < part_list.received_qty)
+            and (part_list.received_qty == part_list.released_qty)
+        ):
+            part_list.db_set("status", "Partially Used")
+        part_list.db_set("used_qty", used_qty, notify=True)
+
+        self.reload()
+        total_used_qty = 0
+        for item in self.items:
+            total_used_qty += item.used_qty
+        self.db_set("total_used_qty", total_used_qty, notify=True)
+
+        self.add_comment(
+            comment_type="Info",
+            text=f"used {used} {part_list.part}: {part_list.part_name}"
+        )
 
 
     @frappe.whitelist()
@@ -486,11 +596,11 @@ def generate_delivery(source_name, target_doc = None):
         if quotation:
             if target_doc.part_list:
                 part_list = frappe.get_doc("Part List", target_doc.part_list)
-                target_doc.qty = part_list.used_qty
+                target_doc.qty = (part_list.used_qty - part_list.delivered_qty)
             else:
                 target_doc.qty = source_doc.qty
         else:
-            target_doc.qty = source_doc.used_qty
+            target_doc.qty = (source_doc.used_qty - source_doc.delivered_qty)
 
     service_order = frappe.get_doc("Service Order", source_name)
 
@@ -530,7 +640,7 @@ def generate_delivery(source_name, target_doc = None):
                     "part": "item_code",
                 },
                 "postprocess": update_item,
-                "filter": lambda d: d.used_qty <= 0
+                "filter": lambda d: (d.used_qty - d.delivered_qty) <= 0
             }
         }, target_doc, set_missing_values)
 
@@ -573,12 +683,10 @@ def generate_quote(source_name, target_doc = None):
         target.run_method("calculate_taxes_and_totals")
 
     def update_item(source_doc, target_doc, source_parent):
-        target_doc.qty = source_doc.used_qty if source_parent.parts_returned else source_doc.qty
+        target_doc.qty = source_doc.used_qty if source_doc.used_qty else source_doc.qty
 
     def get_quote_qty(item_row):
-        return item_row.used_qty if service_order.parts_returned else item_row.qty
-
-    service_order = frappe.get_doc("Service Order", source_name)
+        return item_row.used_qty if item_row.used_qty else item_row.qty
 
     quotation = get_mapped_doc("Service Order", source_name, {
         "Service Order": {

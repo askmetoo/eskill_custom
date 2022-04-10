@@ -4810,7 +4810,7 @@
   "parenttype": null,
   "permlevel": 0,
   "precision": "",
-  "print_hide": 0,
+  "print_hide": 1,
   "print_hide_if_no_value": 0,
   "print_width": null,
   "read_only": 1,

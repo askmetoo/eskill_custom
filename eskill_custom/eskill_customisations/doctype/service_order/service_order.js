@@ -56,13 +56,13 @@ frappe.ui.form.on('Service Order', {
     refresh(frm) {
         set_breadcrumbs(frm);
         if (frm.doc.docstatus == 1) {
-            if (!frm.doc.parts_returned && frm.doc.items.length) {
+            if (frm.doc.items.length) {
                 request_parts(frm);
                 receive_parts(frm);
                 return_unused_parts(frm);
             }
             generate_quote(frm);
-            if (frm.doc.parts_returned && frm.doc.job_status == "Closed") {
+            if (frm.doc.job_status == "Closed") {
                 generate_delivery(frm);
             }
             update_customer_billing_currency(frm);
@@ -83,6 +83,123 @@ frappe.ui.form.on('Service Order', {
 
     onload_post_render(frm) {
         frm.get_field("items").grid.set_multiple_add("part", "qty");
+        if (frm.doc.total_received_qty != frm.doc.total_used_qty) {
+            frm.get_field("items").grid.add_custom_button("Mark Used Parts", () => {
+                let items = frm.get_field("items").grid.get_selected();
+                if (items.length > 0) {
+                    if (frm.is_dirty()) {
+                        frappe.throw("Please save before receiving parts.");
+                    }
+                    frm.reload_doc();
+                    items.forEach((item) => {
+                        if (locals['Part List'][item].used_qty < locals['Part List'][item].received_qty) {
+                            var dialog = new frappe.ui.Dialog({
+                                title: __("Use " + locals['Part List'][item].part),
+                                fields: [
+                                    {
+                                        label: "Part",
+                                        fieldname: "part",
+                                        fieldtype: "Link",
+                                        read_only: 1,
+                                        options: "Item",
+                                        default: locals['Part List'][item].part
+                                    },
+                                    {
+                                        fieldname: "part_list",
+                                        fieldtype: "Data",
+                                        default: item,
+                                        hidden: 1
+                                    },
+                                    {
+                                        fieldname: "column_break_1",
+                                        fieldtype: "Column Break"
+                                    },
+                                    {
+                                        label: "Part Name",
+                                        fieldname: "part_name",
+                                        fieldtype: "Data",
+                                        default: locals['Part List'][item].part_name,
+                                        read_only: 1
+                                    },
+                                    {
+                                        fieldname: "section_break_1",
+                                        fieldtype: "Section Break"
+                                    },
+                                    {
+                                        label: "Requested Qty",
+                                        fieldname: "qty",
+                                        fieldtype: "Float",
+                                        default: locals['Part List'][item].qty,
+                                        read_only: 1
+                                    },
+                                    {
+                                        label: "Parts Released So Far",
+                                        fieldname: "released",
+                                        fieldtype: "Float",
+                                        default: locals['Part List'][item].released_qty,
+                                        read_only: 1
+                                    },
+                                    {
+                                        label: "Parts Received So Far",
+                                        fieldname: "received",
+                                        fieldtype: "Float",
+                                        default: locals['Part List'][item].received_qty,
+                                        read_only: 1
+                                    },
+                                    {
+                                        label: "Parts Used So Far",
+                                        fieldname: "used",
+                                        fieldtype: "Float",
+                                        default: locals['Part List'][item].used_qty,
+                                        read_only: 1
+                                    },
+                                    {
+                                        fieldname: "column_break_4",
+                                        fieldtype: "Column Break"
+                                    },
+                                    {
+                                        label: "New Parts Used",
+                                        fieldname: "newly_used",
+                                        fieldtype: "Float",
+                                        reqd: 1,
+                                        onchange: () => {
+                                            const max_value = locals['Part List'][item].received_qty - locals['Part List'][item].used_qty
+                                            if ((dialog.fields_dict.newly_used.value > max_value) || (dialog.fields_dict.newly_used.value < 0)) {
+                                                dialog.set_value('newly_used', 0);
+                                                frappe.msgprint({
+                                                    title: "Invalid Value",
+                                                    message: max_value == 1 ? "There is 1 left unused." : "There are " + max_value + " left unused."
+                                                });
+                                            }
+                                        }
+                                    }
+                                ],
+                                primary_action: (usage) => {
+                                    if (usage.newly_used) {
+                                        frappe.call({
+                                            doc: frm.doc,
+                                            method: "use_part",
+                                            args: {
+                                                part: usage.part_list,
+                                                used: usage.newly_used
+                                            },
+                                            callback: () => {
+                                                frm.reload_doc();
+                                            }
+                                        });
+                                    }
+                                    dialog.hide();
+                                },
+                                primary_action_label: "Mark Used"
+                            });
+                            dialog.show();
+                        }
+                    });
+                } else {
+                    frappe.msgprint("No items selected.");
+                }
+            });
+        }
     },
 
     before_save(frm) {
@@ -190,7 +307,7 @@ frappe.ui.form.on('Service Device', {
     add_counter_readings(frm, cdt, cdn) {
         add_device_readings(frm, cdn, locals[cdt][cdn].serial_number);
     },
-    
+
     model(frm, cdt, cdn) {
         if (locals[cdt][cdn].serial_number) {
             locals[cdt][cdn].serial_number = undefined;
@@ -203,11 +320,11 @@ frappe.ui.form.on('Service Device', {
         }
         frm.refresh_fields();
     },
-    
+
     serial_no_report(frm, cdt, cdn) {
         serial_report(locals[cdt][cdn].serial_number);
     },
-    
+
     serial_number(frm, cdt, cdn) {
         if (!locals[cdt][cdn].serial_number) {
             locals[cdt][cdn].warranty_status = undefined;
@@ -228,7 +345,7 @@ frappe.ui.form.on('Service Device', {
     warranty_date_update(frm, cdt, cdn) {
         warranty_update(frm, locals[cdt][cdn].model, locals[cdt][cdn].serial_number);
     },
-    
+
     request_swap_out: function(frm, cdt, cdn) {
        request_swap(frm, locals[cdt][cdn]);
     },
@@ -239,7 +356,7 @@ frappe.ui.form.on('Service Device', {
 frappe.ui.form.on('Device Reading', {
     delete_entry(frm, cdt, cdn) {
         console.log(locals[cdt][cdn])
-    }, 
+    },
 });
 
 
@@ -248,7 +365,7 @@ frappe.ui.form.on('Part List', {
         if (locals[cdt][cdn].status != "Not Requested") {
             frappe.throw("You can not delete " + cdt + " " + cdn)
         }
-    }, 
+    },
 });
 
 
@@ -292,7 +409,7 @@ function generate_delivery(frm) {
 
 
 function generate_quote(frm) {
-    if (frm.doc.job_type == "Billable" && frm.doc.billing_status == "Pending Billing") {
+    if (frm.doc.job_type == "Billable" && frm.doc.billing_status == "Pending Delivery") {
         frm.add_custom_button("Quotation", () => {
             frappe.model.open_mapped_doc({
                 method: "eskill_custom.eskill_customisations.doctype.service_order.service_order.generate_quote",
@@ -405,7 +522,7 @@ function model_filter(frm) {
 
 
 function receive_parts(frm) {
-    if (frm.doc.job_status == "Open" && frm.doc.items) {
+    if (frm.doc.job_status == "Open" && frm.doc.items && (frm.doc.total_released_qty > frm.doc.total_received_qty)) {
         frm.add_custom_button("Receive Parts", () => {
             if (frm.is_dirty()) {
                 frappe.throw("Please save before receiving parts.");
@@ -451,21 +568,21 @@ function receive_parts(frm) {
                                     {
                                         label: "Requested Qty",
                                         fieldname: "qty",
-                                        fieldtype: "Data",
+                                        fieldtype: "Float",
                                         default: part[2],
                                         read_only: 1
                                     },
                                     {
                                         label: "Parts Released So Far",
                                         fieldname: "released",
-                                        fieldtype: "Data",
+                                        fieldtype: "Float",
                                         default: part[3],
                                         read_only: 1
                                     },
                                     {
                                         label: "Parts Received So Far",
                                         fieldname: "received",
-                                        fieldtype: "Data",
+                                        fieldtype: "Float",
                                         default: part[4] ? part[4] : "0",
                                         read_only: 1
                                     },
@@ -553,110 +670,38 @@ function request_swap(frm, device) {
 
 
 function return_unused_parts(frm) {
-    frm.add_custom_button("Return Unused Parts", () => {
-        if (!frm.is_dirty()) {
-            frappe.call({
-                doc: frm.doc,
-                method: "return_parts_table",
-                callback: (response) => {
-                    const table_fields = [
-                        {
-                            fieldname: "part_list",
-                            fieldtype: "Link",
-                            options: "Part List",
-                            hidden: 1
-                        },
-                        {
-                            fieldname: "part",
-                            fieldtype: "Link",
-                            options: "Item",
-                            label: "Part",
-                            in_list_view: 1,
-                        },
-                        {
-                            fieldname: "warehouse",
-                            fieldtype: "Link",
-                            options: "Warehouse",
-                            label: "Warehouse",
-                            in_list_view: 1,
-                        },
-                        {
-                            fieldname: "qty",
-                            fieldtype: "Float",
-                            label: "Requested",
-                            in_list_view: 1,
-                        },
-                        {
-                            fieldname: "received_qty",
-                            fieldtype: "Float",
-                            label: "Received",
-                            in_list_view: 1,
-                        },
-                        {
-                            fieldname: "used_qty",
-                            fieldtype: "Float",
-                            label: "Used",
-                            in_list_view: 1,
-                        },
-                    ];
-                    var dialog = new frappe.ui.Dialog({
-                        title: __("Return Unused Parts"),
-                        static: true,
-                        fields: [
-                            {
-                                fieldname: "disclaimer",
-                                fieldtype: "Data",
-                                read_only: 1,
-                                default: "All unused parts will be returned to Stores, therefore will be unavailable for billing."
-                            },
-                            {
-                                fieldname: "part_quantities",
-                                fieldtype: "Table",
-                                label: "Part Quantities",
-                                cannot_add_rows: true,
-                                in_place_edit: false,
-                                read_only: 1,
-                                data: response.message,
-                                fields: table_fields,
-                                description: "Please enter quantities used for each line item."
-                            }
-                        ],
-                        primary_action: function() {
-                            dialog.hide();
-                            var used_parts = {}
-                            dialog.fields[1].data.forEach( (row) => {
-                                if (row.used_qty) {
-                                    if ((row.used_qty > response.message[row.idx - 1].received_qty) || (row.used_qty < 0)) {
-                                        console.log(row, response.message)
-                                        frappe.throw("You can not have used " + row.used_qty + " " + response.message[row.idx - 1].part + ".");
-                                    } else {
-                                        used_parts[row.part_list] = row.used_qty;
-                                    }
-                                }
-                            });
-                            frappe.call({
-                                doc: frm.doc,
-                                method: "return_parts",
-                                args: {
-                                    used_parts: used_parts
+    if (frm.doc.total_received_qty > (frm.doc.total_used_qty + frm.doc.total_returned_qty)) {
+        frm.add_custom_button("Return Unused Parts", () => {
+            if (!frm.is_dirty()) {
+                frappe.call({
+                    doc: frm.doc,
+                    method: "return_parts_table",
+                    callback: (response) => {
+                        if (response.message.parts_returnable) {
+                            frappe.warn(
+                                "Are you sure that you want to proceed?",
+                                response.message.message,
+                                () => {
+                                    frappe.call({
+                                        doc: frm.doc,
+                                        method: "return_parts",
+                                        callback: (response2) => {
+                                            frappe.msgprint(response2.message);
+                                        }
+                                    });
                                 },
-                                callback: (response2) => {
-                                    frm.reload_doc();
-                                }
-                            });
-                        },
-                        primary_action_label: "Return"
-                    });
-                    dialog.fields_dict.part_quantities.grid.wrapper.find('.btn-open-row').hide();
-                    dialog.fields_dict.part_quantities.grid.wrapper.find('.edit-grid-row').hide();
-                    dialog.fields_dict.part_quantities.grid.wrapper.find('.sortable-handle').hide();
-                    dialog.show();
-                }
-            });
-        } else {
-            frappe.msgprint("Please save before returning parts.");
-        }
-    }, "Parts");
+                                "Return",
+                            );
+                        } else {
+                            frappe.msgprint("There are no parts to return.");
+                        }
+                    }
+                });
+            } else {
+                frappe.msgprint("Please save before returning parts.");
+            }
+        }, "Parts");
+    }
 }
 
 
@@ -723,7 +768,7 @@ function sla_filter(frm) {
 
 
 function update_customer_billing_currency(frm) {
-    if (frm.doc.billing_status == "Pending Billing") {
+    if (frm.doc.billing_status == "Pending Delivery") {
         frm.add_custom_button("Change Customer Account", () => {
             if (!frm.is_dirty()) {
                 frappe.prompt([
@@ -735,7 +780,7 @@ function update_customer_billing_currency(frm) {
                         reqd: 1
                     }
                 ], (values) => {
-                    console.log(values)    
+                    console.log(values)
                     frappe.call({
                         doc: frm.doc,
                         method: "update_customer_billing_currency",
@@ -761,7 +806,7 @@ function update_job_status(frm) {
             set_status(frm, "On Hold");
         }, "Job Status");
         frm.add_custom_button("Close Job", () => {
-            if (!frm.doc.parts_returned && frm.doc.items.length) {
+            if ((frm.doc.total_used_qty + frm.doc.total_returned_qty) < frm.doc.total_received_qty) {
                 frappe.throw(__("You must return all unused parts before closing the job."));
             } else {
                 set_status(frm, "Closed");

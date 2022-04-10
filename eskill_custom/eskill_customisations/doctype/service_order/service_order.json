@@ -19,7 +19,6 @@
   "amended_from",
   "assigned_technician",
   "reason_on_hold",
-  "parts_returned",
   "section_break_9",
   "start_date",
   "edit_start_date",
@@ -50,7 +49,14 @@
   "billable_hours",
   "job_resolution_section",
   "items",
-  "resolution_details"
+  "resolution_details",
+  "parts_quantities_section",
+  "total_requested_qty",
+  "total_released_qty",
+  "total_received_qty",
+  "total_used_qty",
+  "total_returned_qty",
+  "total_delivered_qty"
  ],
  "fields": [
   {
@@ -95,14 +101,14 @@
   },
   {
    "allow_on_submit": 1,
-   "default": "Pending Billing",
+   "default": "Pending Delivery",
    "fieldname": "billing_status",
    "fieldtype": "Select",
    "in_filter": 1,
    "in_preview": 1,
    "in_standard_filter": 1,
    "label": "Billing Status",
-   "options": "Pending Billing\nDelivered\nInvoiced",
+   "options": "Pending Delivery\nDelivered\nPending Invoicing\nInvoiced\nBilling Not Required",
    "read_only": 1
   },
   {
@@ -251,16 +257,6 @@
    "read_only": 1
   },
   {
-   "allow_on_submit": 1,
-   "default": "0",
-   "depends_on": "eval: (doc.parts_returned);",
-   "description": "This indicates that unused parts have been returned and billing may proceed.",
-   "fieldname": "parts_returned",
-   "fieldtype": "Check",
-   "label": "Parts Returned",
-   "read_only": 1
-  },
-  {
    "depends_on": "eval: (!doc.docstatus);",
    "fetch_from": "customer.customer_name",
    "fieldname": "customer_name",
@@ -353,12 +349,73 @@
    "fieldtype": "Check",
    "label": "Is Internal Customer",
    "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "depends_on": "eval: (doc.total_requested_qty > 0);",
+   "fieldname": "parts_quantities_section",
+   "fieldtype": "Section Break",
+   "label": "Parts Quantities"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "total_requested_qty",
+   "fieldtype": "Int",
+   "label": "Total Requested Qty",
+   "non_negative": 1,
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "total_released_qty",
+   "fieldtype": "Int",
+   "label": "Total Released Qty",
+   "non_negative": 1,
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "total_received_qty",
+   "fieldtype": "Int",
+   "label": "Total Received Qty",
+   "non_negative": 1,
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "total_used_qty",
+   "fieldtype": "Int",
+   "label": "Total Used Qty",
+   "non_negative": 1,
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "total_returned_qty",
+   "fieldtype": "Int",
+   "label": "Total Returned Qty",
+   "non_negative": 1,
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "total_delivered_qty",
+   "fieldtype": "Int",
+   "label": "Total Delivered Qty",
+   "non_negative": 1,
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-04-04 12:23:35.591870",
+ "modified": "2022-04-08 16:04:35.186492",
  "modified_by": "Administrator",
  "module": "Eskill Customisations",
  "name": "Service Order",
