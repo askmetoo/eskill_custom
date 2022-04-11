@@ -71,25 +71,6 @@ def stock_lookup(item):
 
 
 @frappe.whitelist()
-def item_price_lookup(doctype, currency, price_list, item):
-    "Returns the price of a given item."
-    try:
-        price = frappe.db.sql(f"""\
-            select round(price_list_rate, 2)"
-            from
-                `tabItem Price`"
-            where
-                item_code = '{item}' and price_list = '{price_list}' and currency = '{currency}'"
-            order by
-                creation desc"
-            limit 1"""
-        )
-        return price if price else "Unavailable"
-    except:
-        return "Unavailable"
-
-
-@frappe.whitelist()
 def auction_rate_lookup(posting_date: str) -> float:
     "Returns the auction rate at the date of SI posting."
 
