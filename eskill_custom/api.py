@@ -1,5 +1,6 @@
 "General methods that can be used in various DocTypes."
 from __future__ import unicode_literals
+from decimal import DivisionByZero
 
 import json
 
@@ -23,6 +24,97 @@ def check_maintain_stock(doctype, item):
         return maintain_stock
     except:
         return False
+
+
+@frappe.whitelist()
+def document_gp_lookup(doctype: str, exchange_rate, items):
+    "Returns a message detailing stock locations and available quantities for the given items."
+
+    items = json.loads(items)
+    exchange_rate = float(exchange_rate)
+
+    # accounting for differing names for the valuation_rate field
+    if doctype in ("Delivery Note", "Sales Invoice"):
+        valuation_field = "incoming_rate"
+    else:
+        valuation_field = "valuation_rate"
+
+    message = """
+        <table id="items" class="layout-table">
+            <tbody>
+                <tr class="layout-row">
+                    <td class="layout-cell" style="width: 5%; text-align: center; border: 1px solid var(--table-border-color);">
+                        <div>
+                            Row
+                        </div>
+                    </td>
+                    <td class="layout-cell" style="width: 25%; text-align: center; border: 1px solid var(--table-border-color);">
+                        <div>
+                            Item
+                        </div>
+                    </td>
+                    <td class="layout-cell" style="width: 30%; text-align: center; border: 1px solid var(--table-border-color);">
+                        <div>
+                            Cost Amount
+                        </div>
+                    </td>
+                    <td class="layout-cell" style="width: 30%; text-align: center; border: 1px solid var(--table-border-color);">
+                        <div>
+                            Net Selling Amount
+                        </div>
+                    </td>
+                    <td class="layout-cell" style="width: 10%; text-align: center; border: 1px solid var(--table-border-color);">
+                        <div>
+                            GP %
+                        </div>
+                    </td>
+                </tr>
+    """
+
+    for item in items:
+        selling_amount = round(item['net_amount'], 2)
+        item_cost = round(item[valuation_field] * item['stock_qty'] * exchange_rate, 2)
+        try:
+            gp_percentage = round(((selling_amount - item_cost) / selling_amount) * 100, 2)
+        except ZeroDivisionError:
+            gp_percentage = 0.00
+        message += f"""
+            <tr class="layout-row">
+                <td class="layout-cell" style="text-align: center; border: 1px solid var(--table-border-color);">
+                    <div>
+                        {item['idx']}
+                    <div>
+                </td>
+                <td class="layout-cell" style="border: 1px solid var(--table-border-color); padding-left: 5mm;">
+                    <div>
+                        {item['item_code']}
+                    <div>
+                </td>
+                <td class="layout-cell" style="text-align: center; border: 1px solid var(--table-border-color);">
+                    <div>
+                        {item_cost}
+                    <div>
+                </td>
+                <td class="layout-cell" style="text-align: center; border: 1px solid var(--table-border-color);">
+                    <div>
+                        {selling_amount}
+                    <div>
+                </td>
+                <td class="layout-cell" style="text-align: center; border: 1px solid var(--table-border-color);">
+                    <div>
+                        {gp_percentage}%
+                    <div>
+                </td>
+            </tr>
+        """
+    message += "</tbody></table>"
+
+    frappe.msgprint(
+        msg=message,
+        title="Line Item GPs",
+        is_minimizable=True,
+        wide=True
+    )
 
 
 @frappe.whitelist()

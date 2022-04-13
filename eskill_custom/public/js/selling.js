@@ -1,3 +1,28 @@
+// Get current doctype and apply given form script overrides
+route = frappe.get_route()
+if (route[0] == "Form") {
+    frappe.ui.form.on(route[1], {
+        onload_post_render(frm) {
+            document_gp_lookup(frm);
+        }
+    });
+}
+
+function document_gp_lookup(frm) {
+    frm.add_custom_button(__("Document GP"), () => {
+        if (frm.doc.items.length) {
+            frappe.call({
+                method: "eskill_custom.api.document_gp_lookup",
+                args: {
+                    doctype: route[1],
+                    exchange_rate: frm.doc.usd_to_currency,
+                    items: frm.doc.items
+                }
+            });
+        }
+    }, __("View"));
+}
+
 function limit_rate(frm) {
     if (frm.doc.auction_bid_rate && frm.doc.currency == "ZWD" && frm.doc.conversion_rate) {
         if (frm.doc.conversion_rate > roundNumber(1 / roundNumber(frm.doc.auction_bid_rate * 1.08, 4), 9)) {
