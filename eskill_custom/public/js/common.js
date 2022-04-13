@@ -54,8 +54,8 @@ function get_bid_rate(frm, posting_date) {
 }
 
 function stock_availability(frm) {
-    if (frm.doc.items.length) {
-        frm.add_custom_button(__("Stock Availability"), () => {
+    frm.add_custom_button(__("Stock Availability"), () => {
+        if (frm.doc.items.length) {
             frappe.call({
                 method: "eskill_custom.api.stock_availability",
                 args: {
@@ -63,8 +63,8 @@ function stock_availability(frm) {
                     items: frm.doc.items
                 }
             });
-        }, __("View"));
-    }
+        }
+    }, __("View"));
 }
 
 function stock_item_filter(frm) {
