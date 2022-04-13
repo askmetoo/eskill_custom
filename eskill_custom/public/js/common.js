@@ -1,8 +1,19 @@
+// Map keyboard shortcut 'Ctrl + P' for printing
 frappe.ui.keys.on('ctrl+p', function(e) {
-	e.preventDefault();
+    e.preventDefault();
     e.currentTarget.cur_frm.print_doc();
-	return false;
+    return false;
 });
+
+// Get current doctype and apply given form script overrides
+route = frappe.get_route()
+if (route[0] == "Form") {
+    frappe.ui.form.on(route[1], {
+        onload_post_render(frm) {
+            stock_availability(frm);
+        }
+    });
+}
 
 function check_save(frm) {
     if (frm.is_dirty()) {
@@ -39,6 +50,20 @@ function get_bid_rate(frm, posting_date) {
                 console.log("Got bid rate.");
             }
         });
+    }
+}
+
+function stock_availability(frm) {
+    if (frm.doc.items.length) {
+        frm.add_custom_button(__("Stock Availability"), () => {
+            frappe.call({
+                method: "eskill_custom.api.stock_availability",
+                args: {
+                    doctype: route[1],
+                    items: frm.doc.items
+                }
+            });
+        }, __("View"));
     }
 }
 

@@ -15,7 +15,7 @@ def check_maintain_stock(doctype, item):
             select
                 is_stock_item
             from
-                tabItem 
+                tabItem
             where
                 name = '{item}'
             limit 1;"""
@@ -98,7 +98,7 @@ def customer_account_selector(currency):
 
     try:
         debtors_account = frappe.db.sql(f"select name from tabAccount where account_currency = '{currency}' and debtors_account is true limit 1;")
-        debtors_account = debtors_account[0][0] 
+        debtors_account = debtors_account[0][0]
     except:
         debtors_account = ""
 
@@ -118,13 +118,13 @@ def set_invoice_as_credited(credit):
                     DN.return_against,
                     SII.Invoice
                 from
-                    `tabSales Invoice Item` CNI 
+                    `tabSales Invoice Item` CNI
                 join
                     (select
                         name,
                         return_against
                     from
-                        `tabDelivery Note`) DN on DN.name = CNI.delivery_note 
+                        `tabDelivery Note`) DN on DN.name = CNI.delivery_note
                 join
                     (select
                         parent Invoice,
@@ -132,13 +132,13 @@ def set_invoice_as_credited(credit):
                     from
                         `tabSales Invoice Item`
                     group by
-                        parent) SII on SII.delivery_note = DN.return_against 
+                        parent) SII on SII.delivery_note = DN.return_against
                 group by
-                    parent 
+                    parent
                 having
-                    Credit = '{credit}' 
+                    Credit = '{credit}'
                 order by
-                    parent desc 
+                    parent desc
                 limit 1;"""
             )
             frappe.db.set_value("Sales Invoice", invoice[0][0], "return_against", invoice[0][3])
@@ -209,6 +209,82 @@ def non_billable_item(item_code: str, sla_job: int) -> 'dict[str, str | int]':
         results['expense_account'] = ''
 
     return results
+
+
+@frappe.whitelist()
+def stock_availability(doctype: str, items):
+    "Returns a message detailing stock locations and available quantities for the given items."
+
+    items = json.loads(items)
+
+    message = """The following items are in stock:<br><br>
+        <table id="items" class="layout-table">
+            <tbody>
+                <tr class="layout-row">
+                    <td class="layout-cell" style="width: 40%; text-align: center; border: 1px solid var(--table-border-color);">
+                        <div>
+                            Item
+                        </div>
+                    </td>
+                    <td class="layout-cell" style="width: 40%; text-align: center; border: 1px solid var(--table-border-color);">
+                        <div>
+                            Warehouse
+                        </div>
+                    </td>
+                    <td class="layout-cell" style="width: 20%; text-align: center; border: 1px solid var(--table-border-color);">
+                        <div>
+                            Available Quantity
+                        </div>
+                    </td>
+                </tr>
+    """
+
+    if doctype == "Service Order":
+        item_list = {row['part'] for row in items if "part" in row}
+    else:
+        item_list = {row['item_code'] for row in items if "item_code" in row}
+    no_items = True
+    for item in item_list:
+        stock_levels = [
+            {
+                'warehouse': record['warehouse'],
+                'actual_qty': record['actual_qty'],
+            }
+            for record in get_stock_levels(item_code=item)
+            if record['actual_qty'] > 0
+        ]
+        if len(stock_levels) > 0:
+            no_items = False
+            for i, row in enumerate(stock_levels):
+                message += f"""
+                    <tr class="layout-row">
+                        <td class="layout-cell" style="border: 1px solid var(--table-border-color); padding-left: 5mm;">
+                            <div>
+                                {item if i == 0 else ""}
+                            <div>
+                        </td>
+                        <td class="layout-cell" style="border: 1px solid var(--table-border-color); padding-left: 5mm;">
+                            <div>
+                                {row['warehouse']}
+                            <div>
+                        </td>
+                        <td class="layout-cell" style="text-align: center; border: 1px solid var(--table-border-color);">
+                            <div>
+                                {row['actual_qty']}
+                            <div>
+                        </td>
+                    </tr>
+                """
+    message += "</tbody></table>"
+
+    if no_items:
+        message = "No items are in stock."
+    frappe.msgprint(
+        msg=message,
+        title="Stock Availability",
+        is_minimizable=True,
+        wide=True
+    )
 
 
 @frappe.whitelist()
