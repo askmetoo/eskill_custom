@@ -1,3 +1,9 @@
+frappe.ui.keys.on('ctrl+p', function(e) {
+	e.preventDefault();
+    e.currentTarget.cur_frm.print_doc();
+	return false;
+});
+
 function check_save(frm) {
     if (frm.is_dirty()) {
         frm.save();
