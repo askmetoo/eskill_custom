@@ -166,7 +166,7 @@ def get_data(filters: dict, columns: 'list[dict]') -> 'list[dict]':
 
     if len(invoices) > 0:
         if len(invoices) == 1:
-            invoices = f"({invoices})"
+            invoices = f"('{invoices[0]}')"
         deliveries = get_deliveries(invoices)
         for delivery in deliveries:
             index = next(i for i, row in enumerate(data) if row['invoice'] == delivery['invoice'])
@@ -174,7 +174,9 @@ def get_data(filters: dict, columns: 'list[dict]') -> 'list[dict]':
             data[index]['cos_secondary'] = delivery['cos'] * data[index]['rate']
 
         for i, row in enumerate(data):
-            data[i]['gross_profit'] = (row['total'] - row['cos']) / row['total'] * 100
+            data[i]['gross_profit'] = round(
+                (row['net_total'] - row['cos']) / row['net_total'] * 100, 2
+            )
             data[i]['minimum_gp'] = filters['minimum_gp']
 
         total_row = {'invoice': "Total", 'total': 1}
@@ -183,10 +185,10 @@ def get_data(filters: dict, columns: 'list[dict]') -> 'list[dict]':
                 total_row[column['fieldname']] = 0
                 for i, row in enumerate(data):
                     total_row[column['fieldname']] += row[column['fieldname']]
-        total_row['gross_profit'] = (
-            (total_row['total'] - total_row['cos'])
-            / total_row['total']
-            * 100
+        total_row['gross_profit'] = round(
+            (total_row['net_total'] - total_row['cos'])
+            / total_row['net_total']
+            * 100, 2
         )
         data.extend(({}, total_row))
 

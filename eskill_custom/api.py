@@ -1,5 +1,6 @@
 "General methods that can be used in various DocTypes."
 from __future__ import unicode_literals
+from decimal import DivisionByZero
 
 import json
 
@@ -15,7 +16,7 @@ def check_maintain_stock(doctype, item):
             select
                 is_stock_item
             from
-                tabItem 
+                tabItem
             where
                 name = '{item}'
             limit 1;"""
@@ -23,6 +24,97 @@ def check_maintain_stock(doctype, item):
         return maintain_stock
     except:
         return False
+
+
+@frappe.whitelist()
+def document_gp_lookup(doctype: str, exchange_rate, items):
+    "Returns a message detailing stock locations and available quantities for the given items."
+
+    items = json.loads(items)
+    exchange_rate = float(exchange_rate)
+
+    # accounting for differing names for the valuation_rate field
+    if doctype in ("Delivery Note", "Sales Invoice"):
+        valuation_field = "incoming_rate"
+    else:
+        valuation_field = "valuation_rate"
+
+    message = """
+        <table id="items" class="layout-table">
+            <tbody>
+                <tr class="layout-row">
+                    <td class="layout-cell" style="width: 5%; text-align: center; border: 1px solid var(--table-border-color);">
+                        <div>
+                            Row
+                        </div>
+                    </td>
+                    <td class="layout-cell" style="width: 25%; text-align: center; border: 1px solid var(--table-border-color);">
+                        <div>
+                            Item
+                        </div>
+                    </td>
+                    <td class="layout-cell" style="width: 30%; text-align: center; border: 1px solid var(--table-border-color);">
+                        <div>
+                            Cost Amount
+                        </div>
+                    </td>
+                    <td class="layout-cell" style="width: 30%; text-align: center; border: 1px solid var(--table-border-color);">
+                        <div>
+                            Net Selling Amount
+                        </div>
+                    </td>
+                    <td class="layout-cell" style="width: 10%; text-align: center; border: 1px solid var(--table-border-color);">
+                        <div>
+                            GP %
+                        </div>
+                    </td>
+                </tr>
+    """
+
+    for item in items:
+        selling_amount = round(item['net_amount'], 2)
+        item_cost = round(item[valuation_field] * item['stock_qty'] * exchange_rate, 2)
+        try:
+            gp_percentage = round(((selling_amount - item_cost) / selling_amount) * 100, 2)
+        except ZeroDivisionError:
+            gp_percentage = 0.00
+        message += f"""
+            <tr class="layout-row">
+                <td class="layout-cell" style="text-align: center; border: 1px solid var(--table-border-color);">
+                    <div>
+                        {item['idx']}
+                    <div>
+                </td>
+                <td class="layout-cell" style="border: 1px solid var(--table-border-color); padding-left: 5mm;">
+                    <div>
+                        {item['item_code']}
+                    <div>
+                </td>
+                <td class="layout-cell" style="text-align: center; border: 1px solid var(--table-border-color);">
+                    <div>
+                        {item_cost}
+                    <div>
+                </td>
+                <td class="layout-cell" style="text-align: center; border: 1px solid var(--table-border-color);">
+                    <div>
+                        {selling_amount}
+                    <div>
+                </td>
+                <td class="layout-cell" style="text-align: center; border: 1px solid var(--table-border-color);">
+                    <div>
+                        {gp_percentage}%
+                    <div>
+                </td>
+            </tr>
+        """
+    message += "</tbody></table>"
+
+    frappe.msgprint(
+        msg=message,
+        title="Line Item GPs",
+        is_minimizable=True,
+        wide=True
+    )
 
 
 @frappe.whitelist()
@@ -71,25 +163,6 @@ def stock_lookup(item):
 
 
 @frappe.whitelist()
-def item_price_lookup(doctype, currency, price_list, item):
-    "Returns the price of a given item."
-    try:
-        price = frappe.db.sql(f"""\
-            select round(price_list_rate, 2)"
-            from
-                `tabItem Price`"
-            where
-                item_code = '{item}' and price_list = '{price_list}' and currency = '{currency}'"
-            order by
-                creation desc"
-            limit 1"""
-        )
-        return price if price else "Unavailable"
-    except:
-        return "Unavailable"
-
-
-@frappe.whitelist()
 def auction_rate_lookup(posting_date: str) -> float:
     "Returns the auction rate at the date of SI posting."
 
@@ -117,7 +190,7 @@ def customer_account_selector(currency):
 
     try:
         debtors_account = frappe.db.sql(f"select name from tabAccount where account_currency = '{currency}' and debtors_account is true limit 1;")
-        debtors_account = debtors_account[0][0] 
+        debtors_account = debtors_account[0][0]
     except:
         debtors_account = ""
 
@@ -137,13 +210,13 @@ def set_invoice_as_credited(credit):
                     DN.return_against,
                     SII.Invoice
                 from
-                    `tabSales Invoice Item` CNI 
+                    `tabSales Invoice Item` CNI
                 join
                     (select
                         name,
                         return_against
                     from
-                        `tabDelivery Note`) DN on DN.name = CNI.delivery_note 
+                        `tabDelivery Note`) DN on DN.name = CNI.delivery_note
                 join
                     (select
                         parent Invoice,
@@ -151,13 +224,13 @@ def set_invoice_as_credited(credit):
                     from
                         `tabSales Invoice Item`
                     group by
-                        parent) SII on SII.delivery_note = DN.return_against 
+                        parent) SII on SII.delivery_note = DN.return_against
                 group by
-                    parent 
+                    parent
                 having
-                    Credit = '{credit}' 
+                    Credit = '{credit}'
                 order by
-                    parent desc 
+                    parent desc
                 limit 1;"""
             )
             frappe.db.set_value("Sales Invoice", invoice[0][0], "return_against", invoice[0][3])
@@ -231,6 +304,82 @@ def non_billable_item(item_code: str, sla_job: int) -> 'dict[str, str | int]':
 
 
 @frappe.whitelist()
+def stock_availability(doctype: str, items):
+    "Returns a message detailing stock locations and available quantities for the given items."
+
+    items = json.loads(items)
+
+    message = """The following items are in stock:<br><br>
+        <table id="items" class="layout-table">
+            <tbody>
+                <tr class="layout-row">
+                    <td class="layout-cell" style="width: 40%; text-align: center; border: 1px solid var(--table-border-color);">
+                        <div>
+                            Item
+                        </div>
+                    </td>
+                    <td class="layout-cell" style="width: 40%; text-align: center; border: 1px solid var(--table-border-color);">
+                        <div>
+                            Warehouse
+                        </div>
+                    </td>
+                    <td class="layout-cell" style="width: 20%; text-align: center; border: 1px solid var(--table-border-color);">
+                        <div>
+                            Available Quantity
+                        </div>
+                    </td>
+                </tr>
+    """
+
+    if doctype == "Service Order":
+        item_list = {row['part'] for row in items if "part" in row}
+    else:
+        item_list = {row['item_code'] for row in items if "item_code" in row}
+    no_items = True
+    for item in item_list:
+        stock_levels = [
+            {
+                'warehouse': record['warehouse'],
+                'actual_qty': record['actual_qty'],
+            }
+            for record in get_stock_levels(item_code=item)
+            if record['actual_qty'] > 0
+        ]
+        if len(stock_levels) > 0:
+            no_items = False
+            for i, row in enumerate(stock_levels):
+                message += f"""
+                    <tr class="layout-row">
+                        <td class="layout-cell" style="border: 1px solid var(--table-border-color); padding-left: 5mm;">
+                            <div>
+                                {item if i == 0 else ""}
+                            <div>
+                        </td>
+                        <td class="layout-cell" style="border: 1px solid var(--table-border-color); padding-left: 5mm;">
+                            <div>
+                                {row['warehouse']}
+                            <div>
+                        </td>
+                        <td class="layout-cell" style="text-align: center; border: 1px solid var(--table-border-color);">
+                            <div>
+                                {row['actual_qty']}
+                            <div>
+                        </td>
+                    </tr>
+                """
+    message += "</tbody></table>"
+
+    if no_items:
+        message = "No items are in stock."
+    frappe.msgprint(
+        msg=message,
+        title="Stock Availability",
+        is_minimizable=True,
+        wide=True
+    )
+
+
+@frappe.whitelist()
 def validate_line_item_gp(doctype: str, exchange_rate, items) -> "str | None":
     "Validates line item GP based on item_group then returns an error message if any bad GPs are found."
 
@@ -264,14 +413,17 @@ def validate_line_item_gp(doctype: str, exchange_rate, items) -> "str | None":
     for item in items:
         if item['override_gp_limit'] or not item[valuation_field]:
             continue
-        gross_profit = (
-            (item['base_net_rate'] - item[valuation_field]) / item[valuation_field]
-        ) * 100
+        try:
+            gross_profit = round((
+                (item['base_net_rate'] - item[valuation_field]) / item['base_net_rate']
+            ) * 100, 2)
+        except ZeroDivisionError:
+            gross_profit = 0.00
         if gross_profit < item_groups[item['item_group']]['minimum_gp']:
             min_price = round(
-                (item[valuation_field] + (
-                    item[valuation_field] * item_groups[item['item_group']]['minimum_gp']
-                ) / 100) / exchange_rate,
+                (item[valuation_field] / (
+                    1 - item_groups[item['item_group']]['minimum_gp'] / 100
+                )) * exchange_rate,
                 2
             )
             error_list.append(
@@ -280,9 +432,9 @@ def validate_line_item_gp(doctype: str, exchange_rate, items) -> "str | None":
             )
         elif gross_profit > item_groups[item['item_group']]['maximum_gp']:
             max_price = round(
-                (item[valuation_field] + (
-                    item[valuation_field] * item_groups[item['item_group']]['maximum_gp']
-                ) / 100) / exchange_rate,
+                (item[valuation_field] / (
+                    1 - item_groups[item['item_group']]['maximum_gp'] / 100
+                )) * exchange_rate,
                 2
             )
             error_list.append(
