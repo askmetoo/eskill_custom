@@ -48,7 +48,7 @@ function validate_line_item_gp(frm) {
             method: "eskill_custom.api.validate_line_item_gp",
             args: {
                 doctype: frm.doctype,
-                exchange_rate: frm.doc.conversion_rate,
+                exchange_rate: frm.doc.usd_to_currency,
                 items: frm.doc.items,
             },
             callback: (response) => {

@@ -321,14 +321,17 @@ def validate_line_item_gp(doctype: str, exchange_rate, items) -> "str | None":
     for item in items:
         if item['override_gp_limit'] or not item[valuation_field]:
             continue
-        gross_profit = round((
-            (item['base_net_rate'] - item[valuation_field]) / item['base_net_rate']
-        ) * 100, 2)
+        try:
+            gross_profit = round((
+                (item['base_net_rate'] - item[valuation_field]) / item['base_net_rate']
+            ) * 100, 2)
+        except ZeroDivisionError:
+            gross_profit = 0.00
         if gross_profit < item_groups[item['item_group']]['minimum_gp']:
             min_price = round(
                 (item[valuation_field] / (
                     1 - item_groups[item['item_group']]['minimum_gp'] / 100
-                )) / exchange_rate,
+                )) * exchange_rate,
                 2
             )
             error_list.append(
@@ -339,7 +342,7 @@ def validate_line_item_gp(doctype: str, exchange_rate, items) -> "str | None":
             max_price = round(
                 (item[valuation_field] / (
                     1 - item_groups[item['item_group']]['maximum_gp'] / 100
-                )) / exchange_rate,
+                )) * exchange_rate,
                 2
             )
             error_list.append(
