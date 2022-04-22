@@ -10,7 +10,7 @@
  "idx": 0,
  "is_standard": "Yes",
  "letter_head": "Eskill Trading",
- "modified": "2022-01-25 14:12:44.518678",
+ "modified": "2022-04-14 09:27:48.241369",
  "modified_by": "Administrator",
  "module": "Eskill Customisations",
  "name": "Sales Invoice Income & Expense",
@@ -26,6 +26,9 @@
   },
   {
    "role": "Accounts Manager"
+  },
+  {
+   "role": "Sales User"
   }
  ]
 }
