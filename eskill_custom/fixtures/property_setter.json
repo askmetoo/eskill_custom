@@ -7733,5 +7733,22 @@
   "property_type": "Small Text",
   "row_name": null,
   "value": "[\"68cfb78bbc\", \"de6028034c\", \"7f48414b26\"]"
+ },
+ {
+  "default_value": null,
+  "doc_type": "KB Article",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocField",
+  "field_name": "naming_series",
+  "modified": "2022-04-25 13:38:05.094760",
+  "name": "KB Article-naming_series-options",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "property": "options",
+  "property_type": "Text",
+  "row_name": null,
+  "value": "KB.########"
  }
 ]
