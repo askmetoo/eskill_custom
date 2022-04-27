@@ -1,0 +1,220 @@
+{
+ "actions": [],
+ "autoname": "naming_series:",
+ "creation": "2022-04-25 11:27:30.249782",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "title",
+  "kba_type",
+  "subject",
+  "invalidated",
+  "status",
+  "column_break_5",
+  "item",
+  "article_doctype",
+  "corrected_article",
+  "amended_from",
+  "section_break_4",
+  "article_body"
+ ],
+ "fields": [
+  {
+   "fieldname": "kba_type",
+   "fieldtype": "Select",
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "KBA Type",
+   "options": "Product\nProcess",
+   "read_only_depends_on": "eval: (doc.corrected_article);",
+   "reqd": 1
+  },
+  {
+   "depends_on": "eval: (doc.kba_type == \"Product\");",
+   "fieldname": "item",
+   "fieldtype": "Link",
+   "in_filter": 1,
+   "in_global_search": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Item",
+   "mandatory_depends_on": "eval: (doc.kba_type == \"Product\");",
+   "options": "Item",
+   "read_only_depends_on": "eval: (doc.corrected_article);",
+   "search_index": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "KB Article",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_4",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "article_body",
+   "fieldtype": "Text Editor",
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Article Body",
+   "reqd": 1,
+   "translatable": 1
+  },
+  {
+   "fieldname": "subject",
+   "fieldtype": "Link",
+   "label": "Subject",
+   "options": "KB Subject",
+   "read_only_depends_on": "eval: (doc.corrected_article);",
+   "reqd": 1
+  },
+  {
+   "depends_on": "eval: (doc.kba_type == \"Process\");",
+   "fieldname": "article_doctype",
+   "fieldtype": "Link",
+   "in_global_search": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Article DocType",
+   "mandatory_depends_on": "eval: (doc.kba_type == \"Process\");",
+   "options": "DocType",
+   "read_only_depends_on": "eval: (doc.corrected_article);",
+   "search_index": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "depends_on": "eval: (doc.docstatus != 0);",
+   "fieldname": "invalidated",
+   "fieldtype": "Check",
+   "label": "Invalidated",
+   "permlevel": 1,
+   "read_only_depends_on": "eval: (doc.invalidated || doc.status != \"Current\");"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "Current",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Status",
+   "options": "Current\nOutdated\nInvalidated"
+  },
+  {
+   "fieldname": "column_break_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "corrected_article",
+   "fieldtype": "Link",
+   "in_global_search": 1,
+   "label": "Corrected Article",
+   "options": "KB Article",
+   "read_only": 1
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Naming Series",
+   "options": "KB.########"
+  },
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "in_global_search": 1,
+   "label": "Title"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [
+  {
+   "group": "Article Corrections",
+   "link_doctype": "KB Article",
+   "link_fieldname": "corrected_article"
+  }
+ ],
+ "modified": "2022-04-26 14:03:42.787751",
+ "modified_by": "Administrator",
+ "module": "Knowledge Base",
+ "name": "KB Article",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "if_owner": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Knowledge Base Contributor",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Knowledge Base Editor",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Employee",
+   "share": 1
+  },
+  {
+   "permlevel": 1,
+   "read": 1,
+   "role": "Knowledge Base Editor",
+   "write": 1
+  },
+  {
+   "permlevel": 1,
+   "read": 1,
+   "role": "Employee"
+  }
+ ],
+ "show_name_in_global_search": 1,
+ "show_preview_popup": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "title_field": "title",
+ "track_changes": 1,
+ "track_seen": 1
+}

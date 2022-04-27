@@ -1,0 +1,51 @@
+{
+ "category": "Modules",
+ "charts": [],
+ "creation": "2022-04-25 12:15:42.339723",
+ "developer_mode_only": 0,
+ "disable_user_customization": 1,
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "extends_another_page": 0,
+ "hide_custom": 0,
+ "idx": 0,
+ "is_default": 0,
+ "is_standard": 1,
+ "label": "Knowledge Base",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "KB Articles",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "KB Article",
+   "link_to": "KB Article",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "KB Subject",
+   "link_to": "KB Subject",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2022-04-25 12:25:37.496965",
+ "modified_by": "Administrator",
+ "module": "Knowledge Base",
+ "name": "Knowledge Base",
+ "owner": "Administrator",
+ "pin_to_bottom": 0,
+ "pin_to_top": 1,
+ "shortcuts": []
+}
