@@ -41,8 +41,16 @@ class StocktakeSheet(Document):
                     `tabStocktake User List`
                 where
                     parent = '{self.master}'
-                having
-                    user <> '{self.counter}';"""
+                    and user <> '{self.counter}'
+                    and user not in (
+                        select
+                            counter
+                        from
+                            `tabStocktake Sheet`
+                        where
+                            count_type = "Recount"
+                            and master = '{self.master}'
+                    );"""
             )
             new_sheet.counter = available_users[randint(0, len(available_users) - 1)][0]
             for item in variances:
