@@ -76,9 +76,10 @@ def update_reconciliations(summary: str, reconciliation: str):
             item.db_set("reconciled", 1)
             if item.recount_qty != row.qty:
                 item.db_set("miscounted", 1)
+            item.notify_update()
 
     summary = frappe.get_doc("Stocktake Summary", summary)
 
     reconciled_count = len([item for item in summary.items if item.reconciled or item.miscounted])
     if reconciled_count == len(summary.items):
-        summary.db_set("closed", 1)
+        summary.db_set("closed", 1, notify=True)
