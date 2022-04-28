@@ -6,6 +6,8 @@ from frappe.model.document import Document
 
 
 class StocktakeMaster(Document):
+    "Server-side script for the Stocktake Master DocType."
+
     def validate(self):
         "Methods to be run during the saving process."
 
@@ -33,46 +35,37 @@ class StocktakeMaster(Document):
 
         stock_list = frappe.db.sql(
             f"""select
-                t1.item_code,
-                t1.warehouse,
-                t1.posting_date,
-                t1.qty_after_transaction current_qty
+                bal.item_code,
+                W.warehouse_name warehouse,
+                sum(bal.current_qty) qty
             from
-                `tabStock Ledger Entry` t1
-            join
                 (select
-                    time_table.item_code,
-                    time_table.warehouse,
-                    time_table.posting_date,
-                    max(time_table.posting_time) posting_time
-                from
-                    `tabStock Ledger Entry` time_table
-                join
+                    SLE.item_code,
+                    SLE.warehouse,
+                    SLE.posting_date,
                     (select
-                        item_code,
-                        warehouse,
-                        max(posting_date) posting_date
+                        t2.qty_after_transaction
                     from
-                        `tabStock Ledger Entry`
-                    group by
-                        item_code, warehouse) date_table on
-                    time_table.item_code = date_table.item_code
-                    and time_table.warehouse = date_table.warehouse
-                    and time_table.posting_date = date_table.posting_date
+                        `tabStock Ledger Entry` t2
+                    where
+                        t2.item_code = SLE.item_code and t2.warehouse = SLE.warehouse
+                    order by
+                        concat(t2.posting_date, t2.posting_time) desc
+                    limit 1) current_qty
+                from
+                    `tabStock Ledger Entry` SLE
+                where
+                    SLE.warehouse in {warehouses}
                 group by
-                    item_code, warehouse) t2 on
-                t1.item_code = t2.item_code
-                and t1.warehouse = t2.warehouse
-                and t1.posting_date = t2.posting_date
-                and t1.posting_time = t2.posting_time
-            where
-                t1.warehouse in {warehouses}
+                    SLE.item_code, SLE.warehouse
+                having
+                    current_qty <> 0) bal
+            join
+                tabWarehouse W on bal.warehouse = W.name
             group by
-                t1.item_code, t1.warehouse
-            having
-                current_qty <> 0
+                bal.item_code, W.warehouse_name, W.warehouse_type
             order by
-                t1.warehouse, t1.item_code;""",
+                W.warehouse_type, warehouse, item_code;""",
             as_dict=1
         )
 
@@ -95,7 +88,7 @@ class StocktakeMaster(Document):
                 sheet.append("items", {
                     'warehouse': item['warehouse'],
                     'item_code': item['item_code'],
-                    'current_qty': item['current_qty']
+                    'current_qty': item['qty']
                 })
             sheet.insert(ignore_permissions=True)
             sheet.submit()
@@ -140,6 +133,8 @@ class StocktakeMaster(Document):
                 "Variance found. The counts do match."
             )
         summary.total_variances = len(variance_list)
+        if summary.total_variances == 0:
+            summary.closed = 1
 
         summary.insert(ignore_permissions=True)
         summary.submit()

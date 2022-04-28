@@ -20,9 +20,9 @@ function restrict_items_access(frm) {
     if ((frm.doc.counter != frappe.session.user) && frappe.user_roles.includes("Stocktake User")) {
         frm.set_df_property("items", "hidden", 1);
     }
-    if (!frappe.user_roles.includes("Stocktake User") || frm.doc.count_complete) {
-        frm.fields_dict.items.grid.update_docfield_property("counted_qty", "read_only", 1);
-    }
+    // if (!frappe.user_roles.includes("Stocktake User") || frm.doc.count_complete) {
+    //     frm.fields_dict.items.grid.update_docfield_property("counted_qty", "read_only", 1);
+    // }
     if (frm.doc.count_complete) {
         frm.set_df_property("items", "read_only", 1);
     } else {
