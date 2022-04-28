@@ -9,6 +9,8 @@ from frappe.model.document import Document
 
 
 class StocktakeSheet(Document):
+    "Server-side script for the Stocktake Sheet DocType."
+
     @frappe.whitelist()
     def check_count(self) -> "None | str":
         "Check the counts on the given sheet, if there is a variance create a new sheet."

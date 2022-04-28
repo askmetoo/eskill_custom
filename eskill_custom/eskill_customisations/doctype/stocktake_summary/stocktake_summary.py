@@ -8,11 +8,10 @@ from frappe.model.mapper import get_mapped_doc
 
 
 class StocktakeSummary(Document):
-    def on_update(self):
-        frappe.throw("HI")
-
+    "Server-side script for the Stocktake Summary DocType."
 
     def on_cancel(self):
+        "Method that runs after the cancel event."
         master = frappe.get_doc("Stocktake Master", self.master)
         master.db_set("report_generated", 0)
 

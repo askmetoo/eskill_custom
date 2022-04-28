@@ -618,6 +618,8 @@ def generate_delivery(source_name, target_doc = None):
             "Quotation Item": {
                 "doctype": "Delivery Note Item",
                 "field_map": {
+                    "service_order": "service_order",
+                    "part_list": "part_list"
                 },
                 "postprocess": update_item,
             }
