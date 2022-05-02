@@ -2,8 +2,6 @@
 # For license information, please see license.txt
 
 
-from random import randint
-
 import frappe
 from frappe.model.document import Document
 
@@ -30,29 +28,38 @@ class StocktakeSheet(Document):
 
             self.db_set("status", "Recount Needed")
 
+            self.notify_update()
+
             new_sheet = frappe.new_doc("Stocktake Sheet")
             new_sheet.master = self.master
             new_sheet.count_type = "Recount"
             new_sheet.last_count = self.name
-            available_users = frappe.db.sql(
-                f"""select
-                    user
-                from
-                    `tabStocktake User List`
-                where
-                    parent = '{self.master}'
-                    and user <> '{self.counter}'
-                    and user not in (
-                        select
-                            counter
-                        from
-                            `tabStocktake Sheet`
-                        where
-                            count_type = "Recount"
-                            and master = '{self.master}'
-                    );"""
+            current_user_idx = frappe.db.get_value(
+                "Stocktake User List",
+                filters={
+                    'parent': self.master,
+                    'user': self.counter
+                },
+                fieldname="idx"
             )
-            new_sheet.counter = available_users[randint(0, len(available_users) - 1)][0]
+            user_list = frappe.db.get_all(
+                "Stocktake User List",
+                filters={
+                    'parent': self.master
+                },
+                fields=[
+                    "idx",
+                    "user"
+                ],
+                order_by="idx"
+            )
+            if len(user_list) == 1:
+                new_sheet.counter = self.counter
+            elif current_user_idx == len(user_list):
+                new_sheet.counter = user_list[0].user
+            else:
+                new_sheet.counter = user_list[current_user_idx].user
+
             for item in variances:
                 new_sheet.append("items", item)
 
