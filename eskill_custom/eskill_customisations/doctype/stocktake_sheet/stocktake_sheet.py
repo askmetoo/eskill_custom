@@ -2,8 +2,6 @@
 # For license information, please see license.txt
 
 
-from random import randint
-
 import frappe
 from frappe.model.document import Document
 
