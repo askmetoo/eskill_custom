@@ -50,7 +50,7 @@ class StocktakeMaster(Document):
                     where
                         t2.item_code = SLE.item_code and t2.warehouse = SLE.warehouse
                     order by
-                        concat(t2.posting_date, t2.posting_time) desc
+                        concat(t2.posting_date, t2.posting_time) desc, t2.creation desc
                     limit 1) current_qty
                 from
                     `tabStock Ledger Entry` SLE
