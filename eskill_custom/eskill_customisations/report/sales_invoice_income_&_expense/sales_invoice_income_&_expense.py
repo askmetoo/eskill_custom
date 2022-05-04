@@ -7,6 +7,7 @@ from datetime import datetime
 import frappe
 from frappe import _
 
+from eskill_custom.report_api import get_descendants
 
 def execute(filters: dict = None):
     "Generate report."
@@ -134,10 +135,18 @@ def get_data(filters: dict, columns: 'list[dict]') -> 'list[dict]':
         ]
 
     if "sales_person" in filters:
+        descendants = get_descendants(
+            "Sales Person",
+            filters['sales_person'],
+            "parent_sales_person"
+        )
         data = [
             row
             for i, row in enumerate(data)
-            if row['sales_person'] == filters['sales_person']
+            if (
+                (row['sales_person'] == filters['sales_person'])
+                or (row['sales_person'] in descendants)
+            )
         ]
 
     if "currency" in filters:
