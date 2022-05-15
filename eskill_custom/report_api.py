@@ -25,7 +25,7 @@ def get_descendants(doctype: str, name: str, parent_field: str = "parent") -> se
     for child in child_docs:
         descendants.add(child.name)
         if child.is_group:
-            for sub_child in get_descendants(doctype, child.name):
+            for sub_child in get_descendants(doctype, child.name, parent_field):
                 descendants.add(sub_child)
 
     return descendants

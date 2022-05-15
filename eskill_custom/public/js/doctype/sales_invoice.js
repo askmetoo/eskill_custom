@@ -27,6 +27,7 @@ frappe.ui.form.on('Sales Invoice', {
 
     validate(frm) {
         validate_line_item_gp(frm);
+        validate_advance_payment_rate(frm);
     },
 
     after_save(frm) {
@@ -138,6 +139,24 @@ function update_service_order(frm) {
             method: "eskill_custom.sales_invoice.update_service_order",
             args: {
                 invoice_name: frm.doc.name
+            }
+        });
+    }
+}
+
+function validate_advance_payment_rate(frm) {
+    if (!frappe.user_roles.includes("Accounts Manager") && frm.doc.currency != frappe.sys_defaults.currency) {
+        frappe.call({
+            method: "eskill_custom.sales_invoice.validate_advance_payment_rate",
+            args: {
+                exchange_rate: frm.doc.conversion_rate,
+                advances: frm.doc.advances,
+            },
+            callback: (response) => {
+                if (response.message) {
+                    frappe.validated = false;
+                    frappe.throw(response.message);
+                }
             }
         });
     }

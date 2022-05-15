@@ -46,20 +46,12 @@ frappe.ui.form.on('Warranty Swap Out', {
         }
     },
 
-    after_save(frm) {
-        update_service_order();
-    },
-    
     before_submit(frm) {
         if (!frm.doc.swap_out_reason) {
             frappe.throw(__("Before submitting you must provide an explanation for the swap out."));
         }
     },
 
-    after_cancel(frm) {
-        update_service_order();
-    },
-    
     customer: function(frm) {
         claim_filter(frm);
     },
@@ -121,11 +113,4 @@ function product_out_read_only(frm) {
         frm.set_df_property("model_out", "read_only", 1);
         frm.set_df_property("serial_no_out", "read_only", 1);
     }
-}
-
-
-function update_service_order() {
-    frappe.call({
-        method: "update_service_order"
-    });
 }
