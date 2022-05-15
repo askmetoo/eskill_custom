@@ -2,6 +2,8 @@ from __future__ import unicode_literals
 from frappe import _
 
 def get_data():
+    "Dashboard data for Service Order."
+
     return {
         'fieldname': "service_order",
         'non_standard_fieldnames': {
@@ -19,6 +21,7 @@ def get_data():
                 'items': [
                     "Material Request",
                     "Stock Entry",
+                    "Warranty Swap Out"
                 ]
             },
             {
