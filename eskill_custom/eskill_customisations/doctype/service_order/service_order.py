@@ -565,6 +565,36 @@ def generate_delivery(source_name, target_doc = None):
 
             target.usd_to_currency = 1 / exchange_rate
             target.conversion_rate = exchange_rate
+        else:
+            service_order = frappe.get_doc("Service Order", source.service_order)
+            encountered_items = set()
+            for part in service_order.items:
+                if (part.used_qty - part.delivered_qty) <= 0:
+                    continue
+                index = None
+                if part.part not in encountered_items:
+                    encountered_items.add(part.part)
+                    try:
+                        index = next(
+                            i
+                            for i, row in enumerate(target.items)
+                            if row.item_code == part.part
+                        )
+                    except StopIteration:
+                        pass
+                if index is not None:
+                    target.items[index].qty = part.used_qty - part.delivered_qty
+                    target.items[index].warehouse = part.warehouse
+                    target.items[index].part_list = part.name
+                else:
+                    target.append("items", {
+                        'item_code': part.part,
+                        'warehouse': part.warehouse,
+                        'qty': part.used_qty - part.delivered_qty,
+                        'service_order': part.parent,
+                        'part_list': part.name,
+                        'uom': part.uom
+                    })
 
         target.ignore_pricing_rule = 1
 
