@@ -157,7 +157,10 @@ fixtures = [
     {
         'dt': "Role",
         'filters': [
-            ["role_name", "=", "Stocktake User"]
+            ["role_name", "in", [
+                "Cashier",
+                "Stocktake User",
+            ]]
         ]
     },
     {
