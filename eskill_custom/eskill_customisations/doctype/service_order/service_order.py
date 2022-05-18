@@ -565,6 +565,7 @@ def generate_delivery(source_name, target_doc = None):
 
             target.usd_to_currency = 1 / exchange_rate
             target.conversion_rate = exchange_rate
+            service_order = source
         else:
             service_order = frappe.get_doc("Service Order", source.service_order)
             encountered_items = set()
