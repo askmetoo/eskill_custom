@@ -4,6 +4,17 @@
 frappe.ui.form.on('Payment Receipt', {
     refresh(frm) {
         set_filters(frm);
+        if (
+            frm.doc.docstatus == 1 && frm.doc.status == "Pending Processing"
+            && (frappe.user_roles.includes("Accounts User") || frappe.user_roles.includes("Accounts Manager"))
+        ) {
+            frm.add_custom_button(__("Create Payment Entry"), () => {
+                frappe.model.open_mapped_doc({
+                    method: "eskill_custom.eskill_customisations.doctype.payment_receipt.payment_receipt.generate_payment_entry",
+                    frm: frm,
+                });
+            });
+        }
     },
 
     party(frm) {

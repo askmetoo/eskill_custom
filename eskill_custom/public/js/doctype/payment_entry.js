@@ -11,6 +11,14 @@ frappe.ui.form.on('Payment Entry', {
     before_save(frm) {
         get_bid_rate(frm, frm.doc.posting_date);
     },
+
+    on_submit(frm) {
+        update_payment_receipt(frm);
+    },
+
+    after_cancel(frm) {
+        update_payment_receipt(frm);
+    },
     
     payment_type(frm) {
         name_series(frm);
@@ -88,4 +96,15 @@ function party_filter(frm) {
             ],
         };
     };
+}
+
+function update_payment_receipt(frm) {
+    if (frm.doc.payment_receipt) {
+        frappe.call({
+            method: "eskill_custom.payment_entry.update_payment_receipt",
+            args: {
+                payment_entry: frm.doc.name
+            }
+        });
+    }
 }

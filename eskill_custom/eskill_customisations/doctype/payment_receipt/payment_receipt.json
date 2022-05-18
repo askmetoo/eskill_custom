@@ -1,5 +1,6 @@
 {
  "actions": [],
+ "allow_copy": 1,
  "allow_events_in_timeline": 1,
  "allow_import": 1,
  "autoname": "naming_series:",
@@ -26,6 +27,8 @@
   "reference_section",
   "get_outstanding_invoice",
   "references",
+  "remarks_section",
+  "remarks",
   "totals_section",
   "total_allocated_amount",
   "column_break_20",
@@ -105,6 +108,7 @@
    "fieldname": "paid_amount",
    "fieldtype": "Currency",
    "label": "Paid Amount",
+   "no_copy": 1,
    "non_negative": 1,
    "options": "currency",
    "reqd": 1
@@ -124,6 +128,7 @@
    "fieldname": "references",
    "fieldtype": "Table",
    "label": "Payment References",
+   "no_copy": 1,
    "options": "Payment Receipt Reference"
   },
   {
@@ -187,12 +192,24 @@
    "label": "Status",
    "options": "Pending Processing\nProcessed",
    "print_hide": 1
+  },
+  {
+   "fieldname": "remarks_section",
+   "fieldtype": "Section Break",
+   "label": "Remarks"
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Small Text",
+   "label": "Remarks",
+   "no_copy": 1,
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-05-18 01:05:12.716686",
+ "modified": "2022-05-18 14:32:04.151003",
  "modified_by": "Administrator",
  "module": "Eskill Customisations",
  "name": "Payment Receipt",
