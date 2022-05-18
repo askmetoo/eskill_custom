@@ -3,7 +3,9 @@
 
 import frappe
 from frappe.model.document import Document
-
+from frappe.model.mapper import get_mapped_doc
+from erpnext.accounts.doctype.payment_entry.payment_entry import get_party_details
+from erpnext import get_default_company
 
 class PaymentReceipt(Document):
     "Methods for the Payment Receipt DocType."
@@ -74,3 +76,47 @@ class PaymentReceipt(Document):
 
         self.save()
         self.notify_update()
+
+
+@frappe.whitelist()
+def generate_payment_entry(source_name, target_doc = None):
+    "Generates quote based on parts used and time taken."
+
+    def set_missing_values(source, target):
+        target.payment_type = "Receive"
+        target.party_type = "Customer"
+
+        party_details = get_party_details(
+            company=get_default_company(frappe.session.user),
+            party_type=target.party_type,
+            party=target.party,
+            date=target.posting_date,
+            cost_center=target.cost_center if target.cost_center else None
+        )
+
+        target.paid_from = party_details['party_account']
+        target.paid_from_account_currency = party_details['party_account_currency']
+        target.paid_from_account_balance = party_details['account_balance']
+        target.received_amount = target.paid_amount
+
+        target.reference_no = target.payment_receipt
+        target.reference_date = target.posting_date
+
+    payment_entry = get_mapped_doc("Payment Receipt", source_name, {
+        "Payment Receipt": {
+            "doctype": "Payment Entry",
+            "field_map": {
+                "name": "payment_receipt",
+                "currency": "paid_to_account_currency",
+                "paid_amount": "paid_amount",
+            },
+            "validation": {
+                "docstatus": ["=", 1]
+            }
+        },
+        "Payment Receipt Reference": {
+            "doctype": "Payment Entry Reference",
+        }
+    }, target_doc, set_missing_values)
+
+    return payment_entry
