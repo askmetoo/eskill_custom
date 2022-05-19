@@ -74,7 +74,6 @@ class PaymentReceipt(Document):
             if self.unallocated_amount == 0:
                 break
 
-        self.save()
         self.notify_update()
 
 
