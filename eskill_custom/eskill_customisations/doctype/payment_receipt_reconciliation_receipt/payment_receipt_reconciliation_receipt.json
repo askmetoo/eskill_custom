@@ -1,0 +1,94 @@
+{
+ "actions": [],
+ "creation": "2022-05-19 10:16:41.501837",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "posting_date",
+  "receipt",
+  "party",
+  "currency",
+  "column_break_5",
+  "paid_amount",
+  "total_allocated_amount",
+  "unallocated_amount"
+ ],
+ "fields": [
+  {
+   "fetch_from": "receipt_number.party",
+   "fieldname": "party",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Customer",
+   "options": "Customer",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "receipt_number.currency",
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Currency",
+   "options": "Currency"
+  },
+  {
+   "fieldname": "column_break_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "receipt_number.paid_amount",
+   "fieldname": "paid_amount",
+   "fieldtype": "Currency",
+   "label": "Paid Amount",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "receipt_number.total_allocated_amount",
+   "fieldname": "total_allocated_amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Total Allocated Amount",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "receipt_number.unallocated_amount",
+   "fieldname": "unallocated_amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Unallocated Amount",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Receipt Date",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "receipt_number.posting_date",
+   "fieldname": "receipt",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Receipt Number",
+   "options": "Payment Receipt",
+   "read_only": 1
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2022-05-19 12:42:27.362500",
+ "modified_by": "Administrator",
+ "module": "Eskill Customisations",
+ "name": "Payment Receipt Reconciliation Receipt",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
