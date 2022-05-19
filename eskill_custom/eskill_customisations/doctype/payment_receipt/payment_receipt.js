@@ -38,14 +38,11 @@ frappe.ui.form.on('Payment Receipt', {
     },
 
     get_outstanding_invoice(frm) {
-        if (frm.is_dirty()) {
-            frappe.throw("Please save before proceeding.");
-        }
         frappe.call({
             doc: frm.doc,
             method: "get_outstanding_invoices",
             callback: () => {
-                frm.reload_doc();
+                frm.refresh();
             }
         });
     },
