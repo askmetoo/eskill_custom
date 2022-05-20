@@ -8022,5 +8022,22 @@
   "property_type": "Text",
   "row_name": null,
   "value": null
+ },
+ {
+  "default_value": null,
+  "doc_type": "Payment Receipt",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocType",
+  "field_name": null,
+  "modified": "2022-05-20 12:51:30.138584",
+  "name": "Payment Receipt-main-default_print_format",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "property": "default_print_format",
+  "property_type": "Data",
+  "row_name": null,
+  "value": "Payment Receipt"
  }
 ]
