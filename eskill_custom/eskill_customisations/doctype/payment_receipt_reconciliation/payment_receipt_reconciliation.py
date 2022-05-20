@@ -61,7 +61,7 @@ class PaymentReceiptReconciliation(Document):
 
             update_payment_receipt(entry.name)
 
-            entries_created.append(entry.name)
+            entries_created.append(f"Receipt {entry.payment_receipt} -> {entry.name}")
 
         if len(entries_created) > 0:
             frappe.msgprint(
