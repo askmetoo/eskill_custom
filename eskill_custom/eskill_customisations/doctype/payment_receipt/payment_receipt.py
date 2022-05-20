@@ -30,6 +30,16 @@ class PaymentReceipt(Document):
             referenced_invoices.add(reference.reference_name)
         self.references = references
 
+        self.total_allocated_amount = sum([invoice.allocated_amount for invoice in references], 0)
+        self.unallocated_amount = self.paid_amount - self.total_allocated_amount
+        if (self.paid_amount or self.total_allocated_amount or self.unallocated_amount) < 0:
+            frappe.throw("You can not have a negative amount.")
+        if (self.total_allocated_amount + self.unallocated_amount) != self.paid_amount:
+            frappe.throw(
+                "The sum of the total allocated amount and the unallocated amount "
+                "should equal the paid amount."
+            )
+
 
     @frappe.whitelist()
     def get_outstanding_invoices(self):
