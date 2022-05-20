@@ -79,6 +79,7 @@ class PaymentReceiptReconciliation(Document):
             ["Payment Receipt", "docstatus", "=", 1],
             ["Payment Receipt", "posting_date", "<=", self.to_date],
             ["Payment Receipt", "status", "=", "Pending Processing"],
+            ["Payment Receipt", "receipt_book", "=", self.receipt_book]
         ]
 
         if self.from_date:
@@ -103,7 +104,8 @@ class PaymentReceiptReconciliation(Document):
                 "paid_amount",
                 "total_allocated_amount",
                 "unallocated_amount"
-            ]
+            ],
+            order_by="name"
         )
 
         for receipt in receipts:
