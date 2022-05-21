@@ -44,6 +44,15 @@
   {
    "hidden": 0,
    "is_query_report": 0,
+   "label": "Payment Receipt Reconciliation",
+   "link_to": "Payment Receipt Reconciliation",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Stock Reports",
    "link_type": "DocType",
    "onboard": 0,
@@ -60,7 +69,7 @@
    "type": "Link"
   }
  ],
- "modified": "2022-05-18 01:14:52.077433",
+ "modified": "2022-05-21 12:53:46.551852",
  "modified_by": "Administrator",
  "module": "Eskill Customisations",
  "name": "Eskill Selling",
