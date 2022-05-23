@@ -135,11 +135,10 @@
    "fetch_from": "receipt_book.cash_account",
    "fieldname": "paid_to",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Paid To",
    "options": "Account",
-   "permlevel": 1,
-   "print_hide": 1,
-   "read_only": 1
+   "print_hide": 1
   },
   {
    "fieldname": "party",
@@ -209,7 +208,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-05-19 11:57:17.329504",
+ "modified": "2022-05-23 13:23:28.741550",
  "modified_by": "Administrator",
  "module": "Eskill Customisations",
  "name": "Payment Receipt",
