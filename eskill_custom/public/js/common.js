@@ -9,7 +9,7 @@ frappe.ui.keys.on('ctrl+p', function(e) {
 route = frappe.get_route()
 if (route[0] == "Form") {
     frappe.ui.form.on(route[1], {
-        onload_post_render(frm) {
+        refresh(frm) {
             stock_availability(frm);
         }
     });
