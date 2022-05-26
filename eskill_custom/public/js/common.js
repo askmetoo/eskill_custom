@@ -9,7 +9,7 @@ frappe.ui.keys.on('ctrl+p', function(e) {
 route = frappe.get_route()
 if (route[0] == "Form") {
     frappe.ui.form.on(route[1], {
-        onload_post_render(frm) {
+        refresh(frm) {
             stock_availability(frm);
         }
     });
@@ -54,17 +54,19 @@ function get_bid_rate(frm, posting_date) {
 }
 
 function stock_availability(frm) {
-    frm.add_custom_button(__("Stock Availability"), () => {
-        if (frm.doc.items.length) {
-            frappe.call({
-                method: "eskill_custom.api.stock_availability",
-                args: {
-                    doctype: route[1],
-                    items: frm.doc.items
-                }
-            });
-        }
-    }, __("View"));
+    if (frm.fields_dict.hasOwnProperty("items")) {
+        frm.add_custom_button(__("Stock Availability"), () => {
+            if (frm.doc.items.length) {
+                frappe.call({
+                    method: "eskill_custom.api.stock_availability",
+                    args: {
+                        doctype: route[1],
+                        items: frm.doc.items
+                    }
+                });
+            }
+        }, __("View"));
+    }
 }
 
 function stock_item_filter(frm) {
