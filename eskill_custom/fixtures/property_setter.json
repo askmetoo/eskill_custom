@@ -8039,5 +8039,22 @@
   "property_type": "Data",
   "row_name": null,
   "value": "Payment Receipt"
+ },
+ {
+  "default_value": null,
+  "doc_type": "Stocktake Sheet",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocType",
+  "field_name": null,
+  "modified": "2022-05-29 21:47:29.816832",
+  "name": "Stocktake Sheet-main-default_print_format",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "property": "default_print_format",
+  "property_type": "Data",
+  "row_name": null,
+  "value": "Stocktake Sheet"
  }
 ]
