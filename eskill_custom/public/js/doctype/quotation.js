@@ -8,6 +8,41 @@ frappe.ui.form.on('Quotation', {
         stock_item_filter(frm);
         tax_template_filter(frm);
         get_bid_rate(frm, frm.doc.transaction_date);
+        if (!frm.doc.service_order && frm.doc.docstatus == 1 && ("Open", "Expired").includes(frm.doc.status)) {
+            frm.add_custom_button(__("Link Service Order"), () => {
+                frappe.prompt([
+                    {
+                        label: __("Service Order"),
+                        fieldname: "service_order",
+                        fieldtype: "Link",
+                        options: "Service Order",
+                        reqd: 1,
+                        get_query: () => {
+                            return {
+                                filters: [
+                                    ["Service Order", "customer", "=", frm.doc.party_name],
+                                    ["Service Order", "billing_status", "=", "Pending Delivery"],
+                                    ["Service Order", "goodwill", "=", 0],
+                                    ["Service Order", "job_type", "!=", "Warranty"]
+
+                                ]
+                            }
+                        }
+                    }
+                ], (values) => {
+                    frappe.call({
+                        method: "eskill_custom.quotation.link_service_order",
+                        args: {
+                            quotation: frm.doc.name,
+                            service_order: values.service_order
+                        },
+                        callback: () => {
+                            frm.reload_doc();
+                        }
+                    });
+                });
+            })
+        }
     },
     
     before_save(frm) {
