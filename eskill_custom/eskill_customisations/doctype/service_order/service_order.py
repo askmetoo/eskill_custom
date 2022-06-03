@@ -342,6 +342,7 @@ class ServiceOrder(Document):
         request = frappe.new_doc("Material Request")
         request.material_request_type = "Material Transfer"
         request.service_order = self.name
+        request.parts_return = 1
 
         for item in self.items:
             if (item.received_qty - (item.used_qty + item.returned_qty)) > 0:
@@ -368,6 +369,14 @@ class ServiceOrder(Document):
                     dn=item.name,
                     field="returned_qty",
                     val=request_item.qty,
+                    debug=True
+                )
+
+                frappe.db.set_value(
+                    dt="Part List",
+                    dn=item.name,
+                    field="status",
+                    val="Returned" if item.used_qty == 0 else "Partially Used",
                     debug=True
                 )
 
