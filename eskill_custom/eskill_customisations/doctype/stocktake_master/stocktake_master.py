@@ -1,6 +1,8 @@
 # Copyright (c) 2021, Eskill Trading and contributors
 # For license information, please see license.txt
 
+from random import random
+
 import frappe
 from frappe.model.document import Document
 
@@ -72,11 +74,11 @@ class StocktakeMaster(Document):
         dividend, remainder = divmod(len(stock_list), len(self.user_list))
 
         stocktake_sheets = {
-            self.user_list[i].user: stock_list[
+            user.user: stock_list[
                 i * dividend + min(i, remainder):
                 (i + 1) * dividend + min(i + 1, remainder)
             ]
-            for i in range(len(self.user_list))
+            for i, user in enumerate(sorted(self.user_list, key=lambda _: random()))
         }
 
         for user in stocktake_sheets:
