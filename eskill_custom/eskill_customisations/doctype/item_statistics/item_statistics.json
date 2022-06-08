@@ -1,0 +1,231 @@
+{
+ "actions": [],
+ "allow_copy": 1,
+ "allow_rename": 0,
+ "creation": "2022-06-06 12:04:03.382565",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "item_code",
+  "column_break_2",
+  "periodicity",
+  "date_range_section",
+  "from_date",
+  "column_break_4",
+  "to_date",
+  "sales_section",
+  "item_statistics_sold_to_customers",
+  "purchases_section",
+  "item_statistics_purchase_receipts",
+  "support_section",
+  "item_statistics_service_orders",
+  "sales_and_purchase_summary_section",
+  "qty_sold",
+  "avg_qty_sold",
+  "column_break_11",
+  "qty_purchased",
+  "cost_increase_per_period",
+  "support_summary_section",
+  "service_order_qty",
+  "number_of_warranties",
+  "frequent_serial_number",
+  "max_services",
+  "column_break_24",
+  "avg_services",
+  "avg_service_length"
+ ],
+ "fields": [
+  {
+   "fieldname": "item_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item Code",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "date_range_section",
+   "fieldtype": "Section Break",
+   "label": "Date Range"
+  },
+  {
+   "fieldname": "from_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "From Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "to_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "To Date",
+   "reqd": 1
+  },
+  {
+   "description": "Values listed are excluding tax.",
+   "fieldname": "item_statistics_sold_to_customers",
+   "fieldtype": "Table",
+   "label": "Customers",
+   "options": "Item Statistics Sold To Customers",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "qty_sold",
+   "fieldtype": "Float",
+   "label": "Qty Sold",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_11",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "qty_purchased",
+   "fieldtype": "Float",
+   "label": "Qty Purchased",
+   "read_only": 1
+  },
+  {
+   "fieldname": "item_statistics_purchase_receipts",
+   "fieldtype": "Table",
+   "label": "Purchases",
+   "options": "Item Statistics Purchase Receipts",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Months",
+   "fieldname": "periodicity",
+   "fieldtype": "Select",
+   "label": "Average By",
+   "options": "Days\nMonths\nYears",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "avg_qty_sold",
+   "fieldtype": "Float",
+   "label": "Units Sold per Period",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "description": "The accuracy of this value increases as the number of purchases increases.",
+   "fieldname": "cost_increase_per_period",
+   "fieldtype": "Currency",
+   "label": "Unit Cost Increase per Period",
+   "read_only": 1
+  },
+  {
+   "fieldname": "support_section",
+   "fieldtype": "Section Break",
+   "label": "Support"
+  },
+  {
+   "fieldname": "item_statistics_service_orders",
+   "fieldtype": "Table",
+   "label": "Service Orders",
+   "options": "Item Statistics Service Orders",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sales_and_purchase_summary_section",
+   "fieldtype": "Section Break",
+   "label": "Sales and Purchase Summary"
+  },
+  {
+   "fieldname": "support_summary_section",
+   "fieldtype": "Section Break",
+   "label": "Support Summary"
+  },
+  {
+   "default": "0",
+   "fieldname": "service_order_qty",
+   "fieldtype": "Int",
+   "label": "Total Services",
+   "read_only": 1
+  },
+  {
+   "fieldname": "frequent_serial_number",
+   "fieldtype": "Link",
+   "label": "Most Frequent Serial Number",
+   "options": "Serial No",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "max_services",
+   "fieldtype": "Int",
+   "label": "Highest Number of Services",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_24",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "number_of_warranties",
+   "fieldtype": "Int",
+   "label": "Number of Warranties",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sales_section",
+   "fieldtype": "Section Break",
+   "label": "Sales"
+  },
+  {
+   "fieldname": "purchases_section",
+   "fieldtype": "Section Break",
+   "label": "Purchases"
+  },
+  {
+   "default": "0",
+   "fieldname": "avg_services",
+   "fieldtype": "Float",
+   "label": "Average New Services per Period",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "avg_service_length",
+   "fieldtype": "Float",
+   "label": "Average Days to Close Job",
+   "read_only": 1
+  }
+ ],
+ "hide_toolbar": 1,
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2022-06-08 14:55:10.830188",
+ "modified_by": "Administrator",
+ "module": "Eskill Customisations",
+ "name": "Item Statistics",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}
