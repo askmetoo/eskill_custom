@@ -4,7 +4,6 @@
 import frappe
 from frappe.model.document import Document
 from numpy import average
-from datetime import date
 
 
 class ItemStatistics(Document):
@@ -79,7 +78,8 @@ class ItemStatistics(Document):
                     change = (costs[i]['unit_cost'] - costs[i - 1]['unit_cost']) / date_difference
                     cost_changes.append(change)
 
-            self.cost_increase_per_period = average(cost_changes)
+            if len(cost_changes) > 0:
+                self.cost_increase_per_period = average(cost_changes)
 
 
     def get_sales_data(self, period: int):
