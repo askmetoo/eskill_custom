@@ -4,7 +4,6 @@
 import frappe
 from frappe.model.document import Document
 from numpy import average
-from datetime import date
 
 
 class ItemStatistics(Document):
