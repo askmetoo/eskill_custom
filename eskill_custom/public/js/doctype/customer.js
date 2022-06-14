@@ -5,9 +5,6 @@ frappe.ui.form.on('Customer', {
                 create_secondary_account(frm);
             }, "Create");
         }
-    },
-
-    onload_post_render(frm) {
         frappe.run_serially([
             () => frm.remove_custom_button("Accounts Receivable", "View"),
             () => frm.add_custom_button(__('Accounts Receivable'), function () {
