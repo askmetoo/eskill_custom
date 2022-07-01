@@ -46,6 +46,7 @@ frappe.ui.form.on('Sales Invoice', {
     
     on_submit(frm) {
         update_service_order(frm);
+        update_sla_billing(frm);
     },
 
     after_cancel(frm) {
@@ -139,6 +140,18 @@ function update_service_order(frm) {
             method: "eskill_custom.sales_invoice.update_service_order",
             args: {
                 invoice_name: frm.doc.name
+            }
+        });
+    }
+}
+
+function update_sla_billing(frm) {
+    if (frm.doc.sla) {
+        frappe.call({
+            method: "eskill_custom.eskill_customisations.doctype.device_sla.device_sla.update_billing_information",
+            args: {
+                sla: frm.doc.sla,
+                date: frm.doc.posting_date
             }
         });
     }
