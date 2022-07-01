@@ -2,8 +2,8 @@
 # For license information, please see license.txt
 
 import frappe
-from frappe import _
 from frappe.model.document import Document
+from frappe.model.mapper import get_mapped_doc
 
 
 class DeviceSLA(Document):
@@ -68,11 +68,24 @@ class DeviceSLA(Document):
                 message += f", {incomplete_devices[i].idx}"
             frappe.throw(message + " are missing serial numbers in the devices table.")
 
+        # Set the Additional Billing Amount and Amount Owing
+        for row in self.additional_billing_items:
+            self.additional_billing_amount += row.amount
+
+        self.amount_owing = self.additional_billing_amount
+
 
     @frappe.whitelist()
     def get_terms(self) -> str:
         "Gets the selected terms and conditions template and returns it with the values filled in."
         pass
+
+
+    def update_billing_information(self, date: str):
+        "Sets the latest billing information in the form."
+
+        self.db_set("current_readings_invoiced", 1, notify=True)
+        self.db_set("last_invoiced", date, notify=True)
 
 
     @frappe.whitelist()
@@ -164,3 +177,60 @@ def update_status():
     frappe.db.commit()
 
     return frappe.db.sql("select * from `tabDevice SLA`;", as_dict=1)
+
+
+@frappe.whitelist()
+def make_delivery_note(source_name, target_doc = None):
+    "Creates a new Delivery Note based on the SLA Additonal Billing Items as well as the counter readings."
+
+    def set_missing_values(source, target):
+        company_currency = frappe.get_cached_value('Company',  target.company,  "default_currency")
+
+        target.currency = company_currency
+
+        target.usd_to_currency = 1
+        target.conversion_rate = 1
+        target.ignore_pricing_rule = 1
+
+        for row in source.readings:
+            if row.reading_difference > 0 and row.amount  > 0:
+                reading_type = frappe.get_doc("Device Reading Type", row.reading_type)
+                item = frappe.get_doc("Item", reading_type.item_code)
+                target.append("items", {
+                    'item_code': reading_type.item_code,
+                    'uom': item.stock_uom,
+                    'stock_uom': item.stock_uom,
+                    'qty': row.reading_difference,
+                    'rate': row.unit_price
+                })
+
+        target.run_method("set_missing_values")
+        target.run_method("calculate_taxes_and_totals")
+
+    quotation = get_mapped_doc("Device SLA", source_name, {
+        "Device SLA": {
+            "doctype": "Delivery Note",
+            "field_map": {
+                "name": "sla",
+                "customer": "party_name"
+            },
+            "validation": {
+                "docstatus": ["=", 1],
+                "current_readings_invoiced": ["=", 0]
+            }
+        },
+        "SLA Additional Billing Items": {
+            "doctype": "Delivery Note Item",
+            "field_map": {},
+        }
+    }, target_doc, set_missing_values)
+
+    return quotation
+
+
+@frappe.whitelist()
+def update_billing_information(sla: str, date: str):
+    "Updates the billing information on the given SLA document."
+
+    sla = frappe.get_doc("Device SLA", sla)
+    sla.update_billing_information(date)

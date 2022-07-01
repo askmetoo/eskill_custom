@@ -18,7 +18,7 @@ frappe.form.link_formatters['Item'] = (value, doc) => {
         } else if (doc.model_name && doc.model_name != value) {
             return value + ": " + doc.model_name;
         } else {
-            return value;
+            return value + ": " + doc.item_name;
         }
     }
 }
@@ -32,6 +32,7 @@ frappe.ui.form.on('Device SLA', {
         set_end_date(frm);
         terms_filter(frm);
         update_readings(frm);
+        process_billing(frm);
         frm.get_field("readings").grid.cannot_add_rows = true;
         frm.refresh_field("readings");
     },
@@ -116,6 +117,27 @@ frappe.ui.form.on('SLA Device Reading', {
         locals[cdt][cdn].current_reading = locals[cdt][cdn].initial_reading
         frm.refresh_fields();
     }
+});
+
+frappe.ui.form.on('SLA Additional Billing Items', {
+    item_code(frm, cdt, cdn) {
+        locals[cdt][cdn].item_name = null;        
+        locals[cdt][cdn].description = null;
+        frm.refresh_fields();
+    },
+
+    qty(frm, cdt, cdn) {
+        if (locals[cdt][cdn].qty && locals[cdt][cdn].rate) {
+            locals[cdt][cdn].amount = locals[cdt][cdn].qty * locals[cdt][cdn].rate;
+            frm.refresh_fields();
+        }
+    },
+
+    rate(frm, cdt, cdn) {
+        if (locals[cdt][cdn].qty && locals[cdt][cdn].rate) {
+            locals[cdt][cdn].amount = locals[cdt][cdn].qty * locals[cdt][cdn].rate;
+            frm.refresh_fields();
+        }
     },
 });
 
@@ -173,6 +195,16 @@ function model_filter(frm) {
     }
 }
 
+function process_billing(frm) {
+    frm.add_custom_button(__("Process Billing"), () => {
+        if (!frm.doc.current_readings_invoiced) {
+            frappe.model.open_mapped_doc({
+                method: "eskill_custom.eskill_customisations.doctype.device_sla.device_sla.make_delivery_note",
+                frm: frm,
+            });
+        }
+    });
+}
 
 function serial_filter(frm, devices_row) {
     if (devices_row) {

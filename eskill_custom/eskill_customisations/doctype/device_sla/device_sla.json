@@ -14,17 +14,26 @@
   "customer_name",
   "amended_from",
   "last_service",
-  "column_break_2",
+  "current_readings_invoiced",
+  "last_invoiced",
+  "column_break_9",
   "status",
   "contract_tier",
   "breach",
   "device_details_section",
   "devices",
   "readings",
+  "additional_billing_items_section",
+  "additional_billing_items",
+  "section_break_18",
+  "cpc_amount",
+  "additional_billing_amount",
+  "column_break_21",
+  "amount_owing",
   "contract_period_section",
   "start_date",
   "period",
-  "column_break_8",
+  "column_break_26",
   "end_date",
   "terms_section",
   "tc_name",
@@ -61,18 +70,10 @@
    "label": "Start Date"
   },
   {
-   "fieldname": "column_break_8",
-   "fieldtype": "Column Break"
-  },
-  {
    "fieldname": "end_date",
    "fieldtype": "Date",
    "label": "End Date",
    "read_only": 1
-  },
-  {
-   "fieldname": "column_break_2",
-   "fieldtype": "Column Break"
   },
   {
    "fieldname": "contract_tier",
@@ -81,11 +82,6 @@
    "options": "SLA Level",
    "reqd": 1,
    "set_only_once": 1
-  },
-  {
-   "fieldname": "section_break_14",
-   "fieldtype": "Section Break",
-   "label": "Terms"
   },
   {
    "fetch_from": "tc_name.terms",
@@ -133,8 +129,8 @@
   {
    "fieldname": "devices",
    "fieldtype": "Table",
-   "options": "Service Device",
-   "reqd": 1
+   "label": "Devices",
+   "options": "Service Device"
   },
   {
    "fetch_from": "customer.customer_name",
@@ -174,12 +170,84 @@
    "options": "SLA Device Reading",
    "read_only_depends_on": "eval (doc.docstatus > 0);"
   },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "description": "Indicates whether or not the current readings have been invoiced.",
+   "fieldname": "current_readings_invoiced",
+   "fieldtype": "Check",
+   "label": "Current Readings Invoiced",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "amount_owing",
+   "fieldtype": "Currency",
+   "label": "Amount Owing",
+   "read_only": 1
+  },
+  {
+   "fieldname": "additional_billing_items_section",
+   "fieldtype": "Section Break",
+   "label": "Additional Billing Items"
+  },
+  {
+   "description": "This is for items other than CPC. E.g. rental charges and software licensing.",
+   "fieldname": "additional_billing_items",
+   "fieldtype": "Table",
+   "label": "Additional Billing Items",
+   "options": "SLA Additional Billing Items"
+  },
+  {
+   "fieldname": "terms_section",
+   "fieldtype": "Section Break",
+   "label": "Terms"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "cpc_amount",
+   "fieldtype": "Currency",
+   "label": "CPC Amount",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "description": "The amount charged per billing period.",
+   "fieldname": "additional_billing_amount",
+   "fieldtype": "Currency",
+   "label": "Additional Billing Amount",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "last_invoiced",
+   "fieldtype": "Date",
+   "label": "Last Invoiced",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_9",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_18",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_21",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_26",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-02-18 15:00:36.454534",
+ "modified": "2022-07-01 10:58:06.987666",
  "modified_by": "Administrator",
  "module": "Eskill Customisations",
  "name": "Device SLA",
