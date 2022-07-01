@@ -20,12 +20,13 @@
   "breach",
   "device_details_section",
   "devices",
+  "readings",
   "contract_period_section",
   "start_date",
   "period",
   "column_break_8",
   "end_date",
-  "section_break_14",
+  "terms_section",
   "tc_name",
   "terms"
  ],
@@ -165,6 +166,14 @@
    "hidden": 1,
    "label": "Title",
    "read_only": 1
+  },
+  {
+   "fieldname": "readings",
+   "fieldtype": "Table",
+   "label": "Readings",
+   "options": "SLA Device Reading",
+   "read_only_depends_on": "eval (doc.docstatus > 0);"
+  },
   }
  ],
  "index_web_pages_for_search": 1,

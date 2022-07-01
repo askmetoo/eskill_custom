@@ -75,6 +75,66 @@ class DeviceSLA(Document):
         pass
 
 
+    @frappe.whitelist()
+    def update_readings(self):
+        "Updates the current readings in the Readings table."
+
+        self.cpc_amount = 0
+
+        # set the previous reading value of the device readings
+        # if the current readings have been invoiced
+        if self.current_readings_invoiced:
+            self.current_readings_invoiced = 0
+            for row in self.readings:
+                row.previous_reading = row.current_reading
+                row.reading_difference = 0
+                row.amount = 0
+
+        # flag to indicate that whether or not at least one reading has been invoiced
+        updated = False
+
+        # iterate over all readings and update the current reading with the latest value
+        for row in self.readings:
+            try:
+                latest_reading = frappe.db.sql(f"""
+                    select
+                        DR.reading_time time,
+                        DR.reading_value value
+                    from
+                        `tabDevice Reading` DR
+                    join
+                        `tabService Order` SO on DR.parent = SO.name
+                    where
+                        DR.serial_number = '{row.serial_number}'
+                        and DR.reading_type = '{row.reading_type}'
+                        and DR.reading_time > '{row.last_updated}'
+                        and SO.sla = '{self.name}'
+                    order by
+                        time desc
+                    limit
+                        1
+                """, as_dict=True)[0]
+            except IndexError:
+                continue
+
+            if latest_reading['value'] < row.current_reading:
+                continue
+
+            row.last_updated = latest_reading['time']
+            row.current_reading = latest_reading['value']
+            row.reading_difference = row.current_reading - row.previous_reading
+            row.amount = row.reading_difference * row.unit_price
+            updated = True
+
+        self.cpc_amount = sum([row.amount for row in self.readings])
+
+        self.amount_owing = self.cpc_amount + self.additional_billing_amount
+        self.save()
+
+        if not updated:
+            frappe.msgprint("No readings were updated.")
+
+
 def update_status():
     "Updates SLA status based on date."
 
