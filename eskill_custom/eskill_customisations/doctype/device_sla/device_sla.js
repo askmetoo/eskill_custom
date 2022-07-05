@@ -18,21 +18,8 @@ frappe.form.link_formatters['Item'] = (value, doc) => {
         } else if (doc.model_name && doc.model_name != value) {
             return value + ": " + doc.model_name;
         } else {
-            return value;
+            return value + ": " + doc.item_name;
         }
-    }
-}
-
-
-frappe.form.link_formatters['Serial No'] = (value, doc) => {
-    if (doc.doctype == "Service Device" && value) {
-        if (doc.warranty_status) {
-            return value + ": " + doc.warranty_status;
-        } else {
-            return value + ": Warranty Unknown";
-        }
-    } else {
-        return value;
     }
 }
 
@@ -44,21 +31,10 @@ frappe.ui.form.on('Device SLA', {
         serial_filter(frm);
         set_end_date(frm);
         terms_filter(frm);
-        frm.fields_dict.devices.grid.get_docfield("add_counter_readings").hidden = 1
-        frm.fields_dict.devices.grid.get_docfield("warranty_date_update").hidden = 1
-        frm.fields_dict.devices.grid.get_docfield("warranty_swap_out_section").hidden = 1
-        frm.fields_dict.devices.grid.grid_rows.forEach( (device) => {
-            device.docfields[device.docfields.findIndex( (field) => {
-                return field.fieldname == "add_counter_readings"
-            })].hidden = 1;
-            device.docfields[device.docfields.findIndex( (field) => {
-                return field.fieldname == "warranty_date_update"
-            })].hidden = 1;
-            device.docfields[device.docfields.findIndex( (field) => {
-                return field.fieldname == "warranty_swap_out_section"
-            })].hidden = 1;
-        });
-        frm.refresh_field("devices");
+        update_readings(frm);
+        process_billing(frm);
+        frm.get_field("readings").grid.cannot_add_rows = true;
+        frm.refresh_field("readings");
     },
 
     after_save(frm) {
@@ -95,6 +71,10 @@ frappe.ui.form.on('Service Device', {
             frappe.throw("Please contact a support manager if you wish to remove a device from this issue.");
         }
     },
+
+    add_counter_readings(frm, cdt, cdn) {
+        add_device_readings(frm, cdn, locals[cdt][cdn].serial_number);
+    },
     
     model(frm, cdt, cdn) {
         if (locals[cdt][cdn].serial_number) {
@@ -129,12 +109,54 @@ frappe.ui.form.on('Service Device', {
             }
         }
     },
+});
 
-    warranty_date_update(frm, cdt, cdn) {
-        warranty_update(frm, locals[cdt][cdn].model, locals[cdt][cdn].serial_number);
+frappe.ui.form.on('SLA Device Reading', {
+    initial_reading(frm, cdt, cdn) {
+        locals[cdt][cdn].previous_reading = locals[cdt][cdn].initial_reading
+        locals[cdt][cdn].current_reading = locals[cdt][cdn].initial_reading
+        frm.refresh_fields();
+    }
+});
+
+frappe.ui.form.on('SLA Additional Billing Items', {
+    item_code(frm, cdt, cdn) {
+        locals[cdt][cdn].item_name = null;        
+        locals[cdt][cdn].description = null;
+        frm.refresh_fields();
+    },
+
+    qty(frm, cdt, cdn) {
+        if (locals[cdt][cdn].qty && locals[cdt][cdn].rate) {
+            locals[cdt][cdn].amount = locals[cdt][cdn].qty * locals[cdt][cdn].rate;
+            frm.refresh_fields();
+        }
+    },
+
+    rate(frm, cdt, cdn) {
+        if (locals[cdt][cdn].qty && locals[cdt][cdn].rate) {
+            locals[cdt][cdn].amount = locals[cdt][cdn].qty * locals[cdt][cdn].rate;
+            frm.refresh_fields();
+        }
     },
 });
 
+function add_device_readings(frm, device, serial_number) {
+    frappe.prompt({
+        label: "Number of Records",
+        fieldname: "qty",
+        fieldtype: "Int",
+        default: 1
+    }, (values) => {
+        for (let i = 0; i < values.qty; i++) {
+            frm.add_child("readings", {
+                serial_number: serial_number,
+                service_device: device
+            });
+        }
+        frm.refresh_field("readings");
+    });
+}
 
 function breach_contract(frm) {
     frappe.confirm(
@@ -163,9 +185,8 @@ function customer_filter(frm) {
     }
 }
 
-
 function model_filter(frm) {
-    frm.fields_dict.devices.grid.fields_map.model.get_query = function() {
+    frm.get_field("devices").grid.fields_map.model.get_query = function() {
         return {
             filters : [
                 ['Item', 'has_serial_no', '=', 1]
@@ -174,6 +195,16 @@ function model_filter(frm) {
     }
 }
 
+function process_billing(frm) {
+    frm.add_custom_button(__("Process Billing"), () => {
+        if (!frm.doc.current_readings_invoiced) {
+            frappe.model.open_mapped_doc({
+                method: "eskill_custom.eskill_customisations.doctype.device_sla.device_sla.make_delivery_note",
+                frm: frm,
+            });
+        }
+    });
+}
 
 function serial_filter(frm, devices_row) {
     if (devices_row) {
@@ -199,11 +230,9 @@ function serial_filter(frm, devices_row) {
     frm.refresh_fields();
 }
 
-
 function set_end_date(frm) {
     frm.set_value('end_date', frappe.datetime.add_months(frm.doc.start_date, frm.doc.period));
 }
-
 
 function set_status(frm) {
     if (frappe.datetime.now_date() < frm.doc.start_date) {
@@ -215,7 +244,6 @@ function set_status(frm) {
     }
 }
 
-
 function terms_filter(frm) {
     frm.fields_dict.tc_name.get_query = function() {
         return {
@@ -226,4 +254,16 @@ function terms_filter(frm) {
             ]
         }
     }
+}
+
+function update_readings(frm) {
+    frm.add_custom_button(__("Update Readings"), () => {
+        frappe.call({
+            method: "update_readings",
+            doc: frm.doc,
+            callback: () => {
+                frm.reload_doc();
+            }
+        });
+    });
 }

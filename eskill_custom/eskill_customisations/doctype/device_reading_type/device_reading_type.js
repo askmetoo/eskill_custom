@@ -2,7 +2,9 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Device Reading Type', {
-	// refresh: function(frm) {
-
-	// }
+	refresh(frm) {
+		if (frm.doc.item_code) {
+			frm.set_df_property("item_code", "reqd", 1);
+		}
+	}
 });

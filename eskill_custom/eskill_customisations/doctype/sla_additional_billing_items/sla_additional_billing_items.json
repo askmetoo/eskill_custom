@@ -1,0 +1,119 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2022-06-29 11:42:49.716535",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "item_code",
+  "item_name",
+  "description_section",
+  "description",
+  "quantity_and_rate_section",
+  "qty",
+  "stock_uom",
+  "rate",
+  "column_break_9",
+  "uom",
+  "conversion_rate",
+  "amount"
+ ],
+ "fields": [
+  {
+   "fieldname": "item_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item Code",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "item_code.item_name",
+   "fetch_if_empty": 1,
+   "fieldname": "item_name",
+   "fieldtype": "Data",
+   "label": "Item Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "description_section",
+   "fieldtype": "Section Break",
+   "label": "Description"
+  },
+  {
+   "fetch_from": "item_code.description",
+   "fetch_if_empty": 1,
+   "fieldname": "description",
+   "fieldtype": "Text Editor",
+   "label": "Description",
+   "reqd": 1
+  },
+  {
+   "fieldname": "quantity_and_rate_section",
+   "fieldtype": "Section Break",
+   "label": "Quantity and Rate"
+  },
+  {
+   "fieldname": "qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Quantity",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "fetch_from": "item_code.stock_uom",
+   "fieldname": "stock_uom",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Stock UOM",
+   "options": "UOM"
+  },
+  {
+   "fieldname": "rate",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Unit Price",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_9",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "item_code.stock_uom",
+   "fieldname": "uom",
+   "fieldtype": "Link",
+   "label": "UOM",
+   "options": "UOM",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "conversion_rate",
+   "fieldtype": "Float",
+   "hidden": 1,
+   "label": "UOM Conversion Rate"
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "label": "Amount",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2022-06-29 12:18:12.766307",
+ "modified_by": "Administrator",
+ "module": "Eskill Customisations",
+ "name": "SLA Additional Billing Items",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

@@ -7,7 +7,9 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "type_name"
+  "type_name",
+  "column_break_2",
+  "item_code"
  ],
  "fields": [
   {
@@ -20,11 +22,23 @@
    "label": "Type Name",
    "reqd": 1,
    "unique": 1
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "This is the item code that will be used when invoicing against this reading type.",
+   "fieldname": "item_code",
+   "fieldtype": "Link",
+   "label": "Item Code",
+   "options": "Item",
+   "permlevel": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2021-11-05 15:08:52.338287",
+ "modified": "2022-06-14 11:07:35.036173",
  "modified_by": "Administrator",
  "module": "Eskill Customisations",
  "name": "Device Reading Type",
@@ -58,6 +72,41 @@
    "create": 1,
    "email": 1,
    "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Support Team",
+   "share": 1
+  },
+  {
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Support Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 1,
    "print": 1,
    "read": 1,
    "report": 1,
