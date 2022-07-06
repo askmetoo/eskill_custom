@@ -112,15 +112,15 @@
    "read_only": 1
   },
   {
-   "allow_on_submit": 1,
    "depends_on": "eval: (!doc.is_internal_customer);",
    "fieldname": "sla",
    "fieldtype": "Link",
    "in_global_search": 1,
    "in_preview": 1,
    "label": "SLA",
+   "mandatory_depends_on": "eval: (doc.job_type == \"SLA\");",
    "options": "Device SLA",
-   "read_only_depends_on": "eval: (doc.job_status == \"Closed\" || !doc.customer_main_account);"
+   "read_only_depends_on": "eval: (!doc.customer_main_account);"
   },
   {
    "fieldname": "column_break_11",
@@ -286,10 +286,12 @@
    "label": "Customer Reference"
   },
   {
+   "fetch_from": "sla.devices",
    "fieldname": "devices",
    "fieldtype": "Table",
    "label": "Device Details",
-   "options": "Service Device"
+   "options": "Service Device",
+   "read_only_depends_on": "eval: (doc.sla);"
   },
   {
    "allow_on_submit": 1,
@@ -340,7 +342,7 @@
    "in_standard_filter": 1,
    "label": "Goodwill",
    "permlevel": 1,
-   "read_only_depends_on": "eval: (doc.job_status != \"Open\" || doc.job_type == \"Warranty\" || doc.job_type == \"Internal\");"
+   "read_only_depends_on": "eval: (doc.job_status != \"Open\" || [\"Internal\", \"SLA\", \"Warranty\"].includes(doc.job_type));"
   },
   {
    "default": "0",
@@ -415,7 +417,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-04-08 16:04:35.186492",
+ "modified": "2022-07-06 11:50:31.907108",
  "modified_by": "Administrator",
  "module": "Eskill Customisations",
  "name": "Service Order",

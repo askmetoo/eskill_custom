@@ -133,20 +133,11 @@ class ServiceOrder(Document):
         "Returns list of SLA devices based on selected SLA."
         sla = frappe.get_doc("Device SLA", self.sla)
 
-        device_list = [
-            {
-                'name': device.name,
-                'model': device.model,
-                'model_name': device.model_name,
-                'serial_number': device.serial_number
-            }
-            for device in sla.devices
-        ]
+        for device in sla.devices:
+            self.append("devices", device)
 
-        for i, device in enumerate(device_list):
-            device_list[i]['row_number'] = i
-
-        return device_list
+        self.job_type = "SLA"
+        self.goodwill = 1
 
 
     @frappe.whitelist()
