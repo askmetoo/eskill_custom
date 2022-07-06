@@ -599,6 +599,7 @@ def generate_delivery(source_name, target_doc = None):
 
         target.ignore_pricing_rule = 1
 
+        target.sales_team = []
         if len(service_order.time_taken) > 0:
             for time in service_order.time_taken:
                 sales_person = target.append("sales_team", {})
