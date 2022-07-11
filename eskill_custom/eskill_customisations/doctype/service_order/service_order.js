@@ -214,14 +214,6 @@ frappe.ui.form.on('Service Order', {
 
     before_submit(frm) {
         frm.set_value("job_status", "Open");
-        if (frm.doc.sla) {
-            frappe.confirm(
-                'You have selected an SLA for this service order, would you like to set job as "SLA" type?',
-                () => {
-                    frm.set_value("job_type", "SLA");
-                }
-            );
-        }
     },
 
     customer(frm) {
@@ -256,28 +248,11 @@ frappe.ui.form.on('Service Order', {
 
     sla(frm) {
         if (frm.doc.sla) {
-            frappe.run_serially([
-                () => get_sla_devices(frm),
-                () => {
-                    frappe.confirm(
-                        "You have selected an SLA for this job. Will the job be covered under the SLA?",
-                        () => {
-                            frm.set_value("job_type", "SLA");
-                        },
-                        () => {
-                            if (frm.doc.job_type != "Billable") {
-                                frm.set_value("job_type", "Billable");
-                            }
-                        }
-                    )
-                }
-            ])
+            get_sla_devices(frm);
         } else {
-            if (frm.doc.job_type == "SLA") {
-                frm.set_value("job_type", "Billable");
-            }
+            frm.set_value("job_type", "Billable");
+            frm.set_value("goodwill", 0);
         }
-        limit_devices_table(frm);
     },
 
     search(frm) {
@@ -421,61 +396,14 @@ function generate_quote(frm) {
 
 
 function get_sla_devices(frm) {
-    if (frm.doc.devices.length) {
+    if (frm.doc.devices) {
         frm.clear_table("devices");
-        frm.refresh_field("devices");
     }
     frappe.call({
         doc: frm.doc,
         method: "get_sla_devices",
-        callback: (response) => {
-            const table_data = JSON.parse(JSON.stringify(response.message));
-            const table_fields = [
-                {
-                    fieldname: "model",
-                    fieldtype: "Link",
-                    in_list_view: 1,
-                    label: "Model",
-                    options: "Item",
-                },
-                {
-                    fieldname: "serial_number",
-                    fieldtype: "Link",
-                    in_list_view: 1,
-                    label: "Serial Number",
-                    options: "Serial No",
-                }
-            ];
-            const dialog = new frappe.ui.Dialog({
-                title: __("Devices on SLA"),
-                static: true,
-                fields: [
-                    {
-                        cannot_add_rows: true,
-                        data: table_data,
-                        description: "Please select all devices that are to be serviced on this order.",
-                        fieldname: "devices",
-                        fields: table_fields,
-                        fieldtype: "Table",
-                        in_place_edit: true,
-                    }
-                ],
-                primary_action: () => {
-                    console.log(response.message);
-                    dialog.fields_dict.devices.grid.get_selected_children().forEach( (device) => {
-                        frm.add_child("devices", {
-                            model: response.message[device.row_number].model,
-                            model_name: response.message[device.row_number].model_name,
-                            serial_number: response.message[device.row_number].serial_number
-                        });
-                    });
-                    frm.set_df_property("devices", "cannot_add_rows", 1);
-                    frm.refresh_field("devices");
-                    dialog.hide();
-                },
-                primary_action_label: "Select"
-            });
-            dialog.show();
+        callback() {
+            frm.refresh_fields();
         }
     });
 }
@@ -859,51 +787,36 @@ function update_job_status(frm) {
 
 
 function update_job_type(frm) {
-    if (frm.doc.job_type != "Internal") {
-        if (frm.doc.job_type == "Billable") {
-            frm.add_custom_button("SLA", () => {
-                set_type(frm, "SLA");
-            }, "Job Type");
-            frm.add_custom_button("Warranty", () => {
-                set_type(frm, "Warranty");
-            }, "Job Type");
-        } else if (frm.doc.job_type == "SLA") {
-            frm.add_custom_button("Billable", () => {
-                set_type(frm, "Billable");
-            }, "Job Type");
-            frm.add_custom_button("Warranty", () => {
-                set_type(frm, "Warranty");
-            }, "Job Type");
-        } else {
-            frm.add_custom_button("Billable", () => {
-                set_type(frm, "Billable");
-            }, "Job Type");
-            frm.add_custom_button("SLA", () => {
-                set_type(frm, "SLA");
-            }, "Job Type");
-        }
+    if (frm.doc.job_type == "Billable") {
+        frm.add_custom_button("Warranty", () => {
+            set_type(frm, "Warranty");
+        }, "Job Type");
+    } else if (frm.doc.job_type == "Warranty") {
+        frm.add_custom_button("Billable", () => {
+            set_type(frm, "Billable");
+        }, "Job Type");
+    }
 
-        function set_type(frm, job_type) {
-            frappe.run_serially([
-                () => {
-                    if (frm.is_dirty()) {
-                        frm.save();
-                    }
-                },
-                () => {
-                    frappe.call({
-                        doc: frm.doc,
-                        method: "set_job_type",
-                        args: {
-                            job_type: job_type
-                        },
-                        callback: () => {
-                            frm.reload_doc();
-                        }
-                    });
+    function set_type(frm, job_type) {
+        frappe.run_serially([
+            () => {
+                if (frm.is_dirty()) {
+                    frm.save();
                 }
-            ]);
-        }
+            },
+            () => {
+                frappe.call({
+                    doc: frm.doc,
+                    method: "set_job_type",
+                    args: {
+                        job_type: job_type
+                    },
+                    callback: () => {
+                        frm.reload_doc();
+                    }
+                });
+            }
+        ]);
     }
 }
 

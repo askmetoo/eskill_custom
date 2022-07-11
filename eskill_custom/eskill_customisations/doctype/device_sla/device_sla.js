@@ -257,13 +257,15 @@ function terms_filter(frm) {
 }
 
 function update_readings(frm) {
-    frm.add_custom_button(__("Update Readings"), () => {
-        frappe.call({
-            method: "update_readings",
-            doc: frm.doc,
-            callback: () => {
-                frm.reload_doc();
-            }
+    if (frm.doc.readings.length > 0) {
+        frm.add_custom_button(__("Update Readings"), () => {
+            frappe.call({
+                method: "update_readings",
+                doc: frm.doc,
+                callback: () => {
+                    frm.reload_doc();
+                }
+            });
         });
-    });
+    }
 }

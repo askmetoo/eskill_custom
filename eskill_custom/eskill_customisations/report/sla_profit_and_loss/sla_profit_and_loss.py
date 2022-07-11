@@ -3,7 +3,10 @@
 
 import frappe
 from frappe import _
-
+from frappe.utils.data import today
+from numpy import average
+from copy import deepcopy
+from datetime import datetime
 
 MONTHS = (
     "jan", "feb", "mar",
@@ -21,7 +24,11 @@ def execute(filters=None):
     columns.extend(get_columns(filters))
     data.extend(get_data(filters, columns))
 
-    return columns, data
+    chart = get_chart(filters, data)
+
+    summary = get_summary(filters, data)
+
+    return columns, data, None, chart, summary
 
 
 def get_columns(filters: dict) -> 'list[dict]':
@@ -38,7 +45,14 @@ def get_columns(filters: dict) -> 'list[dict]':
             'fieldname': "customer",
             'label': _("Customer"),
             'fieldtype': "Link",
-            'options': "Customer"
+            'options': "Customer",
+            'width': 340
+        },
+        {
+            'fieldname': "customer_name",
+            'label': _("Customer Name"),
+            'fieldtype': "Data",
+            'hidden': 1
         },
         {
             'fieldname': "contract_tier",
@@ -158,6 +172,23 @@ def get_columns(filters: dict) -> 'list[dict]':
     for i, row in enumerate(columns):
         if row['fieldtype'] == "Currency":
             columns[i]['width'] = 116
+        elif row['fieldtype'] == "Date":
+            columns[i]['width'] = 115
+
+    for month in MONTHS:
+        index = next(i for i, row in enumerate(columns) if row['fieldname'] == month)
+
+        # Add income column for month
+        columns.insert(index, deepcopy(columns[index]))
+        columns[index]['fieldname'] += "_income"
+        columns[index]['label'] += _(" Income")
+        # columns[index]['hidden'] = 1
+
+        # Add cost column for month
+        columns.insert(index, deepcopy(columns[index + 1]))
+        columns[index]['fieldname'] += "_cost"
+        columns[index]['label'] += _(" Cost")
+        # columns[index]['hidden'] = 1
 
     return columns
 
@@ -167,11 +198,12 @@ def get_data(filters: dict, columns: 'list[dict]') -> 'list[dict]':
 
     data = initialise_data(filters, columns)
 
-    data = get_costs(filters, data)
-    data = get_income(filters, data)
+    if data:
+        data = get_costs(filters, data)
+        data = get_income(filters, data)
 
     for i, row in enumerate(data):
-        data[i]['profit'] = row['total_income'] - row['total_cost']
+        data[i]['profit'] = round(row['total_income'] - row['total_cost'], 2)
 
     return data
 
@@ -192,7 +224,8 @@ def initialise_data(filters: dict, columns: 'list[dict]') -> 'list[dict]':
         from
             `tabDevice SLA`
         where
-            customer_name like '%{filters['customer_name'] if "customer_name" in filters else ""}%';
+            customer_name like '%{filters['customer_name'] if "customer_name" in filters else ""}%'
+            {"and year(start_date) <= " + filters['year'] if "year" in filters else ""};
     """, as_dict=True)
 
     if "sla" in filters:
@@ -216,10 +249,44 @@ def initialise_data(filters: dict, columns: 'list[dict]') -> 'list[dict]':
             if row['customer'] == filters['customer']
         ]
 
+    data = filter_device(filters, data)
+
     for i, _ in enumerate(data):
         for col in columns:
             if col['fieldtype'] == "Currency":
                 data[i][col['fieldname']] = 0
+
+    return data
+
+
+def filter_device(filters: dict, data: 'list[dict]') -> 'list[dict]':
+    "Using the provided filters, filter the provided data collection based on device information."
+
+    if any(key in filters for key in ("model", "model_name")):
+        if "model" in filters:
+            model_set = frappe.db.sql(f"""
+                select
+                    distinct parent
+                from
+                    `tabService Device`
+                where
+                    parenttype = "Device SLA"
+                    and model = "{filters['model']}";
+            """)
+        else:
+            model_set = frappe.db.sql(f"""
+                select
+                    distinct parent
+                from
+                    `tabService Device`
+                where
+                    parenttype = "Device SLA"
+                    and model_name like "%{filters['model_name']}%";
+            """)
+
+        model_set = {row[0] for row in model_set}
+
+        data = [row for row in data if row['sla'] in model_set]
 
     return data
 
@@ -251,15 +318,17 @@ def get_costs(filters: dict, data: 'list[dict]') -> 'list[dict]':
                     `tabAccount` A on GLE.account = A.name
                 where
                     DN.sla = '{row['sla']}'
+                    {"and year(GLE.posting_date) = " + filters['year'] if "year" in filters else ""}
                     and A.root_type = 'Expense'
-                    and GLE.is_cancelled = 0
+                    and GLE.is_cancelled = 0;
             """, as_dict=True)[0]
         except IndexError:
             continue
 
         for month in MONTHS:
-            data[i][month] -= costs[month]
-            data[i]['total_cost'] += costs[month]
+            data[i][month + "_cost"] += round(costs[month], 2)
+            data[i][month] -= round(costs[month], 2)
+            data[i]['total_cost'] += round(costs[month], 2)
 
     return data
 
@@ -291,6 +360,7 @@ def get_income(filters: dict, data: 'list[dict]') -> 'list[dict]':
                     `tabAccount` A on GLE.account = A.name
                 where
                     SI.sla = '{row['sla']}'
+                    {"and year(GLE.posting_date) = " + filters['year'] if "year" in filters else ""}
                     and A.root_type = 'Income'
                     and GLE.is_cancelled = 0
             """, as_dict=True)[0]
@@ -298,7 +368,103 @@ def get_income(filters: dict, data: 'list[dict]') -> 'list[dict]':
             continue
 
         for month in MONTHS:
-            data[i][month] += income[month]
-            data[i]['total_income'] += income[month]
+            data[i][month + "_income"] += round(income[month], 2)
+            data[i][month] += round(income[month], 2)
+            data[i]['total_income'] += round(income[month], 2)
 
     return data
+
+
+def get_chart(filters: dict, data: 'list[dict]') -> dict or None:
+    "Returns a dictionary that describes the chart to be displayed."
+
+    chart = None
+    if data:
+        if "display_months" in filters:
+            chart = {
+                'title': "SLA Month on Month Comparison",
+                'data': {
+                    'labels': [month.upper() for month in MONTHS],
+                    'datasets': [
+                        {
+                            'name': row['sla'],
+                            'values': [row[month] for month in MONTHS]
+                        } for row in data
+                    ]
+                },
+                'type': 'line',
+            }
+        else:
+            chart = {
+                'title': "SLA P&L Comparison",
+                'data': {
+                    'labels': [row.sla for row in data],
+                    'datasets': [
+                        {
+                            'name': _("Cost"),
+                            'values': [row['total_cost'] for row in data]
+                        },
+                        {
+                            'name': _("Income"),
+                            'values': [row['total_income'] for row in data]
+                        },
+                        {
+                            'name': _("Profit"),
+                            'values': [row['profit'] for row in data]
+                        },
+                    ]
+                },
+                'type': "bar",
+                # 'barOptions': {
+                #     'stacked': 1
+                # },
+                'colors': ["red", "green", "#ffbd20"],
+            }
+
+    return chart
+
+
+def get_summary(filters: dict, data: 'list[dict]') -> 'list[dict]':
+    "Returns a list of dictionaries to be represented as the report summary."
+
+    summary = [{
+        'label': _("Number of SLAs"),
+        'value': len(data),
+        'indicator': "red" if len(data) < 1 else ""
+    }]
+
+    if data:
+        monthly_costs, monthly_income = [], []
+        for month in MONTHS:
+            monthly_costs.append(sum([
+                row[month + "_cost"]
+                for row in data
+            ]))
+            monthly_income.append(sum([
+                row[month + "_income"]
+                for row in data
+            ]))
+        if "year" in filters and datetime.today().year != int(filters['year']):
+            avg_cost = round(average(monthly_costs), 2)
+            avg_income = round(average(monthly_income), 2)
+        else:
+            avg_cost = round(average(monthly_costs[: datetime.today().month]), 2)
+            avg_income = round(average(monthly_income[: datetime.today().month]), 2)
+
+        summary.extend([
+            {
+                'label': _("Average Monthly Costs"),
+                'value': frappe.format_value(avg_cost, {'fieldtype': "Currency"}),
+                'indicator': "red" if avg_cost > avg_income else ""
+            },
+            {
+                'label': _("Average Monthly Income"),
+                'value': frappe.format_value(avg_income, {'fieldtype': "Currency"}),
+                'indicator': (
+                    "red" if avg_income < avg_cost else (
+                        "green" if avg_income > avg_cost * 1.5 else ""
+                    )
+                )
+            },
+        ])
+    return summary
