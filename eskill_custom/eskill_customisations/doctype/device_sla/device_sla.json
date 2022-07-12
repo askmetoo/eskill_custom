@@ -19,6 +19,7 @@
   "column_break_9",
   "status",
   "contract_tier",
+  "parts_covered_under_sla",
   "breach",
   "device_details_section",
   "devices",
@@ -242,12 +243,21 @@
   {
    "fieldname": "column_break_26",
    "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fetch_from": "contract_tier.parts_covered_under_sla",
+   "fieldname": "parts_covered_under_sla",
+   "fieldtype": "Check",
+   "in_standard_filter": 1,
+   "label": "Parts Covered Under SLA",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-07-01 10:58:06.987666",
+ "modified": "2022-07-11 14:22:50.331212",
  "modified_by": "Administrator",
  "module": "Eskill Customisations",
  "name": "Device SLA",
