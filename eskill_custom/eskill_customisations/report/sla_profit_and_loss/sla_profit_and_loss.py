@@ -1,12 +1,12 @@
 # Copyright (c) 2022, Eskill Trading and contributors
 # For license information, please see license.txt
 
-import frappe
-from frappe import _
-from frappe.utils.data import today
-from numpy import average
 from copy import deepcopy
 from datetime import datetime
+from numpy import average
+
+import frappe
+from frappe import _
 
 MONTHS = (
     "jan", "feb", "mar",
@@ -182,13 +182,13 @@ def get_columns(filters: dict) -> 'list[dict]':
         columns.insert(index, deepcopy(columns[index]))
         columns[index]['fieldname'] += "_income"
         columns[index]['label'] += _(" Income")
-        # columns[index]['hidden'] = 1
+        columns[index]['hidden'] = 1
 
         # Add cost column for month
         columns.insert(index, deepcopy(columns[index + 1]))
         columns[index]['fieldname'] += "_cost"
         columns[index]['label'] += _(" Cost")
-        # columns[index]['hidden'] = 1
+        columns[index]['hidden'] = 1
 
     return columns
 

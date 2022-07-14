@@ -137,7 +137,7 @@ class ServiceOrder(Document):
             self.append("devices", device)
 
         self.job_type = "SLA"
-        self.goodwill = 1
+        self.goodwill = sla.parts_covered_under_sla
 
 
     @frappe.whitelist()
