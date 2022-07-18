@@ -119,7 +119,8 @@ scheduler_events = {
 # 		"eskill_custom.tasks.all"
 # 	],
     'daily' : [
-        "eskill_custom.eskill_customisations.doctype.device_sla.device_sla.update_state"
+        "eskill_custom.eskill_customisations.doctype.device_sla.device_sla.update_state",
+		"eskill_custom.scheduled_tasks.adjust_auction_rates"
     ],
 # 	"hourly": [
 # 		"eskill_custom.tasks.hourly"
