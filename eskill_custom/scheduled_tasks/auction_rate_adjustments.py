@@ -49,6 +49,7 @@ def correct_doctype(doctype: str, date_field: str):
             doc.auction_bid_rate = AER.exchange_rate
         where 
             doc.auction_bid_rate <> AER.exchange_rate
+            and AER.exchange_rate is not null
             and datediff(current_date(), doc.{date_field}) <= 30;
-    """, debug=True)
+    """)
     frappe.db.commit()
