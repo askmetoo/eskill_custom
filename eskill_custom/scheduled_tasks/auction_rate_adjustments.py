@@ -21,7 +21,7 @@ DOCTYPES = {
 def execute():
     "Main function to be run by the scheduler."
 
-    for doctype, date_field in DOCTYPES.values():
+    for doctype, date_field in DOCTYPES.items():
         correct_doctype(doctype, date_field)
         print(f"{doctype} auction rate corrected.")
 
