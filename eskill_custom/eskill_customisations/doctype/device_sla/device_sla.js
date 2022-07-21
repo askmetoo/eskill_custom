@@ -33,6 +33,7 @@ frappe.ui.form.on('Device SLA', {
         terms_filter(frm);
         update_readings(frm);
         process_billing(frm);
+        renew_sla(frm);
         frm.get_field("readings").grid.cannot_add_rows = true;
         frm.refresh_field("readings");
     },
@@ -141,6 +142,12 @@ frappe.ui.form.on('SLA Additional Billing Items', {
     },
 });
 
+frappe.ui.form.on('SLA Renewals', {
+    view_letter(frm, cdt, cdn) {
+        window.open(window.location.origin + locals[cdt][cdn].renewal_letter);
+    }
+});
+
 function add_device_readings(frm, device, serial_number) {
     frappe.prompt({
         label: "Number of Records",
@@ -206,6 +213,67 @@ function process_billing(frm) {
     });
 }
 
+function renew_sla(frm) {
+    if (frm.doc.docstatus == 1
+        && ["Active", "Expired"].includes(frm.doc.status)
+        && frappe.datetime.get_today() > frappe.datetime.add_months(frm.doc.end_date, -1)) {
+        frm.add_custom_button(__("Renew SLA"), () => {
+            frappe.prompt(
+                [
+                    {
+                        fieldname: "renewal_letter",
+                        label: __("Renewal Letter"),
+                        fieldtype: "Attach",
+                        reqd: 1
+                    },
+                    {
+                        fieldname: "start_date",
+                        label: __("Renewal Date"),
+                        fieldtype: "Date",
+                        default: "Today",
+                        reqd: 1
+                    },
+                    {
+                        fieldname: "period",
+                        label: __("New Contract Period"),
+                        fieldtype: "Int",
+                        description: "The new contract period defined in months.",
+                        reqd: 1,
+                    },
+                ], (values) => {
+                    if (values.start_date < frm.doc.end_date) {
+                        frappe.throw(__("The renewed start date can not precede the current end date of the contract."));
+                    }
+
+                    if (values.period < 1) {
+                        frappe.throw(__("The minimum allowable period is 1 month."));
+                    }
+
+                    var renewal = {
+                        renewal_letter: values.renewal_letter,
+                        start_date: values.start_date,
+                        period: values.period,
+                        end_date: frappe.datetime.add_months(values.start_date, values.period)
+                    };
+
+                    if (renewal.end_date <= frappe.datetime.get_today()) {
+                        frappe.throw(__("The new end date can be ealier than today's date."));
+                    }
+
+                    frm.add_child("sla_renewals", renewal);
+                    frm.set_value("end_date", renewal.end_date);
+
+                    if (frm.doc.get_today() <= renewal.end_date) {
+                        frm.set_value("status", "Active");
+                    }
+
+                    frm.refresh_fields();
+                }
+            );
+        });
+    }
+}
+
 function serial_filter(frm, devices_row) {
     if (devices_row) {
         frm.fields_dict.devices.grid.grid_rows_by_docname[devices_row].get_field('serial_number').get_query = function() {
@@ -232,6 +300,7 @@ function serial_filter(frm, devices_row) {
 
 function set_end_date(frm) {
     frm.set_value('end_date', frappe.datetime.add_months(frm.doc.start_date, frm.doc.period));
+    frm.set_value('initial_end_date', frappe.datetime.add_months(frm.doc.start_date, frm.doc.period));
 }
 
 function set_status(frm) {
