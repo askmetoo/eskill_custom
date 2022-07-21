@@ -26,16 +26,19 @@
   "readings",
   "additional_billing_items_section",
   "additional_billing_items",
-  "section_break_18",
+  "section_break_19",
   "cpc_amount",
   "additional_billing_amount",
-  "column_break_21",
+  "column_break_22",
   "amount_owing",
   "contract_period_section",
   "start_date",
   "period",
-  "column_break_26",
+  "column_break_27",
+  "initial_end_date",
   "end_date",
+  "contract_renewals_section",
+  "sla_renewals",
   "terms_section",
   "tc_name",
   "terms"
@@ -71,6 +74,7 @@
    "label": "Start Date"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "end_date",
    "fieldtype": "Date",
    "label": "End Date",
@@ -233,18 +237,6 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "section_break_18",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "column_break_21",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "column_break_26",
-   "fieldtype": "Column Break"
-  },
-  {
    "default": "0",
    "fetch_from": "contract_tier.parts_covered_under_sla",
    "fieldname": "parts_covered_under_sla",
@@ -252,12 +244,44 @@
    "in_standard_filter": 1,
    "label": "Parts Covered Under SLA",
    "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "sla_renewals",
+   "fieldtype": "Table",
+   "options": "SLA Renewals"
+  },
+  {
+   "depends_on": "eval: (doc.initial_end_date != doc.end_date);",
+   "description": "This was the original end date when the contract was first signed (prior to any renewals)",
+   "fieldname": "initial_end_date",
+   "fieldtype": "Date",
+   "label": "Initial End Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_19",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_22",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_27",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "The table below contains all of the signed renewal letters as well as the related date information.",
+   "fieldname": "contract_renewals_section",
+   "fieldtype": "Section Break",
+   "label": "Contract Renewals"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-07-11 14:22:50.331212",
+ "modified": "2022-07-21 13:55:38.356556",
  "modified_by": "Administrator",
  "module": "Eskill Customisations",
  "name": "Device SLA",
