@@ -44,7 +44,7 @@ frappe.ui.form.on('Quotation', {
         set_tax_template(frm);
     },
 
-    party_type(frm) {
+    quotation_to(frm) {
         fetch_default_currency(frm);
     },
 
@@ -71,8 +71,8 @@ function fetch_default_currency(frm) {
     // clear existing fetch definition for the currency field
     delete frm.fetch_dict.Quotation.party_name;
 
-    // if the party_type field is set to "Customer" then fetch the default currency from the linked field
-    if (frm.doc.party_type == "Customer") {
+    // if the quotation_to field is set to "Customer" then fetch the default currency from the linked field
+    if (frm.doc.quotation_to == "Customer") {
         frm.add_fetch("party_name", "default_currency", "currency");
     }
 }
@@ -122,7 +122,7 @@ function set_tax_template(frm) {
     }
 
     // this is to allow for quotes without a customer account, i.e. quotes generated from leads
-    if (frm.doc.party_type == "Customer") {
+    if (frm.doc.quotation_to == "Customer") {
         args.customer = frm.doc.party_name
     }
 
