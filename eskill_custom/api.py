@@ -118,19 +118,22 @@ def document_gp_lookup(doctype: str, exchange_rate, items):
 
 
 @frappe.whitelist()
-def sales_invoice_tax(doctype, currency, customer):
+def sales_invoice_tax(doctype, currency, customer = None):
     "Return tax template for Sales Invoice."
     try:
-        territory = frappe.db.sql(f"""\
-            select
-                territory
-            from
-                tabCustomer
-            where
-                name = '{customer}';"""
-        )
-        if territory[0][0] != 'Zimbabwe':
-            return None
+        # only verify the territory if a customer account is provided
+        if customer:
+            territory = frappe.db.sql(f"""\
+                select
+                    territory
+                from
+                    tabCustomer
+                where
+                    name = '{customer}';"""
+            )
+            if territory[0][0] != 'Zimbabwe':
+                return None
+
         template = frappe.db.sql(f"""\
             select
                 name
@@ -141,7 +144,7 @@ def sales_invoice_tax(doctype, currency, customer):
             limit 1;"""
         )
         return template
-    except:
+    except IndexError:
         return None
 
 
