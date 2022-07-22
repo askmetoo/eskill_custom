@@ -9,8 +9,9 @@ frappe.ui.form.on('Quotation', {
         tax_template_filter(frm);
         get_bid_rate(frm, frm.doc.transaction_date);
         link_service_order(frm);
+        fetch_default_currency(frm);
     },
-    
+
     before_save(frm) {
         set_tax_template(frm);
         if (frm.doc.stock_item) {
@@ -22,12 +23,8 @@ frappe.ui.form.on('Quotation', {
     validate(frm) {
         validate_line_item_gp(frm);
     },
-    
-    before_submit(frm) {
-        set_tax_template(frm);
-    },
 
-    party_name(frm) {
+    before_submit(frm) {
         set_tax_template(frm);
     },
 
@@ -35,14 +32,22 @@ frappe.ui.form.on('Quotation', {
         limit_rate(frm);
         convert_selected_to_base(frm);
     },
-    
+
     currency(frm) {
         get_bid_rate(frm, frm.doc.transaction_date);
         if (frm.doc.party_name) {
             set_tax_template(frm);
         }
     },
-    
+
+    party_name(frm) {
+        set_tax_template(frm);
+    },
+
+    party_type(frm) {
+        fetch_default_currency(frm);
+    },
+
     search(frm) {
         if (frm.doc.stock_item) {
             stock_lookup(frm);
@@ -61,6 +66,16 @@ frappe.ui.form.on('Quotation', {
         convert_base_to_selected(frm);
     }
 });
+
+function fetch_default_currency(frm) {
+    // clear existing fetch definition for the currency field
+    delete frm.fetch_dict.Quotation.party_name;
+
+    // if the party_type field is set to "Customer" then fetch the default currency from the linked field
+    if (frm.doc.party_type == "Customer") {
+        frm.add_fetch("party_name", "default_currency", "currency");
+    }
+}
 
 function link_service_order(frm) {
     if (!frm.doc.service_order && frm.doc.docstatus == 1 && ["Open", "Expired"].includes(frm.doc.status)) {
