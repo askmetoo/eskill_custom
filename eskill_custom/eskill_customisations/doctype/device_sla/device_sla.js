@@ -29,7 +29,6 @@ frappe.ui.form.on('Device SLA', {
         customer_filter(frm);
         model_filter(frm);
         serial_filter(frm);
-        set_end_date(frm);
         terms_filter(frm);
         update_readings(frm);
         process_billing(frm);
@@ -263,7 +262,7 @@ function renew_sla(frm) {
                     frm.add_child("sla_renewals", renewal);
                     frm.set_value("end_date", renewal.end_date);
 
-                    if (frm.doc.get_today() <= renewal.end_date) {
+                    if (frappe.datetime.get_today() <= renewal.end_date) {
                         frm.set_value("status", "Active");
                     }
 
