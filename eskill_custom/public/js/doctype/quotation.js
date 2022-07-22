@@ -101,13 +101,19 @@ function link_service_order(frm) {
 
 // Overwrites library function due to difference in field name for customer
 function set_tax_template(frm) {
+    let args = {
+        "doctype": frm.doctype,
+        "currency": frm.doc.currency,
+    }
+
+    // this is to allow for quotes without a customer account, i.e. quotes generated from leads
+    if (frm.doc.party_type == "Customer") {
+        args.customer = frm.doc.party_name
+    }
+
     frappe.call({
         method: "eskill_custom.api.sales_invoice_tax",
-        args: {
-            "doctype": frm.doctype,
-            "currency": frm.doc.currency,
-            "customer": frm.doc.party_name
-        },
+        args: args,
         callback(data) {
             var template = data.message[0][0];
             if (template) {
