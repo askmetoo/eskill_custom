@@ -29,7 +29,6 @@ frappe.ui.form.on('Device SLA', {
         customer_filter(frm);
         model_filter(frm);
         serial_filter(frm);
-        set_end_date(frm);
         terms_filter(frm);
         update_readings(frm);
         process_billing(frm);
