@@ -262,7 +262,7 @@ function renew_sla(frm) {
                     frm.add_child("sla_renewals", renewal);
                     frm.set_value("end_date", renewal.end_date);
 
-                    if (frm.doc.get_today() <= renewal.end_date) {
+                    if (frappe.datetime.get_today() <= renewal.end_date) {
                         frm.set_value("status", "Active");
                     }
 
