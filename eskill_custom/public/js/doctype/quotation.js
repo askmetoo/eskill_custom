@@ -27,23 +27,23 @@ frappe.ui.form.on('Quotation', {
         set_tax_template(frm);
     },
 
-    party_name: function(frm) {
+    party_name(frm) {
         set_tax_template(frm);
     },
 
-    conversion_rate: function(frm) {
+    conversion_rate(frm) {
         limit_rate(frm);
         convert_selected_to_base(frm);
     },
     
-    currency: function(frm) {
+    currency(frm) {
         get_bid_rate(frm, frm.doc.transaction_date);
         if (frm.doc.party_name) {
             set_tax_template(frm);
         }
     },
     
-    search: function(frm) {
+    search(frm) {
         if (frm.doc.stock_item) {
             stock_lookup(frm);
         } else {
@@ -51,13 +51,13 @@ frappe.ui.form.on('Quotation', {
         }
     },
 
-    transaction_date: function(frm) {
+    transaction_date(frm) {
         if (frm.doc.transaction_date) {
             get_bid_rate(frm, frm.doc.transaction_date);
         }
     },
 
-    usd_to_currency: function(frm) {
+    usd_to_currency(frm) {
         convert_base_to_selected(frm);
     }
 });
@@ -108,7 +108,7 @@ function set_tax_template(frm) {
             "currency": frm.doc.currency,
             "customer": frm.doc.party_name
         },
-        callback: function (data) {
+        callback(data) {
             var template = data.message[0][0];
             if (template) {
                 frappe.run_serially([
