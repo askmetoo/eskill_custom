@@ -69,7 +69,9 @@ frappe.ui.form.on('Quotation', {
 
 function fetch_default_currency(frm) {
     // clear existing fetch definition for the currency field
-    delete frm.fetch_dict.Quotation.party_name;
+    if (frm.fetch_dict['*'] && frm.fetch_dict['*'].party_name) {
+        delete frm.fetch_dict['*'].party_name;
+    }
 
     // if the quotation_to field is set to "Customer" then fetch the default currency from the linked field
     if (frm.doc.quotation_to == "Customer") {
