@@ -55,7 +55,7 @@ frappe.ui.form.on('Sales Order', {
 // sets the delivery_date field in the Sales Order Item child table
 function set_items_delivery_date(frm) {
     if(frm.doc.delivery_date) {
-        locals['Sales Order Item'].forEach((row) => {
+        frm.doc.items.forEach((row) => {
             if (!row.delivery_date) {
                 row.delivery_date = frm.doc.delivery_date;
             }
