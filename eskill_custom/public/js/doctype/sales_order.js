@@ -11,7 +11,6 @@ frappe.ui.form.on('Sales Order', {
     },
     
     before_save(frm) {
-        set_items_delivery_date(frm);
         set_tax_template(frm);
         if (frm.doc.stock_item) {
             frm.doc.stock_item = undefined;
@@ -27,15 +26,17 @@ frappe.ui.form.on('Sales Order', {
         set_tax_template(frm);
     },
 
-    conversion_rate(frm) {
+    conversion_rate: function(frm) {
+        limit_rate(frm);
         convert_selected_to_base(frm);
     },
 
-    customer(frm) {
+    customer: function(frm) {
         set_tax_template(frm);
     },
 
-    currency(frm) {
+    currency: function(frm) {
+        get_bid_rate(frm, frm.doc.transaction_date);
         set_tax_template(frm);
     },
 
@@ -43,22 +44,11 @@ frappe.ui.form.on('Sales Order', {
         get_bid_rate(frm, frm.doc.transaction_date);
     },
     
-    search(frm) {
+    search: function(frm) {
         stock_lookup(frm);
     },
 
-    usd_to_currency(frm) {
+    usd_to_currency: function(frm) {
         convert_base_to_selected(frm);
     }
 });
-
-// sets the delivery_date field in the Sales Order Item child table
-function set_items_delivery_date(frm) {
-    if(frm.doc.delivery_date) {
-        locals['Sales Order Item'].forEach((row) => {
-            if (!row.delivery_date) {
-                row.delivery_date = frm.doc.delivery_date;
-            }
-        });
-    }
-}
