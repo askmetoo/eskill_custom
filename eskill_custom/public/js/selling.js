@@ -12,11 +12,20 @@ function document_gp_lookup(frm) {
     if (frm.fields_dict.hasOwnProperty("items") && frm.doctype != "Service Order") {
         frm.add_custom_button(__("Document GP"), () => {
             if (frm.doc.items.length) {
+                var exchange_rate = 1;
+
+                // if the DocType has the exchange_rate field, use it for the exchange rate otherwise use the conversion_rate field
+                if (frm.fields_dict.hasOwnProperty("exchange_rate")) {
+                    exchange_rate = frm.doc.exchange_rate;
+                } else if (frm.fields_dict.hasOwnProperty("conversion_rate")) {
+                    exchange_rate = frm.doc.conversion_rate;
+                }
+
                 frappe.call({
                     method: "eskill_custom.api.document_gp_lookup",
                     args: {
                         doctype: route[1],
-                        exchange_rate: frm.doc.usd_to_currency,
+                        exchange_rate: exchange_rate,
                         items: frm.doc.items
                     }
                 });
