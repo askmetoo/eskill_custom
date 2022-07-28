@@ -31,7 +31,7 @@ def document_gp_lookup(doctype: str, exchange_rate, items):
     "Returns a message detailing stock locations and available quantities for the given items."
 
     items = json.loads(items)
-    exchange_rate = float(exchange_rate)
+    exchange_rate = 1 / float(exchange_rate)
 
     # accounting for differing names for the valuation_rate field
     if doctype in ("Delivery Note", "Sales Invoice"):
