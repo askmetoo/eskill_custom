@@ -38,21 +38,6 @@ function convert_selected_to_base(frm) {
     }
 }
 
-function get_bid_rate(frm, posting_date) {
-    if (posting_date && !frm.doc.docstatus) {
-        frappe.call({
-            method: "eskill_custom.api.auction_rate_lookup",
-            args: {
-                posting_date: posting_date
-            },
-            callback: function(data) {
-                frm.set_value("auction_bid_rate", data.message);
-                console.log("Got bid rate.");
-            }
-        });
-    }
-}
-
 function stock_availability(frm) {
     if (frm.fields_dict.hasOwnProperty("items")) {
         frm.add_custom_button(__("Stock Availability"), () => {

@@ -21,8 +21,6 @@ frappe.ui.form.on('Sales Invoice', {
         if (frm.doc.stock_item) {
             frm.doc.stock_item = undefined;
         }
-        get_bid_rate(frm, frm.doc.posting_date);
-        limit_rate(frm);
     },
 
     validate(frm) {
@@ -54,12 +52,10 @@ frappe.ui.form.on('Sales Invoice', {
     },
 
     conversion_rate(frm) {
-        limit_rate(frm);
         convert_selected_to_base(frm);
     },
 
     currency(frm) {
-        get_bid_rate(frm, frm.doc.posting_date);
         if (frm.doc.customer) {
             set_tax_template(frm);
         }
@@ -71,12 +67,6 @@ frappe.ui.form.on('Sales Invoice', {
 
     is_return(frm) {
         naming_series_set(frm);
-    },
-
-    posting_date(frm) {
-        if (frm.doc.posting_date) {
-            get_bid_rate(frm, frm.doc.posting_date);
-        }
     },
 
     search(frm) {

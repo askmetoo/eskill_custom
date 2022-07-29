@@ -7,7 +7,6 @@ frappe.ui.form.on('Quotation', {
     refresh(frm) {
         stock_item_filter(frm);
         tax_template_filter(frm);
-        get_bid_rate(frm, frm.doc.transaction_date);
         link_service_order(frm);
         fetch_default_currency(frm);
     },
@@ -17,7 +16,6 @@ frappe.ui.form.on('Quotation', {
         if (frm.doc.stock_item) {
             frm.doc.stock_item = undefined;
         }
-        limit_rate(frm);
     },
 
     validate(frm) {
@@ -29,12 +27,10 @@ frappe.ui.form.on('Quotation', {
     },
 
     conversion_rate(frm) {
-        limit_rate(frm);
         convert_selected_to_base(frm);
     },
 
     currency(frm) {
-        get_bid_rate(frm, frm.doc.transaction_date);
         if (frm.doc.party_name) {
             set_tax_template(frm);
         }
@@ -53,12 +49,6 @@ frappe.ui.form.on('Quotation', {
             stock_lookup(frm);
         } else {
             frappe.throw("You must select a stocked item before performing a stock lookup.");
-        }
-    },
-
-    transaction_date(frm) {
-        if (frm.doc.transaction_date) {
-            get_bid_rate(frm, frm.doc.transaction_date);
         }
     },
 

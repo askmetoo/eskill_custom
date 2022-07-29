@@ -3,7 +3,4 @@ frappe.require([
 ]);
 
 frappe.ui.form.on('Landed Cost Voucher', {
-    before_save(frm) {
-        get_bid_rate(frm, frm.doc.posting_date);
-    }
 });
