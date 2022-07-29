@@ -436,10 +436,10 @@ def get_account_data(
                 then
                     (debit - credit) / doc.conversion_rate
                 else
-                    (debit - credit) * doc.auction_bid_rate
+                    (debit - credit) * GLE.auction_bid_rate
                 end)"""
     else:
-        column2 = "sum((debit - credit) * doc.auction_bid_rate)"
+        column2 = "sum((debit - credit) * GLE.auction_bid_rate)"
 
     data.extend(frappe.db.sql(f"""
         select
@@ -479,7 +479,8 @@ def get_journal_data(
             sum(GLE.debit - GLE.credit) {columns[0]['fieldname']},
             sum(GLE.debit_in_account_currency - GLE.credit_in_account_currency) {columns[1]['fieldname']},
             GLE.voucher_no doc,
-            A.account_currency currency
+            A.account_currency currency,
+            GLE.auction_bid_rate exchange_rate
         from
             `tabGL Entry` GLE
         join
@@ -496,9 +497,7 @@ def get_journal_data(
     for i, row in enumerate(data):
         if row.currency != filters['currency']:
             journal_entry = frappe.get_doc("Journal Entry", row['doc'])
-            if not journal_entry.multi_currency:
-                exchange_rate = journal_entry.auction_bid_rate
-            else:
+            if journal_entry.multi_currency:
                 totals = {
                     'count': 0,
                     'exchange_total': 0
@@ -508,10 +507,10 @@ def get_journal_data(
                         totals['count'] += 1
                         totals['exchange_total'] += 1 / record.exchange_rate
                 if totals['count'] and totals['exchange_total']:
-                    exchange_rate = totals['exchange_total'] / totals['count']
-                else:
-                    exchange_rate = journal_entry.auction_bid_rate
-            data[i][columns[1]['fieldname']] = row[columns[0]['fieldname']] * exchange_rate
+                    data[i]['exchange_rate'] = totals['exchange_total'] / totals['count']
+            data[i][columns[1]['fieldname']] = (
+                row[columns[0]['fieldname']] * data[i]['exchange_rate']
+            )
 
     accounts = set()
     new_data = []

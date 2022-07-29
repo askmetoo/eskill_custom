@@ -390,7 +390,8 @@ def initialise_data(filters: 'dict[str, ]', columns: 'list[dict]'):
             tab1.sales_person,
             0 total,
             GLE.voucher_no,
-            GLE.voucher_type
+            GLE.voucher_type,
+            GLE.auction_bid_rate exchange_rate
         from
             `tabGL Entry` GLE
         join
@@ -417,12 +418,6 @@ def initialise_data(filters: 'dict[str, ]', columns: 'list[dict]'):
             C.name, GLE.posting_date, GLE.voucher_no;""", as_dict=1)
 
     for i, row in enumerate(data):
-        if row['currency'] != "ZWL":
-            data[i]['exchange_rate'] = frappe.get_value(
-                row['voucher_type'],
-                row['voucher_no'],
-                "auction_bid_rate"
-            )
         for col in columns:
             if col['fieldname'] in data[i]:
                 if not data[i][col['fieldname']]:
