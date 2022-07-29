@@ -3,10 +3,6 @@ frappe.require([
 ]);
 
 frappe.ui.form.on('Purchase Invoice', {
-    before_submit(frm) {
-        get_bid_rate(frm, frm.doc.posting_date);
-    },
-
     conversion_rate(frm) {
         convert_selected_to_base(frm);
     },

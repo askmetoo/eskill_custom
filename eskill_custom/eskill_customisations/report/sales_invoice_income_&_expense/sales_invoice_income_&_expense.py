@@ -225,7 +225,7 @@ def initialise_data(filters: dict, columns: 'list[dict]'):
             then
                 1 / SI.conversion_rate
             else
-                SI.auction_bid_rate
+                GLE.auction_bid_rate
             end) rate,
             SI.base_net_total net_total,
             SI.base_grand_total total,
@@ -234,19 +234,27 @@ def initialise_data(filters: dict, columns: 'list[dict]'):
             then
                 SI.net_total
             else
-                SI.base_net_total * SI.auction_bid_rate
+                SI.base_net_total * GLE.auction_bid_rate
             end) net_total_secondary,
             (case when
                 SI.currency = 'ZWL'
             then
                 SI.grand_total
             else
-                SI.base_grand_total * SI.auction_bid_rate
+                SI.base_grand_total * GLE.auction_bid_rate
             end) total_secondary
         from
             `tabSales Invoice` SI
         join
             tabCustomer C on SI.customer = C.name
+        join
+        	(select
+        		distinct voucher_no,
+        		auction_bid_rate
+        	from
+            	`tabGL Entry`
+        	where
+        		not is_cancelled) GLE on SI.name = GLE.voucher_no
         left join
             (select
                 parent,
@@ -258,10 +266,11 @@ def initialise_data(filters: dict, columns: 'list[dict]'):
                 parent) tab1 on SI.name = tab1.parent
         where
             SI.docstatus = 1
-            and is_opening = 'No'
+            and SI.is_opening = 'No'
             {customer_filter}
         order by
-            SI.posting_date;""", as_dict=1)
+            SI.posting_date;
+    """, as_dict=1)
 
     for i, row in enumerate(data):
         for column in columns:

@@ -4,10 +4,6 @@ frappe.require([
 
 
 frappe.ui.form.on('Stock Entry', {
-    before_submit(frm) {
-        get_bid_rate(frm, frm.doc.posting_date);
-    },
-
     on_submit(frm) {
         if (frm.doc.stock_entry_type == "Material Transfer") {
             release_parts(frm);

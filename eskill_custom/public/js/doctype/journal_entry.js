@@ -3,9 +3,6 @@ frappe.require([
 ]);
 
 frappe.ui.form.on('Journal Entry', {
-    before_submit(frm) {
-        get_bid_rate(frm, frm.doc.posting_date);
-    }
 });
 
 frappe.ui.form.on('Journal Entry Account', {

@@ -7,7 +7,6 @@ frappe.ui.form.on('Sales Order', {
     refresh(frm) {
         stock_item_filter(frm);  
         tax_template_filter(frm);
-        get_bid_rate(frm, frm.doc.transaction_date);
     },
     
     before_save(frm) {
@@ -16,7 +15,6 @@ frappe.ui.form.on('Sales Order', {
         if (frm.doc.stock_item) {
             frm.doc.stock_item = undefined;
         }
-        limit_rate(frm);
     },
 
     validate(frm) {
@@ -37,10 +35,6 @@ frappe.ui.form.on('Sales Order', {
 
     currency(frm) {
         set_tax_template(frm);
-    },
-
-    posting_date: function(frm) {
-        get_bid_rate(frm, frm.doc.transaction_date);
     },
     
     search(frm) {

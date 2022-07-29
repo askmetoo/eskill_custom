@@ -3,10 +3,6 @@ frappe.require([
 ]);
 
 frappe.ui.form.on('Stock Reconciliation', {
-    before_submit(frm) {
-        get_bid_rate(frm, frm.doc.posting_date);
-    },
-
     on_submit(frm) {
         update_stocktake_summary(frm);
     }

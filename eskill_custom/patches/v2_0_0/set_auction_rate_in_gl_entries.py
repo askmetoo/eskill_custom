@@ -1,11 +1,9 @@
-"""This is meant to be a scheduled task to correct the auction bid rate on GL Entries
-in the case that there was a delay in getting the new rate."""
+"Sets the auction_bid_rate value in the GL Entry table for all historical documents."
 
 import frappe
 
-
 def execute():
-    "Main function to be run by the scheduler."
+    "Main function to be run by patcher."
 
     frappe.db.sql("""
         update
@@ -25,8 +23,6 @@ def execute():
         set
             GLE.auction_bid_rate = AER.exchange_rate
         where 
-            GLE.auction_bid_rate <> AER.exchange_rate
-            and AER.exchange_rate is not null
-            and datediff(current_date(), GLE.posting_date) <= 30;
+            AER.exchange_rate is not null;
     """)
     frappe.db.commit()

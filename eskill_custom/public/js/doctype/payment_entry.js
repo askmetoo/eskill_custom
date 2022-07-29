@@ -7,10 +7,6 @@ frappe.ui.form.on('Payment Entry', {
         name_series(frm);
         party_filter(frm);
     },
-    
-    before_save(frm) {
-        get_bid_rate(frm, frm.doc.posting_date);
-    },
 
     on_submit(frm) {
         update_payment_receipt(frm);

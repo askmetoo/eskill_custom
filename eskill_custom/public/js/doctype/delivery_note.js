@@ -24,7 +24,6 @@ frappe.ui.form.on('Delivery Note', {
     
     before_save(frm) {
         set_tax_template(frm);
-        limit_rate(frm);
     },
 
     validate(frm) {
@@ -36,7 +35,6 @@ frappe.ui.form.on('Delivery Note', {
     },
     
     before_submit(frm) {
-        get_bid_rate(frm, frm.doc.posting_date);
         set_tax_template(frm);
     },
         
@@ -64,12 +62,10 @@ frappe.ui.form.on('Delivery Note', {
     },
 
     conversion_rate(frm) {
-        limit_rate(frm);
         convert_selected_to_base(frm);
     },
 
     currency(frm) {
-        get_bid_rate(frm, frm.doc.posting_date);
         if (frm.doc.customer) {
             set_tax_template(frm);
         }
@@ -77,12 +73,6 @@ frappe.ui.form.on('Delivery Note', {
     
     customer(frm) {
         set_tax_template(frm);
-    },
-
-    posting_date(frm) {
-        if (frm.doc.posting_date) {
-            get_bid_rate(frm, frm.doc.posting_date);
-        }
     },
 
     usd_to_currency(frm) {

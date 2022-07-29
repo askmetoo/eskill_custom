@@ -3,7 +3,6 @@
 
 from datetime import date
 from decimal import DivisionByZero
-from locale import currency
 
 import frappe
 from frappe import _
@@ -361,7 +360,12 @@ def get_data(filters: 'dict[str, ]', columns: 'list[dict]') -> list:
 def initialise_data(filters: 'dict[str, ]', columns: 'list[dict]'):
     "Initialise report data."
 
-    age_query = f"datediff('{filters['report_date']}', GLE.posting_date)" if filters['aging_based_on'] == "Posting Date" else f"datediff('{filters['report_date']}', ifnull(GLE.due_date, GLE.posting_date))"
+    # special query to work out the age of the outstanding balances
+    age_query = (
+        f"datediff('{filters['report_date']}', GLE.posting_date)"
+        if filters['aging_based_on'] == "Posting Date" else
+        f"datediff('{filters['report_date']}', ifnull(GLE.due_date, GLE.posting_date))"
+    )
 
     data = frappe.db.sql(f"""\
         select
@@ -375,7 +379,8 @@ def initialise_data(filters: 'dict[str, ]', columns: 'list[dict]'):
             GLE.posting_date,
             0 total,
             GLE.voucher_no,
-            GLE.voucher_type
+            GLE.voucher_type,
+            GLE.auction_bid_rate exchange_rate
         from
             `tabGL Entry` GLE
         join
@@ -389,13 +394,7 @@ def initialise_data(filters: 'dict[str, ]', columns: 'list[dict]'):
         order by
             S.supplier_name, GLE.posting_date, GLE.voucher_no;""", as_dict=1)
 
-    for i, row in enumerate(data):
-        if "currency" in filters and filters['currency'] == "ZWL" and row['currency'] != "ZWL":
-            data[i]['exchange_rate'] = frappe.get_value(
-                row['voucher_type'],
-                row['voucher_no'],
-                "auction_bid_rate"
-            )
+    for i, _ in enumerate(data):
         for col in columns:
             if col['fieldname'] in data[i]:
                 if not data[i][col['fieldname']]:

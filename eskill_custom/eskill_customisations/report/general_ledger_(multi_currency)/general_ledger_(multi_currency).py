@@ -5,6 +5,7 @@
 from __future__ import unicode_literals
 
 from datetime import datetime
+from typing import Any
 
 import frappe
 from frappe import _
@@ -271,13 +272,13 @@ def get_data(filters: 'dict[str, ]', columns: 'list[dict[str, ]]') -> list:
                 else:
                     data[i][base_bal_col] = account[base_cre_col] - account[base_deb_col]
 
+    # filter to only display accounts
     if "accounts_only" in filters:
         data = [record for record in data if "account_type" in record]
         columns[1]['hidden'] = 1
         columns[2]['hidden'] = 1
-    if "currency" in filters:
-        for i, record in enumerate(data):
-            data[i]['second_currency'] = filters['currency']
+
+    # filter based on date
     if "from_date" in filters:
         from_date = datetime.strptime(filters['from_date'], "%Y-%m-%d").date()
         data = [
@@ -285,10 +286,17 @@ def get_data(filters: 'dict[str, ]', columns: 'list[dict[str, ]]') -> list:
             for record in data
             if not record['posting_date'] or record['posting_date'] >= from_date
         ]
-        for i, record in enumerate(data):
+        for i, _ in enumerate(data):
             data[i]['from_date'] = filters['from_date']
+
+    # add to_date to each record
     for i, record in enumerate(data):
         data[i]['to_date'] = filters['to_date']
+
+    # add currency to each record for formatting
+    if "currency" in filters:
+        for i, _ in enumerate(data):
+            data[i]['second_currency'] = filters['currency']
 
     return data
 
@@ -402,6 +410,7 @@ def get_account_data(account: 'dict[str,]', filters: 'dict[str,]') -> list:
                 GLE.party_type,
                 GLE.cost_center,
                 GLE.remarks,
+                GLE.auction_bid_rate exchange_rate,
                 A.account_currency
             from
                 `tabGL Entry` GLE
@@ -421,61 +430,77 @@ def get_account_data(account: 'dict[str,]', filters: 'dict[str,]') -> list:
                 if record['document_type'] in filters['selected_documents']
             ]
 
-        basic_docs = {
-            "Delivery Note",
-            "Purchase Invoice",
-            "Purchase Receipt",
-            "Sales Invoice"
-        }
-
         for i, record in enumerate(data):
             if record['account_currency'] != filters['currency']:
-                if record['document_type'] in basic_docs:
-                    doc = frappe.get_doc(record['document_type'], record['account'])
-                    if doc.currency == filters['currency']:
-                        exchange_rate = 1 / doc.conversion_rate
-                    else:
-                        exchange_rate = doc.auction_bid_rate
-                elif record['document_type'] == "Payment Entry":
-                    payment = frappe.get_doc("Payment Entry", record['account'])
-                    exchange_rate = 0
-                    if payment.paid_from == record['account']:
-                        if payment.paid_from_account_currency == filters['currency']:
-                            exchange_rate = 1 / payment.source_exchange_rate
-                        elif payment.paid_to_account_currency == filters['currency']:
-                            exchange_rate = 1 / payment.target_exchange_rate
-                    elif payment.paid_to == record['account']:
-                        if payment.paid_to_account_currency == filters['currency']:
-                            exchange_rate = 1 / payment.target_exchange_rate
-                        elif payment.paid_from_account_currency == filters['currency']:
-                            exchange_rate = 1 / payment.source_exchange_rate
-                    if not exchange_rate:
-                        exchange_rate = payment.auction_bid_rate
+                if record['document_type'] == "Payment Entry":
+                    payment = {
+                        'paid_from': get_record_value(
+                            record,
+                            "paid_from"
+                        ),
+                        'paid_to': get_record_value(
+                            record,
+                            "paid_to"
+                        ),
+                        'paid_from_account_currency': get_record_value(
+                            record,
+                            "paid_from_account_currency"
+                        ),
+                        'source_exchange_rate': get_record_value(
+                            record,
+                            "source_exchange_rate"
+                        ),
+                        'paid_to_account_currency': get_record_value(
+                            record,
+                            "paid_to_account_currency"
+                        ),
+                        'target_exchange_rate': get_record_value(
+                            record,
+                            "target_exchange_rate"
+                        ),
+                    }
+                    if payment['paid_from'] == record['account']:
+                        if payment['paid_from_account_currency'] == filters['currency']:
+                            data[i]['exchange_rate'] = 1 / payment['source_exchange_rate']
+                        elif payment['paid_to_account_currency'] == filters['currency']:
+                            data[i]['exchange_rate'] = 1 / payment['target_exchange_rate']
+                    elif payment['paid_to'] == record['account']:
+                        if payment['paid_to_account_currency'] == filters['currency']:
+                            data[i]['exchange_rate'] = 1 / payment['target_exchange_rate']
+                        elif payment['paid_from_account_currency'] == filters['currency']:
+                            data[i]['exchange_rate'] = 1 / payment['source_exchange_rate']
                 elif record['document_type'] == "Journal Entry":
-                    journal_entry = frappe.get_doc("Journal Entry", record['account'])
-                    if not journal_entry.multi_currency:
-                        exchange_rate = journal_entry.auction_bid_rate
-                    else:
+                    if get_record_value(record, "multi_currency"):
                         totals = {
                             'count': 0,
                             'exchange_total': 0
                         }
-                        for row in journal_entry.accounts:
-                            if row.account_currency == filters['currency']:
+                        accounts = frappe.db.sql(f"""
+                            select
+                                account_currency,
+                                exchange_rate
+                            from
+                                `tabJournal Entry Account`
+                            where
+                                parent = '{record['account']}';
+                        """, as_dict=True)
+                        for row in accounts:
+                            if row['account_currency'] == filters['currency']:
                                 totals['count'] += 1
-                                totals['exchange_total'] += 1 / row.exchange_rate
+                                totals['exchange_total'] += 1 / row['exchange_rate']
                         if totals['count'] and totals['exchange_total']:
-                            exchange_rate = totals['exchange_total'] / totals['count']
-                        else:
-                            exchange_rate = journal_entry.auction_bid_rate
+                            data[i]['exchange_rate'] = totals['exchange_total'] / totals['count']
                 else:
-                    exchange_rate = frappe.get_value(
-                        record['document_type'],
-                        record['account'],
-                        "auction_bid_rate"
-                    )
-                data[i][deb_col] = data[i][base_deb_col] * exchange_rate
-                data[i][cre_col] = data[i][base_cre_col] * exchange_rate
+                    doc = frappe.get_doc(record['document_type'], record['account'])
+                    if hasattr(doc, "currency") and hasattr(doc, "conversion_rate"):
+                        if doc.currency == filters['currency']:
+                            data[i]['exchange_rate'] = 1 / get_record_value(
+                                record,
+                                "conversion_rate"
+                            )
+
+                data[i][deb_col] = data[i][base_deb_col] * data[i]['exchange_rate']
+                data[i][cre_col] = data[i][base_cre_col] * data[i]['exchange_rate']
     else:
         data.extend(frappe.db.sql(f"""\
             select
@@ -512,3 +537,13 @@ def get_account_data(account: 'dict[str,]', filters: 'dict[str,]') -> list:
         data[i]['indent'] = account['indent'] + 1
 
     return data
+
+
+def get_record_value(record: dict, field: str) -> Any:
+    "Simplification of the frappe.get_value() method."
+
+    return frappe.get_value(
+        record['document_type'],
+        record['account'],
+        field
+    )
