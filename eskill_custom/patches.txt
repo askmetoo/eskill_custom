@@ -1,1 +1,3 @@
 eskill_custom.patches.v1_4_1.update_incorrect_auction_rates_in_documents
+eskill_custom.patches.v2_0_0.set_auction_rate_in_gl_entries
+eskill_custom.patches.v2_0_0.delete_old_auction_bid_rate_fields
