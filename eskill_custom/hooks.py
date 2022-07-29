@@ -103,13 +103,16 @@ doctype_js = {
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
+doc_events = {
 # 	"*": {
 # 		"on_update": "method",
 # 		"on_cancel": "method",
 #               "on_trash": "method"
-#	}
-# }
+#	},
+    'GL Entry': {
+        'before_insert': "eskill_custom.crud_events.gl_entry.set_auction_bid_rate"
+    }
+}
 
 # Scheduled Tasks
 # ---------------
