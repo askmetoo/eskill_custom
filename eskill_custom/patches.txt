@@ -1,3 +1,9 @@
 eskill_custom.patches.v1_4_1.update_incorrect_auction_rates_in_documents
 eskill_custom.patches.v2_0_0.set_auction_rate_in_gl_entries
 eskill_custom.patches.v2_0_0.delete_old_auction_bid_rate_fields
+eskill_custom.patches.v2_0_0.delete_sales_person_custom_fields
+execute:frappe.delete_doc_if_exists("Custom Field", "Address-tax_category")
+execute:frappe.delete_doc_if_exists("Custom Field", "Contact-is_billing_contact")
+execute:frappe.delete_doc_if_exists("Custom Field", "Customer-customer_code")
+execute:frappe.delete_doc_if_exists("Custom Field", "Supplier-supplier_code")
+execute:frappe.delete_doc_if_exists("DocType", "test")
