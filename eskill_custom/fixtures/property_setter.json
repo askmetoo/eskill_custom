@@ -6245,7 +6245,7 @@
   "doctype": "Property Setter",
   "doctype_or_field": "DocType",
   "field_name": null,
-  "modified": "2022-06-06 11:05:10.808688",
+  "modified": "2022-08-04 10:32:28.739042",
   "name": "Stock Entry-main-default_print_format",
   "parent": null,
   "parentfield": null,
@@ -6253,7 +6253,7 @@
   "property": "default_print_format",
   "property_type": "Data",
   "row_name": null,
-  "value": "Service Order Parts Movement"
+  "value": "Eskill Stock Entry"
  },
  {
   "default_value": null,
