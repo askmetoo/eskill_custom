@@ -1,7 +1,7 @@
 // Generate a QR code for the Serial Number History Print Format and provide popout asking for confirmation for printing it
 function generate_serial_history_qr(serial_number) {
     frappe.call({
-        method: "eskill_custom.utils.qr_code_generation.generate_serial_qr",
+        method: "eskill_custom.utils.qr_code_generation.generate_serial_history_qr",
         args: {
             serial_number: serial_number,
             site: window.origin
