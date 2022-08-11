@@ -1,6 +1,10 @@
 // Copyright (c) 2021, Eskill Trading and contributors
 // For license information, please see license.txt
 
+frappe.require([
+    "/assets/eskill_custom/js/qr_code_generation.js"
+]);
+
 
 frappe.form.link_formatters['Customer'] = (value, doc) => {
     if (value && doc.customer_name && (doc.customer_name != value)) {
@@ -75,7 +79,11 @@ frappe.ui.form.on('Service Device', {
     add_counter_readings(frm, cdt, cdn) {
         add_device_readings(frm, cdn, locals[cdt][cdn].serial_number);
     },
-    
+
+    generate_serial_no_qr(frm, cdt, cdn) {
+        generate_serial_history_qr(locals[cdt][cdn].serial_number);
+    },
+
     model(frm, cdt, cdn) {
         if (locals[cdt][cdn].serial_number) {
             locals[cdt][cdn].serial_number = undefined;
