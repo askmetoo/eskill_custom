@@ -2,6 +2,7 @@
 # For license information, please see license.txt
 
 from datetime import date
+from eskill_custom.report_api import get_descendants
 
 import frappe
 from frappe import _
@@ -282,12 +283,32 @@ def get_data(filters: 'dict[str, ]', columns: 'list[dict]') -> list:
 
     if "cost_center" in filters:
         data = [record for record in data if record['cost_center'] == filters['cost_center']]
+
     if "customer" in filters:
         data = [record for record in data if record['customer'] == filters['customer']]
+
     if "customer_group" in filters:
         data = [record for record in data if record['customer_group'] == filters['customer_group']]
+
     if "sales_person" in filters:
-        data = [record for record in data if record['sales_person'] == filters['sales_person']]
+        descendants = get_descendants(
+            "Sales Person",
+            filters['sales_person'],
+            "parent_sales_person"
+        )
+
+        new_data = []
+        for row in data:
+            if row['sales_person']:
+                # split the sales_person field to allow for lists of sales reps
+                for rep in row['sales_person'].split(", "):
+                    if (
+                        (rep == filters['sales_person'])
+                        or (rep in descendants)
+                    ):
+                        new_data.append(row)
+
+        data = new_data
 
     for index, record in enumerate(data):
         if record['age'] <= filters['range1']:
@@ -401,8 +422,7 @@ def initialise_data(filters: 'dict[str, ]', columns: 'list[dict]'):
         left join (
             select
                 SI.name invoice,
-                ST.sales_person,
-                max(ST.allocated_amount)
+                group_concat(ST.sales_person separator ", ") sales_person
             from
                 `tabSales Invoice` SI
             join
