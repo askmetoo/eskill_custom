@@ -10,6 +10,7 @@
   "serial_number",
   "warranty_status",
   "column_break_5",
+  "generate_serial_no_qr",
   "serial_no_report",
   "add_counter_readings",
   "warranty_date_update",
@@ -98,11 +99,17 @@
    "fieldname": "add_counter_readings",
    "fieldtype": "Button",
    "label": "Add Counter Readings"
+  },
+  {
+   "depends_on": "eval: (doc.serial_number);",
+   "fieldname": "generate_serial_no_qr",
+   "fieldtype": "Button",
+   "label": "Generate Serial No QR"
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2022-06-13 10:49:20.591931",
+ "modified": "2022-08-11 15:21:19.621111",
  "modified_by": "Administrator",
  "module": "Eskill Customisations",
  "name": "Service Device",

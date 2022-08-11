@@ -3,8 +3,9 @@
 
 
 frappe.require([
-    '/assets/eskill_custom/js/common.js',
-    '/assets/eskill_custom/js/selling.js'
+    "/assets/eskill_custom/js/common.js",
+    "/assets/eskill_custom/js/qr_code_generation.js",
+    "/assets/eskill_custom/js/selling.js"
 ]);
 
 
@@ -281,6 +282,10 @@ frappe.ui.form.on('Service Device', {
 
     add_counter_readings(frm, cdt, cdn) {
         add_device_readings(frm, cdn, locals[cdt][cdn].serial_number);
+    },
+
+    generate_serial_no_qr(frm, cdt, cdn) {
+        generate_serial_history_qr(locals[cdt][cdn].serial_number);
     },
 
     model(frm, cdt, cdn) {
