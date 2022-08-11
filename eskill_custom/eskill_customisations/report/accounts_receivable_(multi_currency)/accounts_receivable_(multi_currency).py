@@ -284,6 +284,9 @@ def get_data(filters: 'dict[str, ]', columns: 'list[dict]') -> list:
     if "cost_center" in filters:
         data = [record for record in data if record['cost_center'] == filters['cost_center']]
 
+    if "account_currency" in filters:
+        data = [record for record in data if record['currency'] == filters['account_currency']]
+
     if "customer" in filters:
         data = [record for record in data if record['customer'] == filters['customer']]
 
