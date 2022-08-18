@@ -236,3 +236,19 @@ def update_service_order(delivery_name: str):
                 quotation.notify_update()
     except:
         pass
+
+
+@frappe.whitelist()
+def update_warranty_swap_out(delivery_name: str):
+    "Updates information on the warranty swap out to indicate delivery."
+
+    delivery = frappe.get_doc("Delivery Note", delivery_name)
+    warranty_swap_out = frappe.get_doc("Warranty Swap Out", delivery.warranty_swap_out)
+
+    warranty_swap_out.db_set("status", "Processed")
+
+    warranty_swap_out.add_comment(
+        comment_type="Info",
+        text="delivered the swap out device."
+    )
+    warranty_swap_out.notify_update()
