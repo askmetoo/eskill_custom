@@ -12,6 +12,7 @@
   "customer",
   "amended_from",
   "column_break_6",
+  "status",
   "service_order",
   "service_device",
   "approved",
@@ -22,9 +23,7 @@
   "serial_no_in",
   "outgoing_device_section",
   "model_out",
-  "serial_no_out",
-  "column_break_12",
-  "delivery_out"
+  "serial_no_out"
  ],
  "fields": [
   {
@@ -96,10 +95,6 @@
    "label": "Outgoing Device"
   },
   {
-   "fieldname": "column_break_12",
-   "fieldtype": "Column Break"
-  },
-  {
    "fieldname": "model_in",
    "fieldtype": "Link",
    "label": "Model In",
@@ -154,15 +149,7 @@
    "fieldname": "approved",
    "fieldtype": "Check",
    "label": "Approved",
-   "permlevel": 1
-  },
-  {
-   "allow_in_quick_entry": 1,
-   "fieldname": "delivery_out",
-   "fieldtype": "Link",
-   "in_preview": 1,
-   "label": "Delivery Out",
-   "options": "Delivery Note",
+   "permlevel": 1,
    "read_only": 1
   },
   {
@@ -173,13 +160,22 @@
    "fieldname": "swap_out_reason",
    "fieldtype": "Text Editor",
    "label": "Swap Out Reason"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "Pending Processing",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Status",
+   "options": "Pending Processing\nProcessed"
   }
  ],
  "in_create": 1,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-05-13 15:15:32.449317",
+ "modified": "2022-08-18 09:16:36.557389",
  "modified_by": "Administrator",
  "module": "Eskill Customisations",
  "name": "Warranty Swap Out",
@@ -227,6 +223,29 @@
    "role": "Support Team",
    "share": 1,
    "write": 1
+  },
+  {
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Support Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Support Team",
+   "share": 1
   }
  ],
  "sort_field": "modified",

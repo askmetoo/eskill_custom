@@ -39,6 +39,10 @@ frappe.ui.form.on('Delivery Note', {
     },
         
     on_submit(frm) {
+        if (frm.doc.warranty_swap_out) {
+            update_warranty_swap_out(frm);
+        }
+
         if (frm.doc.service_order) {
             update_service_order(frm);
             if (frm.doc.goodwill) {
@@ -138,6 +142,18 @@ function update_service_order(frm) {
     if (frm.doc.service_order) {
         frappe.call({
             method: "eskill_custom.delivery_note.update_service_order",
+            args: {
+                delivery_name: frm.doc.name
+            }
+        });
+    }
+}
+
+
+function update_warranty_swap_out(frm) {
+    if (frm.doc.warranty_swap_out) {
+        frappe.call({
+            method: "eskill_custom.delivery_note.update_warranty_swap_out",
             args: {
                 delivery_name: frm.doc.name
             }
