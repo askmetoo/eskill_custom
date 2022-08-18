@@ -3,38 +3,14 @@
 
 frappe.ui.form.on('Warranty Swap Out', {
     refresh(frm) {
-        if (frm.doc.docstatus && frm.doc.serial_no_out && !frm.doc.new_delivery_note) {
-            frm.add_custom_button(__("Issue Swap Out"), function() {
-                const delivery = frappe.model.get_new_doc("Delivery Note");
-                console.log("Delivery Note started.");
-                delivery.naming_series = "DN.########";
-                delivery.posting_date = frappe.datetime.nowdate();
-                delivery.company = "Eskill Trading (Pvt) Ltd";
-                delivery.customer = frm.doc.customer;
-                var replacement = frappe.model.add_child(delivery, "Delivery Note Item", "items");
-                frappe.model.with_doc("Item", frm.doc.model_out, function() {
-                    var item = frappe.model.get_doc("Item", frm.doc.model_out);
-                    replacement.item_code = item.name;
-                    replacement.item_name = item.item_name;
-                    replacement.description = item.description;
-                    replacement.qty = 1;
-                    replacement.schedule_date = delivery.schedule_date;
-                    replacement.uom = item.stock_uom;
-                    replacement.stock_uom = item.stock_uom;
-                    replacement.conversion_factor = 1;
-                    replacement.serial_no = frm.doc.serial_no_out;
-                    replacement.expense_account = "20400 - Warranty Claims - ET";
-                });
-                frappe.db.insert(delivery).then( function(note) {
-                    frm.doc.new_delivery_note = note.name;
-                    frm.save();
-                });
-                console.log("Delivery Note created.");
-            });
+        // allow approval of Warranty Swap Out if document has been submitted and hasn't yet been approved
+        if (frm.doc.docstatus && !frm.doc.approved) {
+            approve_swap(frm);
         }
-        if (frm.doc.new_delivery_note) {
-            
+        if (frm.doc.approved && frm.doc.status == "Pending Processing") {
+            deliver_swapped_device(frm);        
         }
+
         model_out_filter(frm);
         serial_out_filter(frm);
         product_out_read_only(frm);
@@ -50,6 +26,10 @@ frappe.ui.form.on('Warranty Swap Out', {
         if (!frm.doc.swap_out_reason) {
             frappe.throw(__("Before submitting you must provide an explanation for the swap out."));
         }
+
+        if (!frm.doc.model_out || !frm.doc.serial_no_out) {
+            frappe.throw(__("Before submitting, you must select a device to replace the customer's device."));
+        }
     },
 
     customer: function(frm) {
@@ -64,6 +44,25 @@ frappe.ui.form.on('Warranty Swap Out', {
         serial_out_filter(frm);
     }
 });
+
+
+function approve_swap(frm) {
+    frm.add_custom_button(__("Approve"), () => {
+        frm.set_value("approved", 1).then(() => {
+            frm.save_or_update();
+        });
+    });
+}
+
+
+function deliver_swapped_device(frm) {
+    frm.add_custom_button("Delivery Note", () => {
+        frappe.model.open_mapped_doc({
+            method: "eskill_custom.eskill_customisations.doctype.warranty_swap_out.warranty_swap_out.generate_delivery",
+            frm: frm,
+        });
+    });
+}
 
 
 function model_out_filter(frm) {
