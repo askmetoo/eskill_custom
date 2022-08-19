@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
+from frappe import __version__ as frappe_version
+
 from . import __version__ as app_version
 
 app_name = "eskill_custom"
@@ -18,7 +21,14 @@ app_license = "MIT"
 app_include_css = [
     "/assets/eskill_custom/css/form.css"
 ]
-# app_include_js = "/assets/eskill_custom/js/eskill_custom.js"
+
+app_include_js = ([
+    "interface.bundle.js",
+] if int(frappe_version.split('.', maxsplit=1)[0]) > 13
+else [
+    "/assets/js/interface.js",
+])
+
 
 # include js, css files in header of web template
 # web_include_css = "/assets/eskill_custom/css/eskill_custom.css"
