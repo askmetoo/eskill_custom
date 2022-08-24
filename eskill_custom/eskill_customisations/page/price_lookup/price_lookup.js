@@ -1,4 +1,8 @@
+// specification of borders used in the table for uniformity
 const BORDER_SPEC = "solid 3px var(--border-color)"
+
+// tax rate used for calculating the minimum selling price
+const TAX_RATE = 1.145;
 
 frappe.pages['price-lookup'].on_page_load = function(wrapper) {
 	let page = frappe.ui.make_app_page({
@@ -49,19 +53,29 @@ class PriceLookupPage {
 		this.wrapper = wrapper;
 		this.page = wrapper.page;
 		this.body = $(this.wrapper).find(".price-lookup");
+		this.min_gp_rate = 1;
 		this.make();
 		this.get_data();
 	}
 
 	make() {
-		let parent = this;
+		const parent = this;
 		this.page.item_field = this.page.add_field({
-			fieldname: 'item_code',
-			label: __('Item'),
-			fieldtype:'Link',
-			options:'Item',
+			fieldname: "item_code",
+			label: __("Item"),
+			fieldtype: "Link",
+			options: "Item",
 			change() {
-				parent.get_data();
+				frappe.call({
+					method: "eskill_custom.eskill_customisations.page.price_lookup.price_lookup.get_gp_rate",
+					args: {
+						item_code: this.value
+					},
+					callback(response) {
+						parent.min_gp_rate = response.message;
+						parent.get_data();
+					}
+				});
 			}
 		});
 	}
@@ -90,6 +104,8 @@ class PriceLookupPage {
 					continue;
 				}
 
+				const selling_price = current_bin.valuation_rate * TAX_RATE * this.min_gp_rate;
+
 				table_rows.push(`
 					<tr>
 						<td class="column-content">
@@ -104,8 +120,11 @@ class PriceLookupPage {
 						<td class="column-content column-content-number">
 							${current_bin.ordered_qty}
 						</td>
-						<td class="column-content column-right">
+						<td class="column-content">
 							${frappe.format(current_bin.valuation_rate, {fieldtype: "Currency"})}
+						</td>
+						<td class="column-content column-right">
+							${frappe.format(selling_price, {fieldtype: "Currency"})}
 						</td>
 					</tr>
 				`)
@@ -129,8 +148,11 @@ class PriceLookupPage {
 									<td class="column-head">
 										Ordered Qty
 									</td>
-									<td class="column-head column-right">
+									<td class="column-head">
 										Cost Price
+									</td>
+									<td class="column-head column-right">
+										Min. Selling Price
 									</td>
 								</tr>
 							</thead>
