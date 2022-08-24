@@ -5,7 +5,6 @@ frappe.require([
 
 frappe.ui.form.on('Sales Invoice', {
     refresh(frm) {
-        stock_item_filter(frm);
         tax_template_filter(frm);
         setTimeout(() => {
             frm.remove_custom_button("Work Order", 'Create');
@@ -18,9 +17,6 @@ frappe.ui.form.on('Sales Invoice', {
     
     before_save(frm) {
         set_tax_template(frm);
-        if (frm.doc.stock_item) {
-            frm.doc.stock_item = undefined;
-        }
     },
 
     validate(frm) {
@@ -67,14 +63,6 @@ frappe.ui.form.on('Sales Invoice', {
 
     is_return(frm) {
         naming_series_set(frm);
-    },
-
-    search(frm) {
-        if (frm.doc.stock_item) {
-            stock_lookup(frm);
-        } else {
-            frappe.throw("You must select a stocked item before performing a stock lookup.");
-        }
     },
 
     usd_to_currency(frm) {

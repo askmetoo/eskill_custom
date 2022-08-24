@@ -5,7 +5,6 @@ frappe.require([
 
 frappe.ui.form.on('Quotation', {
     refresh(frm) {
-        stock_item_filter(frm);
         tax_template_filter(frm);
         link_service_order(frm);
         fetch_default_currency(frm);
@@ -13,9 +12,6 @@ frappe.ui.form.on('Quotation', {
 
     before_save(frm) {
         set_tax_template(frm);
-        if (frm.doc.stock_item) {
-            frm.doc.stock_item = undefined;
-        }
     },
 
     validate(frm) {
@@ -42,14 +38,6 @@ frappe.ui.form.on('Quotation', {
 
     quotation_to(frm) {
         fetch_default_currency(frm);
-    },
-
-    search(frm) {
-        if (frm.doc.stock_item) {
-            stock_lookup(frm);
-        } else {
-            frappe.throw("You must select a stocked item before performing a stock lookup.");
-        }
     },
 
     usd_to_currency(frm) {

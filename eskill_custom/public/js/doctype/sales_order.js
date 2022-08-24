@@ -5,16 +5,12 @@ frappe.require([
 
 frappe.ui.form.on('Sales Order', {
     refresh(frm) {
-        stock_item_filter(frm);  
         tax_template_filter(frm);
     },
     
     before_save(frm) {
         set_items_delivery_date(frm);
         set_tax_template(frm);
-        if (frm.doc.stock_item) {
-            frm.doc.stock_item = undefined;
-        }
     },
 
     validate(frm) {
@@ -35,10 +31,6 @@ frappe.ui.form.on('Sales Order', {
 
     currency(frm) {
         set_tax_template(frm);
-    },
-    
-    search(frm) {
-        stock_lookup(frm);
     },
 
     usd_to_currency(frm) {

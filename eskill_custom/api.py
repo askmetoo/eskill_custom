@@ -149,23 +149,6 @@ def sales_invoice_tax(doctype, currency, customer = None):
 
 
 @frappe.whitelist()
-def stock_lookup(item):
-    "Returns stock locations and quantities."
-
-    items = [
-        {
-            'warehouse': record['warehouse'],
-            'reserved_qty': record['reserved_qty'],
-            'actual_qty': record['actual_qty'],
-            'valuation_rate': record['valuation_rate']
-        }
-        for record in get_stock_levels(item_code=item)
-    ]
-
-    return items
-
-
-@frappe.whitelist()
 def auction_rate_lookup(posting_date: str) -> float:
     "Returns the auction rate at the date of SI posting."
 

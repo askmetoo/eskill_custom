@@ -76,6 +76,7 @@ frappe.ui.form.on('Service Order', {
         }
         limit_devices_table(frm);
         limit_editing_readings_table(frm);
+        eskill_custom.form.check_price({frm: frm, item_field: "part"})
         model_filter(frm);
         serial_filter(frm);
         sla_filter(frm);
@@ -254,10 +255,6 @@ frappe.ui.form.on('Service Order', {
             frm.set_value("job_type", "Billable");
             frm.set_value("goodwill", 0);
         }
-    },
-
-    search(frm) {
-        stock_lookup(frm);
     },
 });
 

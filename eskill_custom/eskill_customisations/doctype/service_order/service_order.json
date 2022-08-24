@@ -37,10 +37,6 @@
   "device_reading",
   "section_break_23",
   "fault_report",
-  "stock_lookup_section",
-  "stock_item",
-  "column_break_27",
-  "search",
   "section_break_29",
   "time_taken",
   "section_break_31",
@@ -129,13 +125,13 @@
   {
    "collapsible_depends_on": "eval: (!doc.docstatus);",
    "fieldname": "section_break_23",
-   "fieldtype": "Section Break",
-   "label": "Fault Report"
+   "fieldtype": "Section Break"
   },
   {
    "allow_on_submit": 1,
    "fieldname": "fault_report",
    "fieldtype": "Text Editor",
+   "label": "Fault Report",
    "read_only_depends_on": "eval: (doc.job_status == \"Closed\");"
   },
   {
@@ -150,28 +146,6 @@
    "fieldtype": "Text Editor",
    "label": "Resolution Details",
    "read_only_depends_on": "eval: (doc.job_status != \"Open\");"
-  },
-  {
-   "collapsible": 1,
-   "fieldname": "stock_lookup_section",
-   "fieldtype": "Section Break",
-   "label": "Stock Lookup"
-  },
-  {
-   "allow_on_submit": 1,
-   "fieldname": "stock_item",
-   "fieldtype": "Link",
-   "label": "Stock Item",
-   "options": "Item"
-  },
-  {
-   "fieldname": "column_break_27",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "search",
-   "fieldtype": "Button",
-   "label": "Search"
   },
   {
    "depends_on": "eval: (doc.docstatus);",
@@ -417,7 +391,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-07-06 11:50:31.907108",
+ "modified": "2022-08-24 13:20:55.067249",
  "modified_by": "Administrator",
  "module": "Eskill Customisations",
  "name": "Service Order",
