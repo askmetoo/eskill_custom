@@ -1,11 +1,6 @@
-frappe.require([
-    '/assets/eskill_custom/js/common.js',
-    '/assets/eskill_custom/js/selling.js'
-]);
-
 frappe.ui.form.on('Delivery Note', {
     refresh(frm) {
-        tax_template_filter(frm);
+        eskill_custom.form.selling.tax_template_filter(frm);
         if (frm.doc.service_order && frm.doc.docstatus == 1 && frm.doc.status == "To Bill") {
             setTimeout(() => {
                 frm.remove_custom_button("Sales Invoice", 'Create');
@@ -20,6 +15,7 @@ frappe.ui.form.on('Delivery Note', {
         if (frm.doc.customer && frm.doc.currency && !frm.doc.taxes_and_charges && !frm.doc.taxes.length) {
             set_tax_template(frm);
         }
+        eskill_custom.form.common.check_price(frm);
     },
     
     before_save(frm) {
@@ -27,7 +23,7 @@ frappe.ui.form.on('Delivery Note', {
     },
 
     validate(frm) {
-        validate_line_item_gp(frm);
+        eskill_custom.form.selling.validate_line_item_gp(frm);
     },
 
     after_save(frm) {
@@ -66,7 +62,7 @@ frappe.ui.form.on('Delivery Note', {
     },
 
     conversion_rate(frm) {
-        convert_selected_to_base(frm);
+        eskill_custom.form.common.convert_selected_to_base(frm);
     },
 
     currency(frm) {
@@ -80,7 +76,7 @@ frappe.ui.form.on('Delivery Note', {
     },
 
     usd_to_currency(frm) {
-        convert_base_to_selected(frm);
+        eskill_custom.form.common.convert_base_to_selected(frm);
     }
 });
 

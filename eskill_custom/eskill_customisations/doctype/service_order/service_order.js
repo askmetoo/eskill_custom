@@ -3,9 +3,7 @@
 
 
 frappe.require([
-    "/assets/eskill_custom/js/common.js",
     "/assets/eskill_custom/js/qr_code_generation.js",
-    "/assets/eskill_custom/js/selling.js"
 ]);
 
 
@@ -76,7 +74,7 @@ frappe.ui.form.on('Service Order', {
         }
         limit_devices_table(frm);
         limit_editing_readings_table(frm);
-        eskill_custom.form.check_price({frm: frm, item_field: "part"})
+        eskill_custom.form.common.check_price({frm: frm, item_field: "part"})
         model_filter(frm);
         serial_filter(frm);
         sla_filter(frm);
@@ -835,7 +833,6 @@ function warehouse_filter(frm) {
 
 
 function warranty_update(frm, model, serial_number) {
-    check_save(frm);
     var warranty_get, item_warranty;
     frappe.run_serially([
         () => warranty_get = frappe.db.get_value("Item", model, "warranty_period"),

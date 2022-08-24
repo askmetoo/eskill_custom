@@ -1,14 +1,6 @@
-// Get current doctype and apply given form script overrides
-route = frappe.get_route()
-if (route[0] == "Form") {
-    frappe.ui.form.on(route[1], {
-        refresh(frm) {
-            document_gp_lookup(frm);
-        }
-    });
-}
+frappe.provide("eskill_custom.form.selling");
 
-function document_gp_lookup(frm) {
+eskill_custom.form.selling.document_gp_lookup = (frm) => {
     if (frm.fields_dict.hasOwnProperty("items") && frm.doctype != "Service Order") {
         frm.add_custom_button(__("Document GP"), () => {
             if (frm.doc.items.length) {
@@ -34,7 +26,7 @@ function document_gp_lookup(frm) {
     }
 }
 
-function set_tax_template(frm) {
+eskill_custom.form.selling.set_tax_template = (frm) => {
     if (frm.doc.customer && frm.doc.currency) {
         frappe.call({
             method: "eskill_custom.api.sales_invoice_tax",
@@ -58,7 +50,7 @@ function set_tax_template(frm) {
     }
 }
 
-function tax_template_filter(frm) {
+eskill_custom.form.selling.tax_template_filter = (frm) => {
     frm.fields_dict.taxes_and_charges.get_query = function() {
         return {
             filters: [
@@ -68,7 +60,7 @@ function tax_template_filter(frm) {
     };
 }
 
-function validate_line_item_gp(frm) {
+eskill_custom.form.selling.validate_line_item_gp = (frm) => {
     if (!frm.doc.is_return && !frm.is_new()) {
         frappe.call({
             method: "eskill_custom.api.validate_line_item_gp",

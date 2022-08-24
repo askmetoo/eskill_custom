@@ -1,11 +1,6 @@
-frappe.require([
-    '/assets/eskill_custom/js/common.js', 
-    '/assets/eskill_custom/js/selling.js'
-]);
-
 frappe.ui.form.on('Sales Invoice', {
     refresh(frm) {
-        tax_template_filter(frm);
+        eskill_custom.form.selling.tax_template_filter(frm);
         setTimeout(() => {
             frm.remove_custom_button("Work Order", 'Create');
             frm.remove_custom_button("Project", 'Create'); 
@@ -13,14 +8,15 @@ frappe.ui.form.on('Sales Invoice', {
             frm.remove_custom_button("Return / Credit Note", 'Create');
         }, 500);
         naming_series_set(frm);
+        eskill_custom.form.common.check_price(frm);
     },
     
     before_save(frm) {
-        set_tax_template(frm);
+        eskill_custom.form.selling.set_tax_template(frm);
     },
 
     validate(frm) {
-        validate_line_item_gp(frm);
+        eskill_custom.form.selling.validate_line_item_gp(frm);
         validate_advance_payment_rate(frm);
     },
 
@@ -48,17 +44,17 @@ frappe.ui.form.on('Sales Invoice', {
     },
 
     conversion_rate(frm) {
-        convert_selected_to_base(frm);
+        eskill_custom.form.common.convert_selected_to_base(frm);
     },
 
     currency(frm) {
         if (frm.doc.customer) {
-            set_tax_template(frm);
+            eskill_custom.form.selling.set_tax_template(frm);
         }
     },
 
     customer(frm) {
-        set_tax_template(frm);
+        eskill_custom.form.selling.set_tax_template(frm);
     },
 
     is_return(frm) {
@@ -66,7 +62,7 @@ frappe.ui.form.on('Sales Invoice', {
     },
 
     usd_to_currency(frm) {
-        convert_base_to_selected(frm);
+        eskill_custom.form.common.convert_base_to_selected(frm);
     }
 });
 

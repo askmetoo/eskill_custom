@@ -1,27 +1,18 @@
-// Map keyboard shortcut 'Ctrl + P' for printing
-frappe.ui.keys.on('ctrl+p', function(e) {
-    e.preventDefault();
-    e.currentTarget.cur_frm.print_doc();
-    return false;
-});
+frappe.provide("eskill_custom.form.common")
 
-// Get current doctype and apply given form script overrides
-route = frappe.get_route()
-if (route[0] == "Form") {
-    frappe.ui.form.on(route[1], {
-        refresh(frm) {
-            stock_availability(frm);
-        }
-    });
-}
-
-function check_save(frm) {
-    if (frm.is_dirty()) {
-        frm.save();
+eskill_custom.form.common.check_price = ({frm, table = "items", item_field = "item_code"} = {}) => {
+    // the default table is "items" and the default item field is "item_code"
+    if (frm.fields_dict.hasOwnProperty(table)) {
+        frm.get_field(table).grid.add_custom_button(__("Check Price"), () => {
+            const selected = frm.get_field(table).grid.get_selected_children();
+            if (selected.length > 0 && selected[0].hasOwnProperty(item_field)) {
+                eskill_custom.ui.price_dialog.update_window(selected[0][item_field]);
+            }
+        });
     }
 }
 
-function convert_base_to_selected(frm) {
+eskill_custom.form.common.convert_base_to_selected = (frm) => {
     if (frm.doc.usd_to_currency) {
         frm.set_value('conversion_rate', roundNumber(1 / frm.doc.usd_to_currency, 9));
     } else {
@@ -29,7 +20,7 @@ function convert_base_to_selected(frm) {
     }
 }
 
-function convert_selected_to_base(frm) {
+eskill_custom.form.common.convert_selected_to_base = (frm) => {
     if (frm.doc.conversion_rate) {
         frm.doc.usd_to_currency = roundNumber(1 / frm.doc.conversion_rate, 4);
         frm.refresh_field('usd_to_currency');
@@ -38,7 +29,7 @@ function convert_selected_to_base(frm) {
     }
 }
 
-function stock_availability(frm) {
+eskill_custom.form.common.stock_availability = (frm) => {
     if (frm.fields_dict.hasOwnProperty("items")) {
         frm.add_custom_button(__("Stock Availability"), () => {
             if (frm.doc.items.length) {

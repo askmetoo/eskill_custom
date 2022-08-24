@@ -24,9 +24,11 @@ app_include_css = [
 
 app_include_js = ([
     "interface.bundle.js",
+    "form.bundle.js"
 ] if int(frappe_version.split('.', maxsplit=1)[0]) > 13
 else [
     "/assets/js/interface.js",
+    "/assets/js/eskill_form.js"
 ])
 
 

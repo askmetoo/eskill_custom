@@ -1,13 +1,9 @@
-frappe.require([
-    '/assets/eskill_custom/js/common.js',
-    '/assets/eskill_custom/js/selling.js'
-]);
-
 frappe.ui.form.on('Quotation', {
     refresh(frm) {
-        tax_template_filter(frm);
+        eskill_custom.form.selling.tax_template_filter(frm);
         link_service_order(frm);
         fetch_default_currency(frm);
+        eskill_custom.form.common.check_price(frm);
     },
 
     before_save(frm) {
@@ -15,7 +11,7 @@ frappe.ui.form.on('Quotation', {
     },
 
     validate(frm) {
-        validate_line_item_gp(frm);
+        eskill_custom.form.selling.validate_line_item_gp(frm);
     },
 
     before_submit(frm) {
@@ -23,7 +19,7 @@ frappe.ui.form.on('Quotation', {
     },
 
     conversion_rate(frm) {
-        convert_selected_to_base(frm);
+        eskill_custom.form.common.convert_selected_to_base(frm);
     },
 
     currency(frm) {
@@ -41,7 +37,7 @@ frappe.ui.form.on('Quotation', {
     },
 
     usd_to_currency(frm) {
-        convert_base_to_selected(frm);
+        eskill_custom.form.common.convert_base_to_selected(frm);
     }
 });
 
@@ -96,14 +92,14 @@ function link_service_order(frm) {
 
 // Overwrites library function due to difference in field name for customer
 function set_tax_template(frm) {
-    let args = {
+    const args = {
         "doctype": frm.doctype,
         "currency": frm.doc.currency,
-    }
+    };
 
     // this is to allow for quotes without a customer account, i.e. quotes generated from leads
     if (frm.doc.quotation_to == "Customer") {
-        args.customer = frm.doc.party_name
+        args.customer = frm.doc.party_name;
     }
 
     frappe.call({

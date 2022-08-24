@@ -1,4 +1,8 @@
 frappe.ui.form.on("Material Request", {
+    refresh(frm) {
+        eskill_custom.form.common.check_price(frm);
+    },
+
     after_cancel(frm) {
         if (frm.doc.service_order) {
             frappe.call({
