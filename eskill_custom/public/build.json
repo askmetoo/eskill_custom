@@ -1,0 +1,7 @@
+{
+    "js/interface.js": ["public/js/interface.bundle.js"],
+    "js/eskill_form.js": [
+        "public/js/form/common.bundle.js",
+        "public/js/form/selling.bundle.js"
+    ]
+}

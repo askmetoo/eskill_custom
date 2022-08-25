@@ -1,7 +1,3 @@
-frappe.require([
-    '/assets/eskill_custom/js/common.js'
-]);
-
 frappe.ui.form.on('Stock Reconciliation', {
     on_submit(frm) {
         update_stocktake_summary(frm);

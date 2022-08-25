@@ -1,0 +1,32 @@
+[
+ {
+  "action": "eskill_custom.ui.price_dialog.open()",
+  "docstatus": 0,
+  "doctype": "Navbar Item",
+  "hidden": 0,
+  "is_standard": 0,
+  "item_label": "Price Lookup",
+  "item_type": "Action",
+  "modified": "2022-08-25 08:48:18.893636",
+  "name": "760de84125",
+  "parent": "Navbar Settings",
+  "parentfield": "settings_dropdown",
+  "parenttype": "Navbar Settings",
+  "route": null
+ },
+ {
+  "action": null,
+  "docstatus": 0,
+  "doctype": "Navbar Item",
+  "hidden": 0,
+  "is_standard": 0,
+  "item_label": null,
+  "item_type": "Separator",
+  "modified": "2022-08-25 08:48:18.893636",
+  "name": "8c5c0e3d2c",
+  "parent": "Navbar Settings",
+  "parentfield": "settings_dropdown",
+  "parenttype": "Navbar Settings",
+  "route": null
+ }
+]

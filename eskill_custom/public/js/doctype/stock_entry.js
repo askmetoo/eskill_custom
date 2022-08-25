@@ -1,9 +1,8 @@
-frappe.require([
-    '/assets/eskill_custom/js/common.js'
-]);
-
-
 frappe.ui.form.on('Stock Entry', {
+    refresh(frm) {
+        eskill_custom.form.common.check_price(frm);
+    },
+
     on_submit(frm) {
         if (frm.doc.stock_entry_type == "Material Transfer") {
             release_parts(frm);

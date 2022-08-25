@@ -1,0 +1,24 @@
+{
+ "content": null,
+ "creation": "2022-08-17 13:53:21.157033",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2022-08-17 14:25:15.127572",
+ "modified_by": "Administrator",
+ "module": "Eskill Customisations",
+ "name": "price-lookup",
+ "owner": "Administrator",
+ "page_name": "price-lookup",
+ "restrict_to_domain": "",
+ "roles": [
+  {
+   "role": "Employee"
+  }
+ ],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 0,
+ "title": ""
+}

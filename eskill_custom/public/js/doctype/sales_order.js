@@ -1,48 +1,36 @@
-frappe.require([
-    '/assets/eskill_custom/js/common.js', 
-    '/assets/eskill_custom/js/selling.js'
-]);
-
 frappe.ui.form.on('Sales Order', {
     refresh(frm) {
-        stock_item_filter(frm);  
-        tax_template_filter(frm);
+        eskill_custom.form.selling.tax_template_filter(frm);
+        eskill_custom.form.common.check_price({frm: frm});
     },
     
     before_save(frm) {
         set_items_delivery_date(frm);
-        set_tax_template(frm);
-        if (frm.doc.stock_item) {
-            frm.doc.stock_item = undefined;
-        }
+        eskill_custom.form.selling.set_tax_template(frm);
     },
 
     validate(frm) {
-        validate_line_item_gp(frm);
+        eskill_custom.form.selling.validate_line_item_gp(frm);
     },
 
     before_submit(frm) {
-        set_tax_template(frm);
+        eskill_custom.form.selling.set_tax_template(frm);
     },
 
     conversion_rate(frm) {
-        convert_selected_to_base(frm);
+        eskill_custom.form.common.convert_selected_to_base(frm);
     },
 
     customer(frm) {
-        set_tax_template(frm);
+        eskill_custom.form.selling.set_tax_template(frm);
     },
 
     currency(frm) {
-        set_tax_template(frm);
-    },
-    
-    search(frm) {
-        stock_lookup(frm);
+        eskill_custom.form.selling.set_tax_template(frm);
     },
 
     usd_to_currency(frm) {
-        convert_base_to_selected(frm);
+        eskill_custom.form.common.convert_base_to_selected(frm);
     }
 });
 
