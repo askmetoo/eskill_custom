@@ -184,6 +184,12 @@ fixtures = [
         'filters': [
             ["custom", "=", 1]
         ]
+    },
+    {
+        'dt': "Navbar Item",
+        'filters': [
+            ["is_standard", "=", 0]
+        ]
     }
 ]
 
