@@ -2,6 +2,8 @@ frappe.ui.form.on('Sales Order', {
     refresh(frm) {
         eskill_custom.form.selling.tax_template_filter(frm);
         eskill_custom.form.common.check_price({frm: frm});
+        eskill_custom.form.selling.document_gp_lookup(frm);
+        eskill_custom.form.common.stock_availability(frm);
     },
     
     before_save(frm) {

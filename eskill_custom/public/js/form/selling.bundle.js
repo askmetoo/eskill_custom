@@ -16,7 +16,7 @@ eskill_custom.form.selling.document_gp_lookup = (frm) => {
                 frappe.call({
                     method: "eskill_custom.api.document_gp_lookup",
                     args: {
-                        doctype: route[1],
+                        doctype: frm.doctype,
                         exchange_rate: exchange_rate,
                         items: frm.doc.items
                     }

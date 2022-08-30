@@ -1,6 +1,6 @@
 frappe.ui.form.on("Material Request", {
     refresh(frm) {
-        eskill_custom.form.common.check_price(frm);
+        eskill_custom.form.common.check_price({frm: frm});
     },
 
     after_cancel(frm) {

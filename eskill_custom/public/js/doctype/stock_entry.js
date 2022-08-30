@@ -1,6 +1,7 @@
 frappe.ui.form.on('Stock Entry', {
     refresh(frm) {
-        eskill_custom.form.common.check_price(frm);
+        eskill_custom.form.common.check_price({frm: frm});
+        eskill_custom.form.common.stock_availability(frm);
     },
 
     on_submit(frm) {

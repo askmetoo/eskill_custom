@@ -8,7 +8,9 @@ frappe.ui.form.on('Sales Invoice', {
             frm.remove_custom_button("Return / Credit Note", 'Create');
         }, 500);
         naming_series_set(frm);
-        eskill_custom.form.common.check_price(frm);
+        eskill_custom.form.common.check_price({frm: frm});
+        eskill_custom.form.selling.document_gp_lookup(frm);
+        eskill_custom.form.common.stock_availability(frm);
     },
     
     before_save(frm) {

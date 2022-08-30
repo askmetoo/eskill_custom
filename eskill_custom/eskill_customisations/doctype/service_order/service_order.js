@@ -75,6 +75,7 @@ frappe.ui.form.on('Service Order', {
         limit_devices_table(frm);
         limit_editing_readings_table(frm);
         eskill_custom.form.common.check_price({frm: frm, item_field: "part"})
+        eskill_custom.form.common.stock_availability(frm);
         model_filter(frm);
         serial_filter(frm);
         sla_filter(frm);
