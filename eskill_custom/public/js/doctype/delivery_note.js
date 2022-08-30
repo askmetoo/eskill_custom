@@ -15,7 +15,9 @@ frappe.ui.form.on('Delivery Note', {
         if (frm.doc.customer && frm.doc.currency && !frm.doc.taxes_and_charges && !frm.doc.taxes.length) {
             set_tax_template(frm);
         }
-        eskill_custom.form.common.check_price(frm);
+        eskill_custom.form.common.check_price({frm: frm});
+        eskill_custom.form.selling.document_gp_lookup(frm);
+        eskill_custom.form.common.stock_availability(frm);
     },
     
     before_save(frm) {

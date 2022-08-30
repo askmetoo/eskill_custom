@@ -1,12 +1,14 @@
 frappe.provide("eskill_custom.form.common")
 
-eskill_custom.form.common.check_price = ({frm, table = "items", item_field = "item_code"} = {}) => {
+eskill_custom.form.common.check_price = ({frm, table = "items", item_field = "item_code", base_rate_field = "base_rate"} = {}) => {
     // the default table is "items" and the default item field is "item_code"
     if (frm.fields_dict.hasOwnProperty(table)) {
         frm.get_field(table).grid.add_custom_button(__("Check Price"), () => {
             const selected = frm.get_field(table).grid.get_selected_children();
-            if (selected.length > 0 && selected[0].hasOwnProperty(item_field)) {
-                eskill_custom.ui.price_dialog.update_window(selected[0][item_field]);
+            if (selected.length > 0) {
+                item_field = selected[0].hasOwnProperty(item_field) ? item_field : undefined;
+                base_rate_field = selected[0].hasOwnProperty(base_rate_field) ? base_rate_field : undefined;
+                eskill_custom.ui.price_dialog.update_window(selected[0], item_field, base_rate_field);
             }
         });
     }
