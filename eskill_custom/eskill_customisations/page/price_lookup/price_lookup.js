@@ -68,7 +68,7 @@ class PriceLookupPage {
 					this.page.base_selling_price.set_value(current_item.item_obj[current_item.base_rate_field]);
 				}
 			}
-		}, 1000);
+		}, 5000);
 
 		// add button to resync lookup dialog with the last selected item
 		this.page.add_inner_button(__("Refresh"), () => {
