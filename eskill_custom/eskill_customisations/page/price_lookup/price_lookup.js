@@ -54,7 +54,7 @@ class PriceLookupPage {
 		this.wrapper = wrapper;
 		this.page = wrapper.page;
 		this.body = $(this.wrapper).find(".price-lookup");
-		this.min_gp_rate = 1;
+		this.min_gp_rate = 0.18;
 
 		if(!window.hasOwnProperty("current_item")) window.current_item = undefined;
 
@@ -167,8 +167,9 @@ class PriceLookupPage {
 					continue;
 				}
 
-				const selling_price = Math.ceil(current_bin.valuation_rate * TAX_RATE * this.min_gp_rate);
-				const current_gp_rate = (this.page.base_selling_price.value / TAX_RATE / current_bin.valuation_rate - 1) * 100;
+				const selling_price = Math.ceil(current_bin.valuation_rate / (1 - this.min_gp_rate) * TAX_RATE);
+				const net_price = this.page.base_selling_price.value / TAX_RATE;
+				const current_gp_rate = (net_price - current_bin.valuation_rate) / net_price;
 
 				table_rows.push(`
 					<tr>
@@ -190,8 +191,8 @@ class PriceLookupPage {
 						<td class="column-content">
 							${frappe.format(selling_price, {fieldtype: "Currency"})}
 						</td>
-						<td class="column-content column-right" ${(current_gp_rate / 100 + 1) < this.min_gp_rate ? 'style="color: red;"' : ''}>
-							${frappe.format(current_gp_rate, {fieldtype: "Percent"})}
+						<td class="column-content column-right" ${current_gp_rate < this.min_gp_rate ? 'style="color: red;"' : ''}>
+							${frappe.format(current_gp_rate * 100, {fieldtype: "Percent"})}
 						</td>
 					</tr>
 				`)
