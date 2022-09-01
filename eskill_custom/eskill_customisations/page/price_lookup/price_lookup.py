@@ -7,7 +7,7 @@ def get_gp_rate(item_code):
     "Returns the minimum gp rate of the given item code."
 
     try:
-        return (frappe.db.sql(f"""
+        return frappe.db.sql(f"""
             select
                 IG.minimum_gp
             from
@@ -16,6 +16,6 @@ def get_gp_rate(item_code):
                 `tabItem Group` IG on I.item_group = IG.name
             where
                 I.name = '{item_code}';
-        """)[0][0] / 100) + 1
+        """)[0][0] / 100
     except IndexError:
-        return 1
+        return 0.18
