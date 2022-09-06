@@ -53,10 +53,38 @@
   {
    "hidden": 0,
    "is_query_report": 0,
+   "label": "Selling",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "dependencies": "Customer",
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Customer-Wise Sales",
+   "link_to": "Customer-Wise Sales",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Stock Reports",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
+  },
+  {
+   "dependencies": "Item",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Item Statistics",
+   "link_to": "Item Statistics",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   },
   {
    "hidden": 0,
@@ -69,7 +97,7 @@
    "type": "Link"
   }
  ],
- "modified": "2022-05-21 12:53:46.551852",
+ "modified": "2022-09-06 14:31:30.006372",
  "modified_by": "Administrator",
  "module": "Eskill Customisations",
  "name": "Eskill Selling",
