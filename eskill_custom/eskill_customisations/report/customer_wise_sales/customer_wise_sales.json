@@ -10,7 +10,7 @@
  "idx": 0,
  "is_standard": "Yes",
  "letter_head": "Eskill Trading",
- "modified": "2022-09-02 13:04:19.794487",
+ "modified": "2022-09-06 14:35:13.362589",
  "modified_by": "Administrator",
  "module": "Eskill Customisations",
  "name": "Customer-Wise Sales",
@@ -19,5 +19,12 @@
  "ref_doctype": "Customer",
  "report_name": "Customer-Wise Sales",
  "report_type": "Script Report",
- "roles": []
+ "roles": [
+  {
+   "role": "Accounts User"
+  },
+  {
+   "role": "Sales User"
+  }
+ ]
 }
