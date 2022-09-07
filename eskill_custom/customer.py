@@ -16,6 +16,7 @@ def create_secondary_customer(customer: str, currency: str):
         documents = frappe.get_all(
             "Dynamic Link",
             filters={
+                'link_doctype': "Customer",
                 'link_name': previous_customer,
                 'parenttype': doctype
             },

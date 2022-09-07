@@ -35,6 +35,7 @@ def create_secondary_supplier(supplier: str, currency: str):
         documents = frappe.get_all(
             "Dynamic Link",
             filters={
+                'link_doctype': "Supplier",
                 'link_name': previous_supplier,
                 'parenttype': doctype
             },
