@@ -4,6 +4,8 @@
 import frappe
 from frappe import _
 
+from eskill_custom.report_api import get_descendants
+
 
 def execute(filters=None):
     "Main function."
@@ -108,8 +110,26 @@ def get_where_statement(filters: dict) -> str:
         where_list.append(f"I.brand = '{filters['brand']}'")
     if len(filters['item_group']) > 0:
         where_list.append(f"I.item_group in ('{filters['item_group'][0]}'")
+
+        descendants = get_descendants(
+            "Item Group",
+            filters['item_group'][0],
+            "parent_item_group"
+        )
+        for descendant in  descendants:
+            where_list[-1] += f", '{descendant}'"
+
         for i in range(1, len(filters['item_group'])):
             where_list[-1] += f", '{filters['item_group'][i]}'"
+
+            descendants = get_descendants(
+                "Item Group",
+                filters['item_group'][i],
+                "parent_item_group"
+            )
+            for descendant in  descendants:
+                where_list[-1] += f", '{descendant}'"
+
         where_list[-1] += ")"
     if "stock_items_only" in filters:
         where_list.append("I.is_stock_item")
