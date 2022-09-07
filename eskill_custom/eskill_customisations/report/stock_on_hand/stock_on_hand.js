@@ -15,12 +15,15 @@ frappe.query_reports["Stock On Hand"] = {
             label:  __("Item Name"),
             fieldtype:  "Data",
         },
-        {
-            fieldname: "item_group",
-            label:  __("Item Group"),
-            fieldtype:  "Link",
-            options:  "Item Group"
-        },
+		{
+			fieldname: "item_group",
+			label: __("Item Group"),
+			fieldtype: "MultiSelectList",
+			options: "Item Group",
+			get_data(txt) {
+				return frappe.db.get_link_options("Item Group", txt);
+			}
+		},
         {
             fieldname: "brand",
             label:  __("Brand"),

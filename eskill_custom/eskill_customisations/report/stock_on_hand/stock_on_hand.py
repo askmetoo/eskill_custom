@@ -101,57 +101,6 @@ def get_data(filters: dict, columns: 'list[dict]') -> 'list[dict]':
 
     data = initialise_data(filters, columns)
 
-    if "item_code" in filters:
-        data = [
-            row
-            for i, row in enumerate(data)
-            if row['item_code'] == filters['item_code']
-        ]
-
-    if "item_group" in filters:
-        descendants = get_descendants(
-            "Item Group",
-            filters['item_group'],
-            "parent_item_group"
-        )
-        data = [
-            row
-            for i, row in enumerate(data)
-            if (
-                (row['item_group'] == filters['item_group'])
-                or (row['item_group'] in descendants)
-            )
-        ]
-
-    if "brand" in filters:
-        data = [
-            row
-            for i, row in enumerate(data)
-            if row['brand'] == filters['brand']
-        ]
-
-    if "warehouse" in filters:
-        descendants = get_descendants(
-            "Warehouse",
-            filters['warehouse'],
-            "parent_warehouse"
-        )
-        data = [
-            row
-            for i, row in enumerate(data)
-            if (
-                (row['warehouse'] == filters['warehouse'])
-                or (row['warehouse'] in descendants)
-            )
-        ]
-
-    if "warehouse_type" in filters:
-        data = [
-            row
-            for i, row in enumerate(data)
-            if row['warehouse_type'] == filters['warehouse_type']
-        ]
-
     if "show_warehouse" not in filters:
         data = group_by_item_code(data)
 
@@ -167,6 +116,8 @@ def get_data(filters: dict, columns: 'list[dict]') -> 'list[dict]':
 
 def initialise_data(filters: dict, columns: 'list[dict]'):
     "Initialise report data."
+
+    where_statement = get_where_statement(filters)
 
     data = frappe.db.sql(
         f"""
@@ -188,17 +139,13 @@ def initialise_data(filters: dict, columns: 'list[dict]'):
                 tabItem I on B.item_code = I.name
             join
                 tabWarehouse W on W.name = B.warehouse
+            {where_statement}
             having
                 (actual_qty <> 0
                 or ordered_qty <> 0
                 or reserved_qty <> 0
                 or projected_qty <> 0)
                 and warehouse_type in ('Sales', 'Service')
-                {
-                    "and item_name like '%" + filters['item_name'] + "%'"
-                    if "item_name" in filters
-                    else ""
-                }
             order by
                 item_code, warehouse;
         """,
@@ -249,3 +196,65 @@ def group_by_item_code(data: 'list[dict]') -> 'list[dict]':
                 new_data[i]['actual_qty'] += row['actual_qty']
 
     return new_data
+
+
+def get_where_statement(filters: dict) -> str:
+    "Returns the where statement for the get_data() query."
+
+    where_list = []
+
+    # product filters
+    if "item_code" in filters:
+        where_list.append(f"I.name = '{filters['item_code']}'")
+    if "item_name" in filters:
+        where_list.append(f"I.item_name like '%{filters['item_name']}%'")
+    if "brand" in filters:
+        where_list.append(f"I.brand = '{filters['brand']}'")
+    if len(filters['item_group']) > 0:
+        where_list.append(f"I.item_group in ('{filters['item_group'][0]}'")
+
+        descendants = get_descendants(
+            "Item Group",
+            filters['item_group'][0],
+            "parent_item_group"
+        )
+        for descendant in  descendants:
+            where_list[-1] += f", '{descendant}'"
+
+        for i in range(1, len(filters['item_group'])):
+            where_list[-1] += f", '{filters['item_group'][i]}'"
+
+            descendants = get_descendants(
+                "Item Group",
+                filters['item_group'][i],
+                "parent_item_group"
+            )
+            for descendant in  descendants:
+                where_list[-1] += f", '{descendant}'"
+
+        where_list[-1] += ")"
+
+    # warehouse filters
+    if "warehouse" in filters:
+        where_list.append(f"W.name in ('{filters['warehouse']}'")
+
+        descendants = get_descendants(
+            "Warehouse",
+            filters['warehouse'],
+            "parent_warehouse"
+        )
+        for descendant in  descendants:
+            where_list[-1] += f", '{descendant}'"
+
+        where_list[-1] += ")"
+    if "warehouse_type" in filters:
+        where_list.append(f"W.warehouse_type = '{filters['warehouse_type']}'")
+
+
+    where_statement = ""
+    if len(where_list) > 0:
+        where_statement = f"where {where_list[0]}"
+        for i in range(1, len(where_list)):
+            where_statement += " and " + where_list[i]
+
+    return where_statement
