@@ -38,7 +38,7 @@ eskill_custom.form.common.stock_availability = (frm) => {
                 frappe.call({
                     method: "eskill_custom.api.stock_availability",
                     args: {
-                        doctype: route[1],
+                        doctype: frm.doctype,
                         items: frm.doc.items
                     }
                 });
