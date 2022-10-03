@@ -500,7 +500,7 @@ def get_journal_data(
                 if totals['count'] and totals['exchange_total']:
                     data[i]['exchange_rate'] = totals['exchange_total'] / totals['count']
 
-            data[i][columns[1]['fieldname']] = (
+            data[i][columns[1]['fieldname']] = abs(
                 row[columns[0]['fieldname']] * data[i]['exchange_rate']
             )
 

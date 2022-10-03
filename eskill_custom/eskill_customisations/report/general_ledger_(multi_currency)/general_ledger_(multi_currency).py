@@ -499,8 +499,8 @@ def get_account_data(account: 'dict[str,]', filters: 'dict[str,]') -> list:
                                 "conversion_rate"
                             )
 
-                data[i][deb_col] = data[i][base_deb_col] * data[i]['exchange_rate']
-                data[i][cre_col] = data[i][base_cre_col] * data[i]['exchange_rate']
+                data[i][deb_col] = abs(data[i][base_deb_col] * data[i]['exchange_rate'])
+                data[i][cre_col] = abs(data[i][base_cre_col] * data[i]['exchange_rate'])
     else:
         data.extend(frappe.db.sql(f"""\
             select
