@@ -2,7 +2,8 @@ frappe.ui.form.on("Customer", {
   refresh(frm) {
     if (
       !frm.doc.__islocal &&
-      frm.doc.default_currency == frappe.defaults.get_default("currency")
+      frm.doc.default_currency == frappe.defaults.get_default("currency") &&
+      frm.doc.approved
     ) {
       frm.add_custom_button(
         __("Secondary Account"),
@@ -38,10 +39,20 @@ frappe.ui.form.on("Customer", {
           __("View")
         ),
     ]);
+
+    if (frm.is_new()) {
+      frm.set_df_property("approved", "hidden", 1);
+    }
   },
 
   before_save(frm) {
     set_customer_code(frm);
+  },
+
+  approved(frm) {
+    if (frm.doc.approved) {
+      frm.set_value("approved_by", frappe.session.user);
+    }
   },
 
   default_currency(frm) {
@@ -110,6 +121,7 @@ function set_customer_code(frm) {
   if (frm.is_new() && !frm.doc.__newname) {
     frappe.validated = false;
     const customer_code_prefix = frm.doc.customer_name
+      .replace(/[\W\d]{1}/gm, "")
       .substring(0, 3)
       .toUpperCase();
     const customer_code_suffix = frm.doc.default_currency
@@ -142,27 +154,92 @@ function set_customer_code(frm) {
               fieldtype: "Data",
               label: "Customer Code",
               default: default_code,
-              description: "The code should follow the format 'XXX-###-XX'.",
+              read_only: 1,
+            },
+            {
+              fieldtype: "Section Break",
+              label: "Address",
+            },
+            {
+              fieldname: "address_line1",
+              fieldtype: "Data",
+              label: "Address Line 1",
               reqd: 1,
+            },
+            {
+              fieldname: "address_line2",
+              fieldtype: "Data",
+              label: "Address Line 2",
+            },
+            {
+              fieldname: "city",
+              fieldtype: "Data",
+              label: "City/Town",
+              reqd: 1,
+            },
+            {
+              fieldname: "country",
+              fieldtype: "Link",
+              label: "Country",
+              options: "Country",
+              reqd: 1,
+            },
+            {
+              fieldtype: "Section Break",
+              label: "Primary Contact",
+            },
+            {
+              fieldname: "first_name",
+              fieldtype: "Data",
+              label: "First Name",
+              reqd: 1,
+            },
+            {
+              fieldname: "last_name",
+              fieldtype: "Data",
+              label: "Last Name",
+              reqd: 1,
+            },
+            {
+              fieldname: "email_id",
+              fieldtype: "Data",
+              label: "Email Address",
+              options: "Email",
+              reqd: 1,
+            },
+            {
+              fieldname: "phone",
+              fieldtype: "Data",
+              label: "Phone Number",
+              options: "Phone",
+              reqd: 1,
+            },
+            {
+              fieldname: "is_primary_phone",
+              fieldtype: "Check",
+              label: "Is Primary Phone",
+            },
+            {
+              fieldname: "is_primary_mobile_no",
+              fieldtype: "Check",
+              label: "Is Primary Mobile",
             },
           ],
           (values) => {
-            let value = values.customer_code;
-
-            if (
-              !existing_customers.includes(value) &&
-              value.match(
-                RegExp(
-                  `${customer_code_prefix}-\d{3}-${customer_code_suffix}`,
-                  "gm"
-                )
-              )
-            ) {
-              frm.doc.__newname = value;
-              frm.save();
-            }
+            frm.doc.__newname = values.customer_code;
+            frm.save().then(() => {
+              frappe.call({
+                method: "eskill_custom.customer.set_new_customer_info",
+                args: {
+                  values: values,
+                },
+                callback: (response) => {
+                  location.reload();
+                },
+              });
+            });
           },
-          "Set Account Code"
+          "Set Account Information"
         );
       });
   }

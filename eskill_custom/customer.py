@@ -1,6 +1,7 @@
 "Collection of methods to be used in Customer documents."
 
 from __future__ import unicode_literals
+import json
 
 from re import search
 
@@ -32,7 +33,6 @@ def create_secondary_customer(customer: str, currency: str):
                 ignore_permissions=True
             )
 
-
     try:
         debtors_account = frappe.db.sql(f"""
         select
@@ -58,7 +58,8 @@ def create_secondary_customer(customer: str, currency: str):
         group_by="default_currency"
     )
     if currency in existing_secondary_currencies:
-        frappe.throw(_("A customer account already exists for the selected currency."))
+        frappe.throw(
+            _("A customer account already exists for the selected currency."))
 
     meta = frappe.get_meta("Customer")
     fields = [
@@ -70,7 +71,6 @@ def create_secondary_customer(customer: str, currency: str):
             "Table"
         )
     ]
-
 
     main_customer = frappe.get_doc("Customer", customer)
     new_customer = frappe.new_doc("Customer")
@@ -104,3 +104,50 @@ def create_secondary_customer(customer: str, currency: str):
         set_contact_details(doc, main_customer.name, new_customer.name)
 
     return new_customer.name
+
+
+@frappe.whitelist()
+def set_new_customer_info(values):
+    """Sets the dynamic links for the given address and
+    contact documents to link them to the new customer account."""
+
+    results = json.loads(values)
+
+    address = frappe.new_doc("Address")
+    address.address_line1 = results['address_line1']
+    if "address_line2" in results:
+        address.address_line2 = results['address_line2']
+    address.city = results['city']
+    address.country = results['country']
+    address.is_primary_address = 1
+    address.is_shipping_address = 1
+    address.append("links", {
+        'link_doctype': "Customer",
+        'link_name': results['customer_code'],
+    })
+    address.insert(ignore_permissions=True)
+
+    contact = frappe.new_doc("Contact")
+    contact.first_name = results['first_name']
+    contact.last_name = results['last_name']
+    contact.is_billing_contact = 1
+    contact.is_primary_contact = 1
+    contact.append("email_ids", {
+        'email_id': results['email_id'],
+        'is_primary': 1,
+    })
+    contact.append("phone_nos", {
+        'phone': results['phone'],
+        'is_primary_phone':  1 if "is_primary_phone" in results else 0,
+        'is_primary_mobile_no': 1 if "is_primary_mobile_no" in results else 0,
+    })
+    contact.append("links", {
+        'link_doctype': "Customer",
+        'link_name': results['customer_code'],
+    })
+    contact.insert(ignore_permissions=True)
+
+    customer = frappe.get_doc("Customer", results['customer_code'])
+    customer.customer_primary_address = address.name
+    customer.customer_primary_contact = contact.name
+    customer.save()
