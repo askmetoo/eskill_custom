@@ -8506,7 +8506,7 @@
   "doctype": "Property Setter",
   "doctype_or_field": "DocType",
   "field_name": null,
-  "modified": "2022-11-24 15:53:43.772625",
+  "modified": "2022-12-02 11:26:35.775496",
   "name": "Customer-main-links_order",
   "parent": null,
   "parentfield": null,
@@ -8515,22 +8515,5 @@
   "property_type": "Small Text",
   "row_name": null,
   "value": "[\"68cfb78bbc\", \"de6028034c\", \"7f48414b26\", \"4ca29d3546\", \"a134c81650\", \"593895fa8f\", \"e63e4de8ac\", \"349c96d826\", \"41af7eebde\", \"64c93a4807\", \"37b0f150de\", \"e274a4187f\", \"34135d1922\", \"f2e9cc9d1d\", \"6298a1e35a\", \"ba5ae75d0f\", \"b9c692f595\", \"da635bf842\", \"076e5022cf\", \"048f4650ee\", \"0b56c897c8\"]"
- },
- {
-  "default_value": null,
-  "doc_type": "Customer",
-  "docstatus": 0,
-  "doctype": "Property Setter",
-  "doctype_or_field": "DocType",
-  "field_name": null,
-  "modified": "2021-06-08 11:32:47.109524",
-  "name": "Customer-search_fields",
-  "parent": null,
-  "parentfield": null,
-  "parenttype": null,
-  "property": "search_fields",
-  "property_type": "Data",
-  "row_name": null,
-  "value": "customer_name,customer_code,customer_group,territory, mobile_no,primary_address"
  }
 ]
