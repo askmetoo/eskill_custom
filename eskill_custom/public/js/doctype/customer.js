@@ -45,8 +45,13 @@ frappe.ui.form.on("Customer", {
     }
   },
 
+  validate(frm) {},
+
   before_save(frm) {
-    set_customer_code(frm);
+    validate_tax_fields(frm);
+    if (frappe.validated) {
+      set_customer_code(frm);
+    }
   },
 
   approved(frm) {
@@ -242,5 +247,22 @@ function set_customer_code(frm) {
           "Set Account Information"
         );
       });
+  }
+}
+
+// checks that the tax fields are valid
+function validate_tax_fields(frm) {
+  if (frm.doc.tax_id && !frm.doc.tax_id.match(/^\d{8}$/gm)) {
+    frappe.msgprint(
+      `<strong>${frm.doc.tax_id}</strong> is an invalid VAT number.`
+    );
+    frappe.validated = false;
+  }
+
+  if (frm.doc.bp_number && !frm.doc.bp_number.match(/^\d{9}$/gm)) {
+    frappe.msgprint(
+      `<strong>${frm.doc.bp_number}</strong> is an invalid BP number.`
+    );
+    frappe.validated = false;
   }
 }
