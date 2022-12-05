@@ -8,3 +8,4 @@ execute:frappe.delete_doc_if_exists("Custom Field", "Customer-customer_code")
 execute:frappe.delete_doc_if_exists("Custom Field", "Supplier-supplier_code")
 execute:frappe.delete_doc_if_exists("DocType", "test")
 eskill_custom.patches.v2_4_0.set_approval_status_on_existing_customers
+eskill_custom.patches.v2_4_0.validate_customer_vat_number
