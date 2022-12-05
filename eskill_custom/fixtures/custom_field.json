@@ -2891,7 +2891,7 @@
   "insert_after": "tax_id",
   "label": "BP Number",
   "length": 0,
-  "mandatory_depends_on": "eval: (doc.tax_id);",
+  "mandatory_depends_on": "",
   "modified": "2022-12-02 11:26:35.905829",
   "name": "Customer-bp_number",
   "no_copy": 0,
