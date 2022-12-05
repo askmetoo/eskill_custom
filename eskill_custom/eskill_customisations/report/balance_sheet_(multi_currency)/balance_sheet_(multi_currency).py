@@ -508,8 +508,8 @@ def get_journal_data(
                         totals['exchange_total'] += 1 / record.exchange_rate
                 if totals['count'] and totals['exchange_total']:
                     data[i]['exchange_rate'] = totals['exchange_total'] / totals['count']
-            data[i][columns[1]['fieldname']] = abs(
-                row[columns[0]['fieldname']] * data[i]['exchange_rate']
+            data[i][columns[1]['fieldname']] = (
+                row[columns[0]['fieldname']] * abs(data[i]['exchange_rate'])
             )
 
     accounts = set()
