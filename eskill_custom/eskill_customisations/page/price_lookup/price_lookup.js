@@ -2,7 +2,7 @@
 const BORDER_SPEC = "solid 3px var(--border-color)"
 
 // tax rate used for calculating the minimum selling price
-const TAX_RATE = 1.145;
+const TAX_RATE = 1.15;
 
 frappe.pages['price-lookup'].on_page_load = function(wrapper) {
 	let page = frappe.ui.make_app_page({
