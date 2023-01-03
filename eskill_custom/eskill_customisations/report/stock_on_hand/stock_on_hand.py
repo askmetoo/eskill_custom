@@ -34,7 +34,6 @@ def get_columns(filters: dict) -> 'list[dict]':
             'label': _("Item Name"),
             'fieldtype': "Text",
             'width': 400,
-            'hidden': 1
         },
         {
             'fieldname': "item_group",
