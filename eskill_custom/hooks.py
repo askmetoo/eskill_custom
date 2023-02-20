@@ -17,19 +17,24 @@ app_license = "MIT"
 # Includes in <head>
 # ------------------
 
+# whitelist python methods for JINJA templating
+jenv = {
+    "methods": [
+        "company_tax_numbers:eskill_custom.print_format_api.selling.company_tax_numbers",
+    ],
+    "filters": [],
+}
+
 # include js, css files in header of desk.html
 app_include_css = [
-    "/assets/eskill_custom/css/form.css"
+    "/assets/eskill_custom/css/form.css",
 ]
 
-app_include_js = ([
-    "interface.bundle.js",
-    "form.bundle.js"
-] if int(frappe_version.split('.', maxsplit=1)[0]) > 13
-else [
-    "/assets/js/interface.js",
-    "/assets/js/eskill_form.js"
-])
+app_include_js = (
+    ["interface.bundle.js", "form.bundle.js"]
+    if int(frappe_version.split(".", maxsplit=1)[0]) > 13
+    else ["/assets/js/interface.js", "/assets/js/eskill_form.js"]
+)
 
 
 # include js, css files in header of web template
@@ -41,27 +46,27 @@ else [
 
 # include js in doctype views
 doctype_js = {
-    'Accounts Settings' : 'public/js/doctype/accounts_settings.js',
-    'Customer' : 'public/js/doctype/customer.js',
-    'Delivery Note' : 'public/js/doctype/delivery_note.js',
-    'Item' : 'public/js/doctype/item.js',
-    'Item Group' : 'public/js/doctype/item_group.js',
-    'Journal Entry' : 'public/js/doctype/journal_entry.js',
-    'Landed Cost Voucher' : 'public/js/doctype/landed_cost_voucher.js',
-    'Material Request': 'public/js/doctype/material_request.js',
-    'Payment Entry' : 'public/js/doctype/payment_entry.js',
-    'Purchase Invoice' : 'public/js/doctype/purchase_invoice.js',
-    'Purchase Order' : 'public/js/doctype/purchase_order.js',
-    'Purchase Receipt' : 'public/js/doctype/purchase_receipt.js',
-    'Quotation' : 'public/js/doctype/quotation.js',
-    'Sales Invoice' : 'public/js/doctype/sales_invoice.js',
-    'Sales Order' : 'public/js/doctype/sales_order.js',
-    'Serial No': 'public/js/doctype/serial_no.js',
-    'Stock Entry' : 'public/js/doctype/stock_entry.js',
-    'Stock Reconciliation' : 'public/js/doctype/stock_reconciliation.js',
-    'Supplier' : 'public/js/doctype/supplier.js',
-    'Task' : 'public/js/doctype/task.js',
-    'Timesheet' : 'public/js/doctype/timesheet.js',
+    "Accounts Settings": "public/js/doctype/accounts_settings.js",
+    "Customer": "public/js/doctype/customer.js",
+    "Delivery Note": "public/js/doctype/delivery_note.js",
+    "Item": "public/js/doctype/item.js",
+    "Item Group": "public/js/doctype/item_group.js",
+    "Journal Entry": "public/js/doctype/journal_entry.js",
+    "Landed Cost Voucher": "public/js/doctype/landed_cost_voucher.js",
+    "Material Request": "public/js/doctype/material_request.js",
+    "Payment Entry": "public/js/doctype/payment_entry.js",
+    "Purchase Invoice": "public/js/doctype/purchase_invoice.js",
+    "Purchase Order": "public/js/doctype/purchase_order.js",
+    "Purchase Receipt": "public/js/doctype/purchase_receipt.js",
+    "Quotation": "public/js/doctype/quotation.js",
+    "Sales Invoice": "public/js/doctype/sales_invoice.js",
+    "Sales Order": "public/js/doctype/sales_order.js",
+    "Serial No": "public/js/doctype/serial_no.js",
+    "Stock Entry": "public/js/doctype/stock_entry.js",
+    "Stock Reconciliation": "public/js/doctype/stock_reconciliation.js",
+    "Supplier": "public/js/doctype/supplier.js",
+    "Task": "public/js/doctype/task.js",
+    "Timesheet": "public/js/doctype/timesheet.js",
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
@@ -75,7 +80,7 @@ doctype_js = {
 
 # website user home page (by Role)
 # role_home_page = {
-#	"Role": "home_page"
+# "Role": "home_page"
 # }
 
 # Website user home page (by function)
@@ -116,36 +121,36 @@ doctype_js = {
 # Hook on document methods and events
 
 doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-#               "on_trash": "method"
-#	},
-    'GL Entry': {
-        'before_insert': "eskill_custom.crud_events.gl_entry.set_auction_bid_rate"
-    }
+    # 	"*": {
+    # 		"on_update": "method",
+    # 		"on_cancel": "method",
+    #               "on_trash": "method"
+    # },
+    "GL Entry": {
+        "before_insert": "eskill_custom.crud_events.gl_entry.set_auction_bid_rate",
+    },
 }
 
 # Scheduled Tasks
 # ---------------
 
 scheduler_events = {
-# 	"all": [
-# 		"eskill_custom.tasks.all"
-# 	],
-    'daily' : [
+    # 	"all": [
+    # 		"eskill_custom.tasks.all"
+    # 	],
+    "daily": [
         "eskill_custom.eskill_customisations.doctype.device_sla.device_sla.update_state",
-		"eskill_custom.scheduled_tasks.adjust_auction_rates"
+        "eskill_custom.scheduled_tasks.adjust_auction_rates",
     ],
-# 	"hourly": [
-# 		"eskill_custom.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"eskill_custom.tasks.weekly"
-# 	]
-# 	"monthly": [
-# 		"eskill_custom.tasks.monthly"
-# 	]
+    # 	"hourly": [
+    # 		"eskill_custom.tasks.hourly"
+    # 	],
+    # 	"weekly": [
+    # 		"eskill_custom.tasks.weekly"
+    # 	]
+    # 	"monthly": [
+    # 		"eskill_custom.tasks.monthly"
+    # 	]
 }
 
 # Testing
@@ -168,32 +173,29 @@ scheduler_events = {
 # }
 
 fixtures = [
-    'Custom Field',
-    'Property Setter',
+    "Custom Field",
+    "Property Setter",
     {
-        'dt': "Role",
-        'filters': [
-            ["role_name", "in", [
-                "Cashier",
-                "Stocktake User",
-            ]]
-        ]
+        "dt": "Role",
+        "filters": [
+            ["role_name", "in", ["Cashier", "Stocktake User"]],
+        ],
     },
     {
-        'dt': "DocType Link",
-        'filters': [
-            ["custom", "=", 1]
-        ]
+        "dt": "DocType Link",
+        "filters": [
+            ["custom", "=", 1],
+        ],
     },
     {
-        'dt': "Navbar Item",
-        'filters': [
-            ["is_standard", "=", 0]
-        ]
-    }
+        "dt": "Navbar Item",
+        "filters": [
+            ["is_standard", "=", 0],
+        ],
+    },
 ]
 
 website_context = {
     "favicon": "/assets/eskill_custom/images/EskillFavicon.png",
-    "splash_image": "/assets/eskill_custom/images/EskillSplash.png"
+    "splash_image": "/assets/eskill_custom/images/EskillSplash.png",
 }
